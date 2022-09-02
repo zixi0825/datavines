@@ -231,7 +231,7 @@ public abstract class JdbcConnector implements Connector, IDataSourceInfo {
         return result;
     }
 
-    private InputParam getInputParam(String field, String title, String placeholder, int rows, Validate validate) {
+    protected InputParam getInputParam(String field, String title, String placeholder, int rows, Validate validate) {
         return InputParam
                 .newBuilder(field, title)
                 .addValidate(validate)
@@ -244,7 +244,7 @@ public abstract class JdbcConnector implements Connector, IDataSourceInfo {
                 .build();
     }
 
-    private InputParam getInputParamNoValidate(String field, String title, String placeholder, int rows) {
+    protected InputParam getInputParamNoValidate(String field, String title, String placeholder, int rows) {
         return InputParam
                 .newBuilder(field, title)
                 .setProps(new InputParamsProps().setDisabled(false))
@@ -261,7 +261,7 @@ public abstract class JdbcConnector implements Connector, IDataSourceInfo {
         ResultSet rs = null;
         List<String> primaryKeys = new ArrayList<>();
         try {
-            rs = metaData.getPrimaryKeys(null, dbName, tableName);
+            rs = metaData.getPrimaryKeys(dbName, dbName, tableName);
 
             if (rs == null) {
                 return primaryKeys;
