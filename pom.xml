@@ -43,6 +43,7 @@
         <module>datavines-core</module>
         <module>datavines-storage</module>
         <module>datavines-runner</module>
+        <module>datavines-metadata</module>
     </modules>
 
     <properties>
@@ -110,6 +111,7 @@
         <commons.email.version>1.5</commons.email.version>
         <poi.version>4.1.2</poi.version>
         <javax.mail.version>1.6.2</javax.mail.version>
+        <calcite.version>1.34.0</calcite.version>
 
         <license-maven-plugin.version>3.0</license-maven-plugin.version>
         <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
@@ -640,8 +642,21 @@
             <dependency>
                 <groupId>com.cronutils</groupId>
                 <artifactId>cron-utils</artifactId>
-                <version> ${cron-utils.version}</version>
+                <version>${cron-utils.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.calcite</groupId>
+                <artifactId>calcite-core</artifactId>
+                <version>${calcite.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.calcite</groupId>
+                <artifactId>calcite-server</artifactId>
+                <version>${calcite.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
