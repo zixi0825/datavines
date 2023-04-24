@@ -3,15 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.datavines</groupId>
-        <artifactId>datavines</artifactId>
+        <artifactId>datavines-pipeline</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>datavines-pipeline-dolphinscheduler</artifactId>
+    <artifactId>datavines-pipeline-scheduler</artifactId>
     <packaging>jar</packaging>
 
-    <name>datavines-pipeline-dolphinscheduler</name>
+    <name>datavines-pipeline-scheduler</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -20,10 +19,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
+            <groupId>io.datavines</groupId>
+            <artifactId>datavines-pipeline-repository</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

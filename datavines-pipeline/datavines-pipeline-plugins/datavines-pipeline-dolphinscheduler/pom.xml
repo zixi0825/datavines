@@ -5,22 +5,25 @@
         <groupId>io.datavines</groupId>
         <artifactId>datavines</artifactId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>datavines-pipeline</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>datavines-pipeline-api</module>
-        <module>datavines-pipeline-dolphinscheduler</module>
-        <module>datavines-pipeline-repository</module>
-        <module>datavines-pipeline-scheduler</module>
-        <module>datavines-pipeline-plugins</module>
-    </modules>
+    <artifactId>datavines-pipeline-dolphinscheduler</artifactId>
+    <packaging>jar</packaging>
+
+    <name>datavines-pipeline-dolphinscheduler</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>io.datavines</groupId>
-            <artifactId>datavines-common</artifactId>
+            <artifactId>datavines-pipeline-api</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

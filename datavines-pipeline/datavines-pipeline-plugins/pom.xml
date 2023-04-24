@@ -3,24 +3,20 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.datavines</groupId>
-        <artifactId>datavines</artifactId>
+        <artifactId>datavines-pipeline</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>datavines-pipeline</artifactId>
+    <artifactId>datavines-pipeline-plugins</artifactId>
     <packaging>pom</packaging>
+
+    <name>datavines-pipeline-plugins</name>
     <modules>
-        <module>datavines-pipeline-api</module>
         <module>datavines-pipeline-dolphinscheduler</module>
-        <module>datavines-pipeline-repository</module>
-        <module>datavines-pipeline-scheduler</module>
-        <module>datavines-pipeline-plugins</module>
     </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.datavines</groupId>
-            <artifactId>datavines-common</artifactId>
-        </dependency>
-    </dependencies>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
 </project>

@@ -2,16 +2,19 @@ package io.datavines.pipeline.repository.entity;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class PipelineProject {
+public class PipelineProject implements Serializable {
+
+    private static final long serialVersionUID = -1L;
 
     private Long id;
 
-    private String name;
-
     private Long code;
+
+    private String name;
 
     private String description;
 

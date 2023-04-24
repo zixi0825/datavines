@@ -1,3 +1,38 @@
+-- ----------------------------
+-- Table structure for dv_pl_pipeline_source
+-- ----------------------------
+DROP TABLE IF EXISTS `dv_pl_pipeline_source`;
+CREATE TABLE `dv_pl_pipeline_source` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `uuid` varchar(64) NOT NULL COMMENT '数据管道服务UUID',
+    `name` varchar(255) NOT NULL COMMENT '数据管道服务名称',
+    `type` varchar(255) NOT NULL COMMENT '数据管道服务类型',
+    `param` text NOT NULL COMMENT '数据管道服务参数',
+    `param_code` varchar(255) NULL COMMENT '数据管道服务参数MD5值',
+    `workspace_id` bigint(20) NOT NULL COMMENT '工作空间ID',
+    `create_by` bigint(20) NOT NULL COMMENT '创建用户ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_by` bigint(20) NOT NULL COMMENT '更新用户ID',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `pipeline_source_un` (`name`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据管道服务';
+
+-- ----------------------------
+-- Table structure for dv_datasource
+-- ----------------------------
+DROP TABLE IF EXISTS `dv_pl_data_offset`;
+CREATE TABLE `dv_pl_data_offset` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `source_uuid` varchar(64) NOT NULL COMMENT '数据管道服务UUID',
+    `database_name` varchar(255) NOT NULL COMMENT '数据库名称',
+    `table_name` varchar(255) NOT NULL COMMENT '表名称',
+    `last_seen_time` varchar(255) NOT NULL COMMENT '上次读取数据的时间',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `datasource_un` (`name`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据管道数据同步时间';
+
 DROP TABLE IF EXISTS `dv_pl_project`;
 CREATE TABLE `dv_pl_project` (
     `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'key',
