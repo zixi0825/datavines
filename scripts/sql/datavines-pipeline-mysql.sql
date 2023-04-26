@@ -21,7 +21,7 @@ CREATE TABLE `dv_pl_pipeline_source` (
 -- ----------------------------
 -- Table structure for dv_datasource
 -- ----------------------------
-DROP TABLE IF EXISTS `dv_pl_data_offset`;
+DROP TABLE IF EXISTS `dv_pl_sync_data_offset`;
 CREATE TABLE `dv_pl_data_offset` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
     `source_uuid` varchar(64) NOT NULL COMMENT '数据管道服务UUID',
