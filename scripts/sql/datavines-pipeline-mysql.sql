@@ -40,7 +40,7 @@ CREATE TABLE `dv_pl_project` (
     `code` bigint(20) NOT NULL COMMENT 'encoding',
     `description` varchar(255) DEFAULT NULL,
     `properties` longtext DEFAULT NULL COMMENT 'project properties map',
-    `creator` int(11) DEFAULT NULL COMMENT 'creator',
+    `creator` varchar(255) DEFAULT NULL COMMENT 'creator',
     `create_time` datetime NOT NULL COMMENT 'create time',
     `update_time` datetime DEFAULT NULL COMMENT 'update time',
     PRIMARY KEY (`id`),
