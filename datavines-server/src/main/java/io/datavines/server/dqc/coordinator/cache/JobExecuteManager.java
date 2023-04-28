@@ -49,7 +49,7 @@ import io.datavines.server.dqc.executor.cache.JobExecutionCache;
 import io.datavines.server.dqc.executor.cache.JobExecutionContext;
 import io.datavines.server.dqc.executor.runner.JobRunner;
 import io.datavines.server.utils.DefaultDataSourceInfoUtils;
-import io.datavines.server.utils.NamedThreadFactory;
+import io.datavines.common.utils.NamedThreadFactory;
 import io.datavines.server.utils.SpringApplicationContext;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;

@@ -23,7 +23,6 @@
             <groupId>io.datavines</groupId>
             <artifactId>datavines-pipeline-api</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

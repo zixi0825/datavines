@@ -21,6 +21,10 @@
             <groupId>io.datavines</groupId>
             <artifactId>datavines-spi</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.datavines</groupId>
+            <artifactId>datavines-common</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

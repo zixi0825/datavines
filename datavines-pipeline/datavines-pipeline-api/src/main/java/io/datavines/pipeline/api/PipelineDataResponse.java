@@ -1,12 +1,12 @@
-package io.datavines.pipeline.scheduler;
+package io.datavines.pipeline.api;
 
 import io.datavines.common.entity.ListWithQueryColumn;
 import lombok.Data;
 
 @Data
-public class PipelineDataFetchResponse {
+public class PipelineDataResponse {
 
-    private Long sourceId;
+    private String sourceUUID;
 
     private String tableName;
 

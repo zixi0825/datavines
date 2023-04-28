@@ -1,6 +1,8 @@
 package io.datavines.pipeline.api;
 
+import io.datavines.pipeline.api.param.FetchDataParam;
+
 public interface PipelineFetcher {
 
-    void fetchData(String pipelineParam);
+    PipelineDataResponse fetchData(FetchDataParam param);
 }
