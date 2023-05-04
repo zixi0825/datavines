@@ -22,7 +22,7 @@ import io.datavines.server.api.dto.bo.catalog.CatalogRefresh;
 import io.datavines.server.repository.entity.DataSource;
 import io.datavines.server.repository.service.CatalogMetaDataFetchTaskService;
 import io.datavines.server.repository.service.impl.JobExternalService;
-import io.datavines.server.utils.SpringApplicationContext;
+import io.datavines.core.utils.SpringApplicationContext;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;

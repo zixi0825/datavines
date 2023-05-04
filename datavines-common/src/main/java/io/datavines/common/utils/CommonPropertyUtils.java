@@ -50,6 +50,9 @@ public class CommonPropertyUtils {
     public static final String CATALOG_METADATA_TASK_LOCK_KEY = "registry.catalog.metadata.task.lock.key";
     public static final String CATALOG_METADATA_TASK_LOCK_KEY_DEFAULT = "/datavines/catalog/fetch/lock";
 
+    public static final String PIPELINE_FETCH_TASK_LOCK_KEY = "registry.pipeline.fetch.task.lock.key";
+    public static final String PIPELINE_FETCH_TASK_LOCK_KEY_DEFAULT = "/datavines/pipeline/fetch/lock";
+
     public static final String SERVERS_KEY = "registry.servers.key";
     public static final String SERVERS_KEY_DEFAULT = "/datavines/servers";
 

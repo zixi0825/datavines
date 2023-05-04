@@ -7,6 +7,7 @@ CREATE TABLE `dv_pl_pipeline_source` (
     `uuid` varchar(64) NOT NULL COMMENT '数据管道服务UUID',
     `name` varchar(255) NOT NULL COMMENT '数据管道服务名称',
     `type` varchar(255) NOT NULL COMMENT '数据管道服务类型',
+    `connection_type` varchar(255) NOT NULL COMMENT '数据管道服务类连接类型',
     `param` text NOT NULL COMMENT '数据管道服务参数',
     `param_code` varchar(255) NULL COMMENT '数据管道服务参数MD5值',
     `workspace_id` bigint(20) NOT NULL COMMENT '工作空间ID',
@@ -19,6 +20,37 @@ CREATE TABLE `dv_pl_pipeline_source` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据管道服务';
 
 -- ----------------------------
+-- Table structure for dv_pl_command
+-- ----------------------------
+DROP TABLE IF EXISTS `dv_pl_command`;
+CREATE TABLE `dv_pl_command` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `parameter` text COMMENT 'json command parameters',
+    `task_id` bigint(20) NOT NULL COMMENT 'task id',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'update time',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='获取数据命令';
+
+-- ----------------------------
+-- Table structure for dv_pl_data_fetch_task
+-- ----------------------------
+DROP TABLE IF EXISTS `dv_pl_data_fetch_task`;
+CREATE TABLE `dv_pl_data_fetch_task` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `pipeline_source_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '数据管道服务ID',
+    `status` int(11) DEFAULT NULL COMMENT '任务状态',
+    `parameter` text COMMENT '任务参数',
+    `execute_host` varchar(255) DEFAULT NULL COMMENT '执行任务的主机',
+    `submit_time` datetime DEFAULT NULL COMMENT '提交时间',
+    `start_time` datetime DEFAULT NULL COMMENT '开始时间',
+    `end_time` datetime DEFAULT NULL COMMENT '结束时间',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据管道数据抓取任务';
+
+-- ----------------------------
 -- Table structure for dv_datasource
 -- ----------------------------
 DROP TABLE IF EXISTS `dv_pl_sync_data_offset`;
@@ -29,8 +61,7 @@ CREATE TABLE `dv_pl_data_offset` (
     `table_name` varchar(255) NOT NULL COMMENT '表名称',
     `last_seen_time` varchar(255) NOT NULL COMMENT '上次读取数据的时间',
     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `datasource_un` (`name`) USING BTREE
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据管道数据同步时间';
 
 DROP TABLE IF EXISTS `dv_pl_project`;
@@ -55,7 +86,7 @@ CREATE TABLE `dv_pl_dag_definition` (
     `code` bigint(20) NOT NULL COMMENT 'unique encoding',
     `name` varchar(255) DEFAULT NULL COMMENT 'dag definition name',
     `version` int(11) DEFAULT '0' COMMENT 'dag definition version',
-    `description` text COMMENT 'dag description',
+    `description` varchar(255) COMMENT 'dag description',
     `project_code` bigint(20) NOT NULL COMMENT 'project code',
     `release_state` tinyint(4) DEFAULT NULL COMMENT 'dag definition release state：0:offline,1:online',
     `properties` longtext DEFAULT NULL COMMENT 'dag definition properties map',
@@ -72,7 +103,7 @@ CREATE TABLE `dv_pl_dag_definition_history` (
     `code` bigint(20) NOT NULL COMMENT 'unique encoding',
     `name` varchar(255) DEFAULT NULL COMMENT 'dag definition name',
     `version` int(11) DEFAULT '0' COMMENT 'dag definition version',
-    `description` text COMMENT 'dag description',
+    `description` varchar(255) COMMENT 'dag description',
     `project_code` bigint(20) NOT NULL COMMENT 'project code',
     `release_state` tinyint(4) DEFAULT NULL COMMENT 'dag definition release state：0:offline,1:online',
     `properties` longtext DEFAULT NULL COMMENT 'dag properties map',
@@ -91,7 +122,7 @@ CREATE TABLE `dv_pl_task_definition` (
     `code` bigint(20) NOT NULL COMMENT 'encoding',
     `name` varchar(255) DEFAULT NULL COMMENT 'task definition name',
     `version` int(11) DEFAULT '0' COMMENT 'task definition version',
-    `description` text COMMENT 'description',
+    `description` varchar(255) COMMENT 'description',
     `project_code` bigint(20) NOT NULL COMMENT 'project code',
     `task_type` varchar(50) NOT NULL COMMENT 'task type',
     `task_execute_type` int(11) DEFAULT '0' COMMENT 'task execute type: 0-batch, 1-stream',
@@ -110,7 +141,7 @@ CREATE TABLE `dv_pl_task_definition_history` (
     `code` bigint(20) NOT NULL COMMENT 'encoding',
     `name` varchar(255) DEFAULT NULL COMMENT 'task definition name',
     `version` int(11) DEFAULT '0' COMMENT 'task definition version',
-    `description` text COMMENT 'description',
+    `description` varchar(255) COMMENT 'description',
     `project_code` bigint(20) NOT NULL COMMENT 'project code',
     `task_type` varchar(50) NOT NULL COMMENT 'task type',
     `task_execute_type` int(11) DEFAULT '0' COMMENT 'task execute type: 0-batch, 1-stream',

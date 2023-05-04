@@ -18,14 +18,14 @@ package io.datavines.server.dqc.coordinator.runner;
 
 import io.datavines.common.utils.*;
 import io.datavines.server.dqc.coordinator.cache.JobExecuteManager;
-import io.datavines.server.registry.Register;
+import io.datavines.core.registry.Register;
 import io.datavines.server.enums.CommandType;
 import io.datavines.server.repository.entity.JobExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.datavines.server.repository.service.impl.JobExternalService;
-import io.datavines.server.utils.SpringApplicationContext;
+import io.datavines.core.utils.SpringApplicationContext;
 import io.datavines.server.repository.entity.Command;
 
 import static io.datavines.common.CommonConstants.SLEEP_TIME_MILLIS;

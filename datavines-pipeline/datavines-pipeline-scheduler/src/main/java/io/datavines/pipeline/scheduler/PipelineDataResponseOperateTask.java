@@ -16,7 +16,5 @@ public class PipelineDataResponseOperateTask implements Runnable {
         // response 格式正确，进行数据处理
         // response 格式错误，记录错误日志
         // response handler
-
-
     }
 }

@@ -22,7 +22,7 @@ import io.datavines.core.utils.LanguageUtils;
 import io.datavines.engine.api.engine.EngineExecutor;
 import io.datavines.metric.api.*;
 import io.datavines.core.constant.DataVinesConstants;
-import io.datavines.core.aop.RefreshToken;
+import io.datavines.server.api.aop.RefreshToken;
 import io.datavines.server.api.dto.vo.Item;
 import io.datavines.server.api.dto.vo.MetricItem;
 import io.datavines.spi.PluginLoader;

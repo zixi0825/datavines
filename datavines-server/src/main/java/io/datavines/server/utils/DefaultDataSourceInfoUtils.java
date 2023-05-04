@@ -19,6 +19,7 @@ package io.datavines.server.utils;
 import com.zaxxer.hikari.HikariDataSource;
 import io.datavines.common.entity.ConnectionInfo;
 import io.datavines.common.utils.JdbcUrlParser;
+import io.datavines.core.utils.SpringApplicationContext;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -20,7 +20,7 @@ import io.datavines.server.api.dto.bo.user.UserLogin;
 import io.datavines.server.api.dto.bo.user.UserRegister;
 import io.datavines.common.exception.DataVinesException;
 import io.datavines.core.constant.DataVinesConstants;
-import io.datavines.core.aop.RefreshToken;
+import io.datavines.server.api.aop.RefreshToken;
 import io.datavines.server.repository.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

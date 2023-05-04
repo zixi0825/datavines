@@ -16,18 +16,20 @@
  */
 package io.datavines.server.catalog.metadata;
 
+import io.datavines.common.failover.FailoverListener;
+import io.datavines.common.failover.FailoverManager;
 import io.datavines.common.utils.CommonPropertyUtils;
 import io.datavines.common.utils.NetUtils;
 import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchTask;
 import io.datavines.server.repository.service.CatalogMetaDataFetchTaskService;
-import io.datavines.server.utils.SpringApplicationContext;
+import io.datavines.core.utils.SpringApplicationContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 
 @Slf4j
-public class MetaDataFetchTaskFailover {
+public class MetaDataFetchTaskFailover implements FailoverListener {
 
     private CatalogMetaDataFetchTaskService metaDataFetchTaskService;
 
@@ -36,9 +38,10 @@ public class MetaDataFetchTaskFailover {
     public MetaDataFetchTaskFailover(CatalogMetaDataFetchTaskManager metaDataFetchTaskManager) {
         this.metaDataFetchTaskService = SpringApplicationContext.getBean(CatalogMetaDataFetchTaskService.class);
         this.metaDataFetchTaskManager = metaDataFetchTaskManager;
+        FailoverManager.getInstance().registry(this);
     }
 
-    public void handleMetaDataFetchTaskFailover(String host) {
+    public void handleFailover(String host) {
         List<CatalogMetaDataFetchTask> needFailoverTaskList = metaDataFetchTaskService.listNeedFailover(host);
         innerHandleMetaDataFetchTaskFailover(needFailoverTaskList);
     }
@@ -59,7 +62,7 @@ public class MetaDataFetchTaskFailover {
         }
     }
 
-    public void handleMetaDataFetchTaskFailover(List<String> hostList) {
+    public void handleFailover(List<String> hostList) {
         List<CatalogMetaDataFetchTask> needFailoverTaskList = metaDataFetchTaskService.listTaskNotInServerList(hostList);
         innerHandleMetaDataFetchTaskFailover(needFailoverTaskList);
     }

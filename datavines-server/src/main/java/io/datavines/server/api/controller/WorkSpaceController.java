@@ -17,7 +17,7 @@
 package io.datavines.server.api.controller;
 
 import io.datavines.core.constant.DataVinesConstants;
-import io.datavines.core.aop.RefreshToken;
+import io.datavines.server.api.aop.RefreshToken;
 import io.datavines.server.api.dto.bo.workspace.InviteUserIntoWorkspace;
 import io.datavines.server.api.dto.bo.workspace.RemoveUserOutWorkspace;
 import io.datavines.server.api.dto.bo.workspace.WorkSpaceCreate;

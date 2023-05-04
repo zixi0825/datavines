@@ -72,6 +72,38 @@ public class SqlUtils {
         return listWithQueryColumn;
     }
 
+    public static ListWithQueryColumn query(JdbcTemplate jdbcTemplate, String sql) {
+        long before = System.currentTimeMillis();
+        ListWithQueryColumn listWithQueryColumn = new ListWithQueryColumn();
+
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql);
+        SqlRowSetMetaData metaData = rowSet.getMetaData();
+        List<QueryColumn> queryColumns = new ArrayList<>();
+        for (int i = 1; i <= metaData.getColumnCount(); i++) {
+            queryColumns.add(new QueryColumn(metaData.getColumnLabel(i), metaData.getColumnTypeName(i)));
+        }
+        listWithQueryColumn.setColumns(queryColumns);
+
+        List<Map<String, Object>> resultList = new ArrayList<>();
+
+        try {
+            while (rowSet.next()) {
+                resultList.add(getResultObjectMap(rowSet, metaData));
+            }
+        } catch (Throwable e) {
+            logger.error("get data error", e);
+        }
+
+        listWithQueryColumn.setResultList(resultList);
+
+        logger.info("query for {} ms, total count:{} sql:{}",
+                System.currentTimeMillis() - before,
+                listWithQueryColumn.getResultList().size(),
+                formatSql(sql));
+
+        return listWithQueryColumn;
+    }
+
     public static ListWithQueryColumn queryForPage(JdbcTemplate jdbcTemplate,
                                                    String sql, int limit, int pageNumber, int pageSize) {
 

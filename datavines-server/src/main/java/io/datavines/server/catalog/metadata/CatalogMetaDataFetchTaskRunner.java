@@ -21,7 +21,7 @@ import io.datavines.server.catalog.metadata.task.CatalogMetaDataFetchExecutorImp
 import io.datavines.server.catalog.metadata.task.CatalogTaskContext;
 import io.datavines.server.catalog.metadata.task.CatalogTaskResponse;
 import io.datavines.server.catalog.metadata.task.CatalogTaskResponseQueue;
-import io.datavines.server.utils.SpringApplicationContext;
+import io.datavines.core.utils.SpringApplicationContext;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

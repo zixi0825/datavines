@@ -17,6 +17,8 @@
 package io.datavines.server.dqc.coordinator.failover;
 
 import io.datavines.common.enums.ExecutionStatus;
+import io.datavines.common.failover.FailoverListener;
+import io.datavines.common.failover.FailoverManager;
 import io.datavines.common.utils.CommonPropertyUtils;
 import io.datavines.common.utils.NetUtils;
 import io.datavines.common.utils.Stopper;
@@ -26,7 +28,7 @@ import io.datavines.common.exception.DataVinesException;
 import io.datavines.server.dqc.coordinator.cache.JobExecuteManager;
 import io.datavines.server.repository.entity.JobExecution;
 import io.datavines.server.repository.service.impl.JobExternalService;
-import io.datavines.server.utils.SpringApplicationContext;
+import io.datavines.core.utils.SpringApplicationContext;
 import io.datavines.common.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -40,7 +42,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class JobExecutionFailover {
+public class JobExecutionFailover implements FailoverListener {
 
     private final JobExternalService jobExternalService;
 
@@ -58,9 +60,11 @@ public class JobExecutionFailover {
         this.jobExecuteManager = jobExecuteManager;
         executorService = Executors.newScheduledThreadPool(2);
         executorService.scheduleAtFixedRate(new YarnJobExecutionStatusChecker(),0,4, TimeUnit.SECONDS);
+        FailoverManager.getInstance().registry(this);
     }
 
-    public void handleJobExecutionFailover(String host) {
+    @Override
+    public void handleFailover(String host) {
         List<JobExecution> jobExecutionList = jobExternalService.getJobExecutionListNeedFailover(host);
         if (CollectionUtils.isEmpty(jobExecutionList)) {
             return;
@@ -69,7 +73,8 @@ public class JobExecutionFailover {
         innerHandleJobExecutionFailover(jobExecutionList);
     }
 
-    public void handleJobExecutionFailover(List<String> hostList) {
+    @Override
+    public void handleFailover(List<String> hostList) {
         List<JobExecution> jobExecutionList = jobExternalService.getJobExecutionListNeedFailover(hostList);
         if (CollectionUtils.isEmpty(jobExecutionList)) {
             return;

@@ -27,7 +27,7 @@ import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchTask;
 import io.datavines.server.repository.service.CatalogMetaDataFetchTaskService;
 import io.datavines.server.repository.service.impl.JobExternalService;
 import io.datavines.common.utils.NamedThreadFactory;
-import io.datavines.server.utils.SpringApplicationContext;
+import io.datavines.core.utils.SpringApplicationContext;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;

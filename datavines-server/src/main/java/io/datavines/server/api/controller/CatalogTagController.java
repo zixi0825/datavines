@@ -16,7 +16,7 @@
  */
 package io.datavines.server.api.controller;
 
-import io.datavines.core.aop.RefreshToken;
+import io.datavines.server.api.aop.RefreshToken;
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.server.api.dto.bo.catalog.tag.TagCategoryCreate;
 import io.datavines.server.api.dto.bo.catalog.tag.TagCreate;

@@ -23,7 +23,7 @@ import io.datavines.server.repository.entity.User;
 import io.datavines.server.repository.service.UserService;
 import io.datavines.core.exception.DataVinesServerException;
 import io.datavines.server.utils.ContextHolder;
-import io.datavines.core.utils.TokenManager;
+import io.datavines.server.api.utils.TokenManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;

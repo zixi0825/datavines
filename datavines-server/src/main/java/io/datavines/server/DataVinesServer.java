@@ -25,12 +25,12 @@ import io.datavines.registry.api.Registry;
 import io.datavines.server.catalog.metadata.CatalogMetaDataFetchTaskManager;
 import io.datavines.server.catalog.metadata.CatalogMetaDataFetchTaskScheduler;
 import io.datavines.server.catalog.metadata.MetaDataFetchTaskFailover;
-import io.datavines.server.registry.Register;
+import io.datavines.core.registry.Register;
 import io.datavines.server.dqc.coordinator.cache.JobExecuteManager;
 import io.datavines.server.dqc.coordinator.failover.JobExecutionFailover;
 import io.datavines.server.dqc.coordinator.runner.JobScheduler;
-import io.datavines.server.registry.RegistryHolder;
-import io.datavines.server.utils.SpringApplicationContext;
+import io.datavines.core.registry.RegistryHolder;
+import io.datavines.core.utils.SpringApplicationContext;
 import io.datavines.spi.PluginLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +89,7 @@ public class DataVinesServer {
         registry.init(CommonPropertyUtils.getProperties());
         registryHolder.setRegistry(registry);
 
-        register = new Register(registry, jobExecutionFailover, metaDataFetchTaskFailover);
+        register = new Register(registry);
         register.start();
 
         //start job scheduler

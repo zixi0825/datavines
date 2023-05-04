@@ -39,11 +39,10 @@ import io.datavines.server.repository.entity.catalog.CatalogSchemaChange;
 import io.datavines.server.repository.service.CatalogEntityInstanceService;
 import io.datavines.server.repository.service.CatalogEntityRelService;
 import io.datavines.server.repository.service.CatalogSchemaChangeService;
-import io.datavines.server.utils.SpringApplicationContext;
+import io.datavines.core.utils.SpringApplicationContext;
 import io.datavines.spi.PluginLoader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.BeanUtils;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;

@@ -20,7 +20,7 @@ import io.datavines.connector.api.ConnectorFactory;
 import io.datavines.server.api.dto.vo.Item;
 import io.datavines.common.param.TestConnectionRequestParam;
 import io.datavines.core.constant.DataVinesConstants;
-import io.datavines.core.aop.RefreshToken;
+import io.datavines.server.api.aop.RefreshToken;
 import io.datavines.server.api.dto.bo.datasource.DataSourceCreate;
 import io.datavines.server.api.dto.bo.datasource.DataSourceUpdate;
 import io.datavines.server.api.dto.bo.datasource.ExecuteRequest;

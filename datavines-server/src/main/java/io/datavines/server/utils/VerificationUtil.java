@@ -18,7 +18,8 @@ package io.datavines.server.utils;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import io.datavines.core.constant.DataVinesConstants;
-import io.datavines.core.utils.TokenManager;
+import io.datavines.core.utils.SpringApplicationContext;
+import io.datavines.server.api.utils.TokenManager;
 import io.datavines.server.api.dto.vo.KaptchaResp;
 import io.datavines.core.enums.Status;
 import io.datavines.core.exception.DataVinesServerException;

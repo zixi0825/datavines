@@ -18,7 +18,7 @@ package io.datavines.server.api.controller;
 
 import io.datavines.common.utils.DateUtils;
 import io.datavines.common.utils.StringUtils;
-import io.datavines.core.aop.RefreshToken;
+import io.datavines.server.api.aop.RefreshToken;
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.server.api.dto.bo.catalog.CatalogRefresh;
 import io.datavines.server.api.dto.bo.catalog.OptionItem;

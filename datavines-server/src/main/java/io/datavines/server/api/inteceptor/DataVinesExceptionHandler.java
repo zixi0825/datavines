@@ -16,9 +16,9 @@
  */
 package io.datavines.server.api.inteceptor;
 
-import io.datavines.core.entity.ResultMap;
+import io.datavines.server.api.entity.ResultMap;
 import io.datavines.core.enums.Status;
-import io.datavines.core.utils.TokenManager;
+import io.datavines.server.api.utils.TokenManager;
 import io.datavines.core.exception.DataVinesServerException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;

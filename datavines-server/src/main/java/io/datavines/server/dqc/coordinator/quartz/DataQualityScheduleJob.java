@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.server.repository.service.impl.JobExternalService;
-import io.datavines.server.utils.SpringApplicationContext;
+import io.datavines.core.utils.SpringApplicationContext;
 import io.datavines.common.utils.DateUtils;
 import io.datavines.server.repository.entity.Job;
 

@@ -23,7 +23,7 @@ import io.datavines.common.utils.CommonPropertyUtils;
 import io.datavines.common.utils.JSONUtils;
 import io.datavines.common.utils.NetUtils;
 import io.datavines.server.api.dto.bo.catalog.CatalogRefresh;
-import io.datavines.server.registry.RegistryHolder;
+import io.datavines.core.registry.RegistryHolder;
 import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchCommand;
 import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchTask;
 import io.datavines.server.repository.mapper.CatalogMetaDataFetchTaskMapper;

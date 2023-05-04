@@ -29,5 +29,11 @@
             <artifactId>datavines-pipeline-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.datavines</groupId>
+            <artifactId>datavines-pipeline-dolphinscheduler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
