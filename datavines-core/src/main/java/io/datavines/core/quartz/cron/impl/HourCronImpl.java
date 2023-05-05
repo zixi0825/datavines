@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.dqc.coordinator.quartz.cron.impl;
+package io.datavines.core.quartz.cron.impl;
 
 import com.cronutils.builder.CronBuilder;
 import com.cronutils.model.Cron;
@@ -23,42 +23,39 @@ import com.cronutils.model.definition.CronDefinitionBuilder;
 import io.datavines.common.utils.JSONUtils;
 import io.datavines.core.enums.Status;
 import io.datavines.core.exception.DataVinesServerException;
-import io.datavines.server.api.dto.bo.job.schedule.MapParam;
-import io.datavines.server.dqc.coordinator.quartz.cron.StrategyFactory;
-import io.datavines.server.dqc.coordinator.quartz.cron.FunCron;
+import io.datavines.core.quartz.MapParam;
+import io.datavines.core.quartz.cron.FunCron;
+import io.datavines.core.quartz.cron.StrategyFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 import static com.cronutils.model.field.expression.FieldExpressionFactory.*;
 import static com.cronutils.model.field.expression.FieldExpressionFactory.on;
-import static io.datavines.server.utils.VerificationUtil.verifyIsNeedParam;
 
 @Service
-public class WeekCronImpl implements FunCron {
+public class HourCronImpl implements FunCron {
 
     @Override
     public String funcDeal(String param) {
-        MapParam mapParam = JSONUtils.parseObject(param,MapParam.class);
+        MapParam mapParam = JSONUtils.parseObject(param, MapParam.class);
         Map<String ,String> parameter = mapParam.getParameter();
-        String[]  times = {"wday", "hour", "minute"};
-        Boolean verify = verifyIsNeedParam(parameter, times);
+
+        String minute = parameter.get("minute");
+        String[] times = {"minute"};
+        Boolean verify = FunCron.verifyIsNeedParam(parameter, times);
         if(!verify){
             throw new DataVinesServerException(Status.CREATE_ENV_ERROR);
         }
-        Integer wday = Integer.parseInt(parameter.get("wday"));
-        Integer hour =  Integer.parseInt(parameter.get("hour"));
-        Integer minute = Integer.parseInt(parameter.get("minute"));
-
 
         Cron cron = CronBuilder.cron(CronDefinitionBuilder.instanceDefinitionFor(CronType.QUARTZ))
                 .withYear(always())
+                .withDoW(questionMark())
                 .withMonth(always())
-                .withDoW(on(wday))
-                .withDoM(questionMark())
-                .withHour(on(hour))
-                .withMinute(on(minute))
-                .withSecond(on(0))
+                .withDoM(always())
+                .withHour(always())
+                .withMinute(on(Integer.parseInt(minute)))
+                .withSecond(on (0))
                 .instance();
 
         return cron.asString();
@@ -66,11 +63,12 @@ public class WeekCronImpl implements FunCron {
 
     @Override
     public String getFuncName(){
-        return "week";
+        return "hour";
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
         StrategyFactory.register(this.getFuncName(), this);
     }
+
 }

@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.dqc.coordinator.quartz.cron;
+package io.datavines.core.quartz.cron;
 
-import io.datavines.server.dqc.coordinator.quartz.cron.FunCron;
 import org.springframework.util.Assert;
 
 import java.util.Map;

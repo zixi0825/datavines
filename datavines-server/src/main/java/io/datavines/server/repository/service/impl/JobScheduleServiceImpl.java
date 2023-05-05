@@ -23,17 +23,17 @@ import io.datavines.common.utils.JSONUtils;
 import io.datavines.core.enums.Status;
 import io.datavines.core.exception.DataVinesServerException;
 import io.datavines.server.api.dto.bo.job.schedule.JobScheduleCreateOrUpdate;
-import io.datavines.server.api.dto.bo.job.schedule.MapParam;
-import io.datavines.server.dqc.coordinator.quartz.ScheduleJobInfo;
-import io.datavines.server.enums.ScheduleJobType;
+import io.datavines.core.quartz.MapParam;
+import io.datavines.core.quartz.ScheduleJobInfo;
+import io.datavines.core.quartz.ScheduleJobType;
 import io.datavines.server.repository.entity.Job;
 import io.datavines.server.repository.entity.JobSchedule;
 import io.datavines.server.repository.mapper.JobScheduleMapper;
 import io.datavines.server.repository.service.JobScheduleService;
-import io.datavines.server.dqc.coordinator.quartz.QuartzExecutors;
+import io.datavines.core.quartz.QuartzExecutors;
 import io.datavines.server.dqc.coordinator.quartz.DataQualityScheduleJob;
-import io.datavines.server.dqc.coordinator.quartz.cron.StrategyFactory;
-import io.datavines.server.dqc.coordinator.quartz.cron.FunCron;
+import io.datavines.core.quartz.cron.StrategyFactory;
+import io.datavines.core.quartz.cron.FunCron;
 
 import io.datavines.server.enums.JobScheduleType;
 import io.datavines.server.repository.service.JobService;
@@ -182,7 +182,7 @@ public class JobScheduleServiceImpl extends ServiceImpl<JobScheduleMapper, JobSc
         JobSchedule jobSchedule = getById(id);
         Job job = jobService.getById(jobSchedule.getJobId());
         ScheduleJobInfo scheduleJobInfo = getScheduleJobInfo(jobSchedule, job);
-        Boolean deleteJob = quartzExecutor.deleteJob(scheduleJobInfo);
+        boolean deleteJob = quartzExecutor.deleteJob(scheduleJobInfo);
         if (!deleteJob ) {
             return 0;
         }
@@ -234,7 +234,7 @@ public class JobScheduleServiceImpl extends ServiceImpl<JobScheduleMapper, JobSc
                     throw new DataVinesServerException(Status.SCHEDULE_PARAMETER_IS_NULL_ERROR);
                 }
 
-                Boolean isValid = quartzExecutor.isValid(param.getCrontab());
+                boolean isValid = quartzExecutor.isValid(param.getCrontab());
                 if (!isValid) {
                     throw new DataVinesServerException(Status.SCHEDULE_CRON_IS_INVALID_ERROR, param.getCrontab());
                 }

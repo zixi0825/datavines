@@ -14,26 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.datavines.pipeline.repository.service.impl;
 
-package io.datavines.server.repository.service;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.datavines.pipeline.repository.entity.PipelineTaskDefinitionHistory;
+import io.datavines.pipeline.repository.mapper.PipelineTaskDefinitionHistoryMapper;
+import io.datavines.pipeline.repository.service.PipelineTaskDefinitionHistoryService;
+import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import io.datavines.core.exception.DataVinesServerException;
-import io.datavines.server.api.dto.bo.job.schedule.JobScheduleCreateOrUpdate;
-import io.datavines.core.quartz.MapParam;
-import io.datavines.server.repository.entity.JobSchedule;
-
-import java.util.List;
-
-public interface JobScheduleService extends IService<JobSchedule> {
-
-    JobSchedule createOrUpdate(JobScheduleCreateOrUpdate jobScheduleCreate) throws DataVinesServerException;
-
-    int deleteById(long id);
-
-    JobSchedule getById(long id);
-
-    JobSchedule getByJobId(Long jobId);
-
-    List<String> getCron(MapParam mapParam);
+@Service("pipelineTaskDefinitionHistoryService")
+public class PipelineTaskDefinitionHistoryServiceImpl extends ServiceImpl<PipelineTaskDefinitionHistoryMapper, PipelineTaskDefinitionHistory>  implements PipelineTaskDefinitionHistoryService {
 }

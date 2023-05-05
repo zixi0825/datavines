@@ -14,47 +14,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.dqc.coordinator.quartz.cron.impl;
+package io.datavines.core.quartz.cron.impl;
 
+import com.cronutils.builder.CronBuilder;
+import com.cronutils.model.Cron;
+import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import io.datavines.common.utils.JSONUtils;
 import io.datavines.core.enums.Status;
 import io.datavines.core.exception.DataVinesServerException;
-import io.datavines.server.api.dto.bo.job.schedule.MapParam;
-import io.datavines.server.dqc.coordinator.quartz.cron.StrategyFactory;
-import io.datavines.server.dqc.coordinator.quartz.cron.FunCron;
-
+import io.datavines.core.quartz.MapParam;
+import io.datavines.core.quartz.cron.StrategyFactory;
+import io.datavines.core.quartz.cron.FunCron;
 import org.springframework.stereotype.Service;
-import com.cronutils.builder.CronBuilder;
-import com.cronutils.model.Cron;
-import com.cronutils.model.CronType;
+
 import java.util.Map;
 
 import static com.cronutils.model.field.expression.FieldExpressionFactory.*;
-import static io.datavines.server.utils.VerificationUtil.verifyIsNeedParam;
+import static com.cronutils.model.field.expression.FieldExpressionFactory.on;
+
 
 @Service
-public class DayCronImpl implements FunCron {
+public class MonthCronImpl implements FunCron {
 
     @Override
     public String funcDeal(String param) {
         MapParam mapParam = JSONUtils.parseObject(param,MapParam.class);
-        Map<String ,String>   parameter = mapParam.getParameter();
-        String[]  times = {"hour", "minute"};
-        Boolean verify = verifyIsNeedParam(parameter, times);
+        Map<String ,String> parameter = mapParam.getParameter();
+        String[]  times = {"day", "hour", "minute"};
+        Boolean verify = FunCron.verifyIsNeedParam(parameter, times);
         if(!verify){
             throw new DataVinesServerException(Status.CREATE_ENV_ERROR);
         }
+        String day = parameter.get("day");
         String hour = parameter.get("hour");
-        String mintute = parameter.get("minute");
+        String minute = parameter.get("minute");
 
         Cron cron = CronBuilder.cron(CronDefinitionBuilder.instanceDefinitionFor(CronType.QUARTZ))
                 .withYear(always())
                 .withDoW(questionMark())
                 .withMonth(always())
-                .withDoM(always())
+                .withDoM(on(Integer.parseInt(day)))
                 .withHour(on(Integer.parseInt(hour)))
-                .withMinute(on(Integer.parseInt(mintute)))
+                .withMinute(on(Integer.parseInt(minute)))
                 .withSecond(on (0))
                 .instance();
 
@@ -63,7 +65,7 @@ public class DayCronImpl implements FunCron {
 
     @Override
     public String getFuncName(){
-        return "day";
+        return "month";
     }
 
     @Override

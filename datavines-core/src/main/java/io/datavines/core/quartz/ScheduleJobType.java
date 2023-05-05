@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.enums;
+package io.datavines.core.quartz;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 
@@ -26,7 +26,9 @@ public enum ScheduleJobType {
      *
      */
     DATA_QUALITY(0, "data_quality"),
-    CATALOG(1, "catalog");
+    CATALOG(1, "catalog"),
+
+    PIPELINE(2, "pipeline");
 
     ScheduleJobType(int code, String description){
         this.code = code;

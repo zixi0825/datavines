@@ -14,31 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.api.dto.bo.job.schedule;
+package io.datavines.core.quartz;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.datavines.core.quartz.MapParam;
 import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.util.Map;
 
 @Data
-@NotNull(message = "Job Schedule Create cannot be null")
-public class JobScheduleCreate {
+public class MapParam {
 
-    @NotNull(message = "job id cannot be empty")
-    private Long jobId;
+    private String cycle;
 
-    @NotBlank(message = "job schedule type cannot be empty")
-    private String type;
+    private Map<String, String>  parameter;
 
-    private MapParam param;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    private LocalDateTime startTime;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    private LocalDateTime endTime;
+    private String crontab;
 }

@@ -14,26 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package io.datavines.server.repository.service;
+package io.datavines.pipeline.repository.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import io.datavines.core.exception.DataVinesServerException;
-import io.datavines.server.api.dto.bo.job.schedule.JobScheduleCreateOrUpdate;
-import io.datavines.core.quartz.MapParam;
-import io.datavines.server.repository.entity.JobSchedule;
+import io.datavines.pipeline.repository.entity.PipelineTaskInstance;
 
-import java.util.List;
+public interface PipelineTaskInstanceService extends IService<PipelineTaskInstance> {
 
-public interface JobScheduleService extends IService<JobSchedule> {
-
-    JobSchedule createOrUpdate(JobScheduleCreateOrUpdate jobScheduleCreate) throws DataVinesServerException;
-
-    int deleteById(long id);
-
-    JobSchedule getById(long id);
-
-    JobSchedule getByJobId(Long jobId);
-
-    List<String> getCron(MapParam mapParam);
 }

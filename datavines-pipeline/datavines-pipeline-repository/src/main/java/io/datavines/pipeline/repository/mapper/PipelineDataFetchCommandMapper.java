@@ -14,14 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.dqc.coordinator.quartz.cron;
+package io.datavines.pipeline.repository.mapper;
 
-import io.datavines.server.repository.entity.JobSchedule;
-import org.springframework.beans.factory.InitializingBean;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.datavines.pipeline.repository.entity.PipelineDataFetchCommand;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
-public interface FunCron extends InitializingBean {
+import java.util.List;
 
-    public String funcDeal(String param);
+@Mapper
+public interface PipelineDataFetchCommandMapper extends BaseMapper<PipelineDataFetchCommand> {
 
-    public String getFuncName();
+    @Select("SELECT * from dv_pl_data_fetch_command where unix_timestamp(now()) - unix_timestamp(expected_execute_time) > 0 order by update_time limit 10")
+    List<PipelineDataFetchCommand> getCommandList();
 }

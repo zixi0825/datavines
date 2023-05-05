@@ -24,6 +24,8 @@ public class DataVinesConstants {
 
     public static String DATASOURCE_ID = "datasource_id";
 
+    public static String SOURCE_ID = "source_id";
+
     public static String JOB_ID = "job_id";
 
     public static String DATASOURCE_JOB_ID = "project_job_id";

@@ -14,17 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.api.dto.bo.job.schedule;
+package io.datavines.pipeline.repository.service.impl;
 
-import lombok.Data;
-import java.util.Map;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.datavines.pipeline.repository.entity.PipelineDagInstance;
+import io.datavines.pipeline.repository.mapper.PipelineDagInstanceMapper;
+import io.datavines.pipeline.repository.service.PipelineDagInstanceService;
+import org.springframework.stereotype.Service;
 
-@Data
-public class MapParam {
-
-    private String cycle;
-
-    private Map<String, String>  parameter;
-
-    private String crontab;
+@Service("pipelineDagInstanceService")
+public class PipelineDagInstanceServiceImpl extends ServiceImpl<PipelineDagInstanceMapper, PipelineDagInstance>  implements PipelineDagInstanceService {
 }

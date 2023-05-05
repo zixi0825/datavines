@@ -111,22 +111,6 @@ public class VerificationUtil {
         return "data:image/jpg;base64,".concat(imageByte64);
     }
 
-    public static boolean verifyIsNeedParam(Map<String ,String>  parameter, String[]  times) {
-        for (String time : times) {
-            if (!parameter.containsKey(time)) {
-                return false;
-            }
-            try {
-                int timeValue = Integer.parseInt(parameter.get(time));
-                if (timeValue > 60 || timeValue < 0) {
-                    return false;
-                }
-            } catch (Exception e) {
-                return false;
-            }
-        }
-        return  true;
-    }
 }
 
 

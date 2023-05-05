@@ -17,7 +17,7 @@
 package io.datavines.server.api.dto.bo.catalog.profile;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.datavines.server.api.dto.bo.job.schedule.MapParam;
+import io.datavines.core.quartz.MapParam;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;

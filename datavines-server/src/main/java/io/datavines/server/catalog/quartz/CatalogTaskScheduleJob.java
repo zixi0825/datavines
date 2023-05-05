@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.dqc.coordinator.quartz;
+package io.datavines.server.catalog.quartz;
 
 import io.datavines.common.utils.DateUtils;
 import io.datavines.core.constant.DataVinesConstants;
@@ -51,7 +51,7 @@ public class CatalogTaskScheduleJob implements org.quartz.Job {
 
         JobDataMap dataMap = context.getJobDetail().getJobDataMap();
 
-        Long dataSourceId = dataMap.getLong(DataVinesConstants.DATASOURCE_ID);
+        Long dataSourceId = dataMap.getLong(DataVinesConstants.SOURCE_ID);
 
         LocalDateTime scheduleTime = DateUtils.date2LocalDateTime(context.getScheduledFireTime());
         LocalDateTime fireTime = DateUtils.date2LocalDateTime(context.getFireTime());

@@ -21,7 +21,7 @@ import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.core.exception.DataVinesServerException;
 
 import io.datavines.server.api.dto.bo.job.schedule.JobScheduleCreateOrUpdate;
-import io.datavines.server.api.dto.bo.job.schedule.MapParam;
+import io.datavines.core.quartz.MapParam;
 import io.datavines.server.repository.service.JobScheduleService;
 
 import io.swagger.annotations.Api;

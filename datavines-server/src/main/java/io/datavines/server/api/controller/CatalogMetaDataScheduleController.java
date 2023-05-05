@@ -20,7 +20,7 @@ import io.datavines.server.api.aop.RefreshToken;
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.core.exception.DataVinesServerException;
 import io.datavines.server.api.dto.bo.catalog.metadata.CatalogMetaDataFetchTaskScheduleCreateOrUpdate;
-import io.datavines.server.api.dto.bo.job.schedule.MapParam;
+import io.datavines.core.quartz.MapParam;
 import io.datavines.server.repository.service.CatalogMetaDataFetchTaskScheduleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

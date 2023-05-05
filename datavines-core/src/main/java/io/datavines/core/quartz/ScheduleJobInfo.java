@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.dqc.coordinator.quartz;
+package io.datavines.core.quartz;
 
-import io.datavines.server.enums.ScheduleJobType;
+import io.datavines.core.quartz.ScheduleJobType;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -26,7 +26,7 @@ public class ScheduleJobInfo {
 
     private ScheduleJobType type;
 
-    private Long datasourceId;
+    private Long sourceId;
 
     private Long id;
 
@@ -37,13 +37,13 @@ public class ScheduleJobInfo {
     private LocalDateTime endTime;
 
     public ScheduleJobInfo(ScheduleJobType type,
-                           Long datasourceId,
+                           Long sourceId,
                            Long id,
                            String cronExpression,
                            LocalDateTime startTime,
                            LocalDateTime endTime) {
         this.type = type;
-        this.datasourceId = datasourceId;
+        this.sourceId = sourceId;
         this.id = id;
         this.cronExpression = cronExpression;
         this.startTime = startTime;

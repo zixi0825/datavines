@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.dqc.coordinator.quartz;
+package io.datavines.core.quartz;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
@@ -53,21 +53,21 @@ import io.datavines.core.constant.DataVinesConstants;
 @Service
 public class QuartzExecutors {
 
-  @Autowired
-  private Scheduler scheduler;
+    @Autowired
+    private Scheduler scheduler;
 
-  private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-  private QuartzExecutors() {
-  }
+    private QuartzExecutors() {
+    }
 
-  /**
-   * add task trigger , if this task already exists, return this task with updated trigger
-   *
-   * @param clazz job class name
-   * @param schedule schedule job info
-   * @param schedule schedule
-   */
+    /**
+     * add task trigger , if this task already exists, return this task with updated trigger
+     *
+     * @param clazz job class name
+     * @param schedule schedule job info
+     * @param schedule schedule
+     */
     public void addJob(Class<? extends Job> clazz, final ScheduleJobInfo schedule) throws ParseException {
 
         String jobGroupName = buildJobGroupName(schedule);
@@ -152,7 +152,8 @@ public class QuartzExecutors {
    * @return true if the Job was found and deleted.
    */
     public boolean deleteJob(ScheduleJobInfo schedule) {
-        lock.writeLock().lock(); String jobName = buildJobName(schedule);
+        lock.writeLock().lock();
+        String jobName = buildJobName(schedule);
         String jobGroupName = buildJobGroupName(schedule);
         JobKey jobKey = new JobKey(jobName,jobGroupName);
         try {
@@ -208,7 +209,7 @@ public class QuartzExecutors {
      * @return job group name
      */
     private static String buildJobGroupName(ScheduleJobInfo schedule) {
-        return schedule.getType().getDescription() + "_job_group" + DataVinesConstants.UNDERLINE + schedule.getDatasourceId();
+        return schedule.getType().getDescription() + "_job_group" + DataVinesConstants.UNDERLINE + schedule.getSourceId();
     }
 
     /**
@@ -218,7 +219,7 @@ public class QuartzExecutors {
     private static Map<String, Object> buildDataMap( ScheduleJobInfo schedule) {
         Map<String, Object> dataMap = Maps.newHashMap();
         dataMap.put(DataVinesConstants.JOB_ID, schedule.getId());
-        dataMap.put(DataVinesConstants.DATASOURCE_ID, schedule.getDatasourceId());
+        dataMap.put(DataVinesConstants.SOURCE_ID, schedule.getSourceId());
         dataMap.put(DataVinesConstants.SCHEDULE, JSONUtils.toJsonString(schedule));
         return dataMap;
     }
@@ -230,7 +231,7 @@ public class QuartzExecutors {
         return Date.from(instant);
     }
 
-    public  boolean isValid(String cronExpression){
+    public boolean isValid(String cronExpression){
         return CronExpression.isValidExpression(cronExpression);
     }
 }

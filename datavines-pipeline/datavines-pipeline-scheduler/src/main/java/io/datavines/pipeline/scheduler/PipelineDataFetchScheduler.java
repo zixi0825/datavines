@@ -2,14 +2,19 @@ package io.datavines.pipeline.scheduler;
 
 import io.datavines.common.utils.*;
 import io.datavines.core.registry.Register;
+import io.datavines.core.utils.SpringApplicationContext;
+import io.datavines.pipeline.repository.entity.PipelineDataFetchCommand;
+import io.datavines.pipeline.repository.entity.PipelineDataFetchTask;
+import io.datavines.pipeline.repository.service.PipelineDataFetchCommandService;
+import io.datavines.pipeline.repository.service.PipelineDataFetchTaskService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static io.datavines.common.CommonConstants.SLEEP_TIME_MILLIS;
-import static io.datavines.common.utils.CommonPropertyUtils.*;
-import static io.datavines.common.utils.CommonPropertyUtils.RESERVED_MEMORY_DEFAULT;
 
 @Slf4j
 public class PipelineDataFetchScheduler extends Thread {
@@ -33,9 +38,15 @@ public class PipelineDataFetchScheduler extends Thread {
 
     private final ExecutorService executorService;
 
+    private final PipelineDataFetchCommandService pipelineDataFetchCommandService;
+
+    private final PipelineDataFetchTaskService pipelineDataFetchTaskService;
+
     public PipelineDataFetchScheduler(Register register){
         this.register = register;
         this.executorService = Executors.newFixedThreadPool(10, new NamedThreadFactory("Pipeline-Executor"));
+        this.pipelineDataFetchCommandService = SpringApplicationContext.getBean(PipelineDataFetchCommandService.class);
+        this.pipelineDataFetchTaskService = SpringApplicationContext.getBean(PipelineDataFetchTaskService.class);
     }
 
     @Override
@@ -44,19 +55,21 @@ public class PipelineDataFetchScheduler extends Thread {
 
         int retryNum = 0;
         while (Stopper.isRunning()) {
-            PipelineDataFetchRequest fetchRequest = null;
+
             try {
                 register.blockUtilAcquireLock(PIPELINE_FETCH_TASK_LOCK_KEY);
 
-                fetchRequest = requestQueue.take();
-
-                if (fetchRequest != null) {
-                    executorService.execute(new PipelineDataFetchTask(fetchRequest));
-                    register.release(PIPELINE_FETCH_TASK_LOCK_KEY);
-                    ThreadUtils.sleep(SLEEP_TIME_MILLIS);
-                } else {
-                    register.release(PIPELINE_FETCH_TASK_LOCK_KEY);
-                    ThreadUtils.sleep(SLEEP_TIME_MILLIS * 2);
+                List<PipelineDataFetchCommand> commandList = pipelineDataFetchCommandService.getCommandList();
+                if (CollectionUtils.isNotEmpty(commandList)) {
+                    commandList.forEach(command -> {
+                        PipelineDataFetchTask task = pipelineDataFetchTaskService.getById(command.getTaskId());
+                        PipelineDataFetchRequest fetchRequest = JSONUtils.parseObject(task.getParameter(), PipelineDataFetchRequest.class);
+                        if (fetchRequest != null) {
+                            executorService.execute(new PipelineDataFetchTaskRunner(fetchRequest));
+                            register.release(PIPELINE_FETCH_TASK_LOCK_KEY);
+                            ThreadUtils.sleep(SLEEP_TIME_MILLIS);
+                        }
+                    });
                 }
 
                 retryNum = 0;

@@ -11,6 +11,7 @@ CREATE TABLE `dv_pl_pipeline_source` (
     `param` text NOT NULL COMMENT '数据管道服务参数',
     `param_code` varchar(255) NULL COMMENT '数据管道服务参数MD5值',
     `workspace_id` bigint(20) NOT NULL COMMENT '工作空间ID',
+    `active` int(11) NOT NULL DEFAULT 1 COMMENT '是否生效'
     `create_by` bigint(20) NOT NULL COMMENT '创建用户ID',
     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     `update_by` bigint(20) NOT NULL COMMENT '更新用户ID',
@@ -27,7 +28,7 @@ CREATE TABLE `dv_pl_command` (
     `id` bigint(20) NOT NULL AUTO_INCREMENT,
     `parameter` text COMMENT 'json command parameters',
     `task_id` bigint(20) NOT NULL COMMENT 'task id',
-    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',
+    `expected_execute_time` datetime NOT NULL COMMENT 'expected_execute_time time',
     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'update time',
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='获取数据命令';

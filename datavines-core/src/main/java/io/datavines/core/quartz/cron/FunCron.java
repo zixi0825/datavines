@@ -14,26 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.datavines.core.quartz.cron;
 
-package io.datavines.server.repository.service;
+import org.springframework.beans.factory.InitializingBean;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import io.datavines.core.exception.DataVinesServerException;
-import io.datavines.server.api.dto.bo.job.schedule.JobScheduleCreateOrUpdate;
-import io.datavines.core.quartz.MapParam;
-import io.datavines.server.repository.entity.JobSchedule;
+import java.util.Map;
 
-import java.util.List;
+public interface FunCron extends InitializingBean {
 
-public interface JobScheduleService extends IService<JobSchedule> {
+    public String funcDeal(String param);
 
-    JobSchedule createOrUpdate(JobScheduleCreateOrUpdate jobScheduleCreate) throws DataVinesServerException;
+    public String getFuncName();
 
-    int deleteById(long id);
-
-    JobSchedule getById(long id);
-
-    JobSchedule getByJobId(Long jobId);
-
-    List<String> getCron(MapParam mapParam);
+    public static boolean verifyIsNeedParam(Map<String ,String> parameter, String[] times) {
+        for (String time : times) {
+            if (!parameter.containsKey(time)) {
+                return false;
+            }
+            try {
+                int timeValue = Integer.parseInt(parameter.get(time));
+                if (timeValue > 60 || timeValue < 0) {
+                    return false;
+                }
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return  true;
+    }
 }
