@@ -50,6 +50,7 @@ public class JobRunner implements Runnable {
         JobExecuteResponseCommand responseCommand =
                 new JobExecuteResponseCommand(this.jobExecutionRequest.getJobExecutionId());
         try {
+            logger.info("start to run job execution [{}]", jobExecutionRequest.getJobExecutionId());
             String taskLoggerName = LoggerUtils.buildJobExecutionLoggerName(
                     LoggerUtils.JOB_LOGGER_INFO_PREFIX,
                     jobExecutionRequest.getJobExecutionUniqueId());
@@ -100,22 +101,24 @@ public class JobRunner implements Runnable {
     /**
      *  kill job
      */
-    public void kill(){
-        if (engineExecutor != null) {
-            try {
-                engineExecutor.cancel();
-                JobExecuteResponseCommand responseCommand =
-                        new JobExecuteResponseCommand(this.jobExecutionRequest.getJobExecutionId());
-                responseCommand.setStatus(ExecutionStatus.KILL.getCode());
-                responseCommand.setEndTime(LocalDateTime.now());
-                if (engineExecutor.getProcessResult() != null) {
-                    responseCommand.setApplicationIds(engineExecutor.getProcessResult().getApplicationId());
-                    responseCommand.setProcessId(engineExecutor.getProcessResult().getProcessId());
-                }
-                JobExecutionResponseProcessor.getInstance().processJobExecutionExecuteResponse(responseCommand);
-            } catch (Exception e) {
-                logger.error(e.getMessage(),e);
+    public void kill() {
+        if (engineExecutor == null) {
+            return;
+        }
+
+        try {
+            engineExecutor.cancel();
+            JobExecuteResponseCommand responseCommand =
+                    new JobExecuteResponseCommand(this.jobExecutionRequest.getJobExecutionId());
+            responseCommand.setStatus(ExecutionStatus.KILL.getCode());
+            responseCommand.setEndTime(LocalDateTime.now());
+            if (engineExecutor.getProcessResult() != null) {
+                responseCommand.setApplicationIds(engineExecutor.getProcessResult().getApplicationId());
+                responseCommand.setProcessId(engineExecutor.getProcessResult().getProcessId());
             }
+            JobExecutionResponseProcessor.getInstance().processJobExecutionExecuteResponse(responseCommand);
+        } catch (Exception e) {
+            logger.error("kill job execution error: ",e);
         }
     }
 }

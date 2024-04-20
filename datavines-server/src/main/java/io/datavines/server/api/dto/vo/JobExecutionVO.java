@@ -63,6 +63,9 @@ public class JobExecutionVO implements Serializable {
     }
 
     public String getCheckState() {
+        if (checkState == null) {
+            return LanguageUtils.isZhContext()? DqJobExecutionState.NONE.getZhDescription() : DqJobExecutionState.NONE.getDescription();
+        }
         return LanguageUtils.isZhContext()? checkState.getZhDescription() : checkState.getDescription();
     }
 

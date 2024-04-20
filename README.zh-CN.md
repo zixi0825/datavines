@@ -119,6 +119,7 @@ $ mvn clean package -Prelease -DskipTests
 
 
 ## License
+
 `Datavines` 基于 [Apache License 2.0](LICENSE) 协议。`Datavines` 依赖了一些第三方组件，它们的开源协议也为 `Apache License 2.0` 或者兼容 `Apache License 2.0`， 此外 `Datavines` 也直接引用或者修改了 `Apache DolphinScheduler`、`SeaTunnel` 以及 `Dubbo` 中的一些代码，均为 `Apache License 2.0` 协议的，感谢这些项目的贡献。
 
 ## 社交媒体
@@ -126,3 +127,13 @@ $ mvn clean package -Prelease -DskipTests
 - 微信公众号（中文，扫描二维码关注）
 
 ![微信二维码](docs/img/wechat-qrcode.jpg)
+
+## 联系作者
+
+- 添加时备注：Datavines
+
+![wechat-author-qrcode](docs/img/wechat-author-qrcode.jpg)
+
+## 友情赞助
+
+![wechat-donation-qrcode](docs/img/wechat-donation-qrcode.jpg)

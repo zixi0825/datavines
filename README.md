@@ -122,5 +122,14 @@ Datavines is licensed under the [Apache License 2.0](LICENSE). Datavines relies 
 
 - WeChat Official Account (in Chinese, scan the QR code to follow)
 
-![wx-qrcode](docs/img/wechat-qrcode-en.jpg)
+![wechat-qrcode](docs/img/wechat-qrcode-en.jpg)
 
+## Contact Author
+
+- Notes "Datavines" When Adding Me On WeChat
+ 
+![wechat-author-qrcode](docs/img/wechat-author-qrcode.jpg)
+
+## Donation
+
+![wechat-donation-qrcode](docs/img/wechat-donation-qrcode.jpg)

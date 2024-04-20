@@ -24,25 +24,25 @@ public class JobExecutionCache {
 
     private final ConcurrentHashMap<Long, JobExecutionContext> cache = new ConcurrentHashMap<>();
 
-    private JobExecutionCache(){}
+    private JobExecutionCache() {}
 
-    private static class Singleton{
+    private static class Singleton {
         static JobExecutionCache instance = new JobExecutionCache();
     }
 
-    public static JobExecutionCache getInstance(){
+    public static JobExecutionCache getInstance() {
         return Singleton.instance;
     }
 
-    public JobExecutionContext getById(Long taskId){
+    public JobExecutionContext getById(Long taskId) {
         return cache.get(taskId);
     }
 
-    public void cache(JobExecutionContext jobExecutionContext){
+    public void cache(JobExecutionContext jobExecutionContext) {
         cache.put(jobExecutionContext.getJobExecutionRequest().getJobExecutionId(), jobExecutionContext);
     }
 
-    public void remove(Long taskId){
+    public void remove(Long taskId) {
         cache.remove(taskId);
     }
 }

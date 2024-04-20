@@ -82,20 +82,20 @@ public class JobScheduler extends Thread {
                     if (CommandType.START == command.getType()) {
                         JobExecution jobExecution = jobExternalService.executeCommand(command);
                         if (jobExecution == null) {
-                            logger.warn(String.format("jobExecution not found , command : %s", JSONUtils.toJsonString(command)));
+                            logger.warn(String.format("job execution not found , command : %s", JSONUtils.toJsonString(command)));
                             jobExternalService.deleteCommandById(command.getId());
                             continue;
                         }
 
                         if (!executionOutOfThreshold(engineType)) {
-                            logger.info("start submit jobExecution : {} ", JSONUtils.toJsonString(jobExecution));
+                            logger.info("start submit job execution : {} ", JSONUtils.toJsonString(jobExecution));
                             jobExecuteManager.addExecuteCommand(jobExecution);
-                            logger.info(String.format("submit success, jobExecution : %s", jobExecution.getName()) );
+                            logger.info(String.format("submit success, job execution : %s", jobExecution.getName()) );
                             jobExternalService.deleteCommandById(command.getId());
                         }
                     } else if (CommandType.STOP == command.getType()) {
                         jobExecuteManager.addKillCommand(command.getJobExecutionId());
-                        logger.info(String.format("kill task : %s", command.getJobExecutionId()) );
+                        logger.info(String.format("kill job execution : %s", command.getJobExecutionId()) );
                         jobExternalService.deleteCommandById(command.getId());
                     }
 

@@ -36,6 +36,7 @@ import io.datavines.server.repository.entity.JobExecutionResult;
 import io.datavines.server.repository.service.*;
 import io.datavines.server.repository.service.impl.JobExternalService;
 import io.datavines.spi.PluginLoader;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ import java.util.*;
 
 import static io.datavines.common.ConfigConstants.FIX_VALUE;
 
+@Slf4j
 @Component
 public class JobResultValidator {
 
@@ -113,38 +115,41 @@ public class JobResultValidator {
         return result;
     }
 
-    private void sendErrorEmail(Long jobExecutionId){
-
-        SlaNotificationMessage message = new SlaNotificationMessage();
-        JobExecution jobExecution = jobExternalService.getJobExecutionById(jobExecutionId);
-        Long jobId = jobExecution.getJobId();
-        JobService jobService = jobExternalService.getJobService();
-        Job job = jobService.getById(jobId);
-        String jobName = job.getName();
-        Long dataSourceId = job.getDataSourceId();
-        DataSource dataSource = jobExternalService.getDataSourceService().getDataSourceById(dataSourceId);
-        String dataSourceName = dataSource.getName();
-        String dataSourceType = dataSource.getType();
-        List<JobExecutionResult> errorJobExecutionResultList = jobExternalService.listErrorJobExecutionResultByJobExecutionId(jobExecution.getId());
-        boolean isEn = !LanguageUtils.isZhContext();
-        if (CollectionUtils.isNotEmpty(errorJobExecutionResultList)) {
-            for (JobExecutionResult errorJobExecutionResult : errorJobExecutionResultList) {
-                MetricExecutionResult metricExecutionResult = new MetricExecutionResult();
-                BeanUtils.copyProperties(errorJobExecutionResult, metricExecutionResult);
-                List<String> messages = new ArrayList<>();
-                messages.add((isEn ? "Job Name : ": "作业名称: ") + jobName);
-                messages.add(String.format((isEn ? "Datasource : %s [%s] : ": "数据源 : %s [%s]: ") ,dataSourceType.toUpperCase(), dataSourceName));
-                String title = buildAlertSubject(metricExecutionResult, isEn);
-                String content = buildAlertMessage(messages, metricExecutionResult, jobExecution.getEngineType(), isEn);
-                message.setSubject(title);
-                message.setMessage(content);
-                saveIssue(jobId, title, content);
-                Map<SlaSenderMessage, Set<SlaConfigMessage>> config = slaNotificationService.getSlasNotificationConfigurationByJobId(jobId);
-                if (config.isEmpty()){
-                    return;
+    private void sendErrorEmail(Long jobExecutionId) {
+        try {
+            SlaNotificationMessage message = new SlaNotificationMessage();
+            JobExecution jobExecution = jobExternalService.getJobExecutionById(jobExecutionId);
+            Long jobId = jobExecution.getJobId();
+            JobService jobService = jobExternalService.getJobService();
+            Job job = jobService.getById(jobId);
+            String jobName = job.getName();
+            Long dataSourceId = job.getDataSourceId();
+            DataSource dataSource = jobExternalService.getDataSourceService().getDataSourceById(dataSourceId);
+            String dataSourceName = dataSource.getName();
+            String dataSourceType = dataSource.getType();
+            List<JobExecutionResult> errorJobExecutionResultList = jobExternalService.listErrorJobExecutionResultByJobExecutionId(jobExecution.getId());
+            boolean isEn = !LanguageUtils.isZhContext();
+            if (CollectionUtils.isNotEmpty(errorJobExecutionResultList)) {
+                for (JobExecutionResult errorJobExecutionResult : errorJobExecutionResultList) {
+                    MetricExecutionResult metricExecutionResult = new MetricExecutionResult();
+                    BeanUtils.copyProperties(errorJobExecutionResult, metricExecutionResult);
+                    List<String> messages = new ArrayList<>();
+                    messages.add((isEn ? "Job Name : ": "作业名称: ") + jobName);
+                    messages.add(String.format((isEn ? "Datasource : %s [%s] : ": "数据源 : %s [%s]: ") ,dataSourceType.toUpperCase(), dataSourceName));
+                    String title = buildAlertSubject(metricExecutionResult, isEn);
+                    String content = buildAlertMessage(messages, metricExecutionResult, jobExecution.getEngineType(), isEn);
+                    message.setSubject(title);
+                    message.setMessage(content);
+                    saveIssue(jobId, title, content);
+                    Map<SlaSenderMessage, Set<SlaConfigMessage>> config = slaNotificationService.getSlasNotificationConfigurationByJobId(jobId);
+                    if (config.isEmpty()){
+                        return;
+                    }
+                    notificationClient.notify(message, config);
                 }
-                notificationClient.notify(message, config);
             }
+        } catch (Exception e) {
+            log.error("send email error: ", e);
         }
     }
 
