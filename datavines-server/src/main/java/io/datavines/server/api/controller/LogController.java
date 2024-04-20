@@ -57,6 +57,7 @@ public class LogController {
         if (isConcurrentHost) {
             return logService.queryWholeLog(taskId);
         }
+        response.setHeader("Authorization", request.getHeader("Authorization"));
         response.sendRedirect(request.getScheme() + "://" + taskHost + "/api/v1/task/log/queryWholeLog?taskId=" + taskId);
         return null;
     }
@@ -71,6 +72,7 @@ public class LogController {
         if (isConcurrentHost) {
             return logService.queryLog(taskId, offsetLine);
         }
+        response.setHeader("Authorization", request.getHeader("Authorization"));
         response.sendRedirect(request.getScheme() + "://" + taskHost +
                 "/api/v1/task/log/queryLogWithOffsetLine?offsetLine="+offsetLine+"&taskId="+taskId);
         return null;
@@ -86,6 +88,7 @@ public class LogController {
         if (isConcurrentHost) {
             return logService.queryLog(taskId, offsetLine, limit);
         }
+        response.setHeader("Authorization", request.getHeader("Authorization"));
         response.sendRedirect(request.getScheme() + "://" + taskHost +
                 "/api/v1/task/log/queryLogWithLimit?limit="+limit+"&offsetLine="+offsetLine+"&taskId="+taskId);
         return null;
@@ -110,6 +113,7 @@ public class LogController {
             FileUtils.downloadToResp(jobExecution.getLogPath(), response);
             return;
         }
+        response.setHeader("Authorization", request.getHeader("Authorization"));
         response.sendRedirect(request.getScheme() + "://" + taskHost + "/api/v1/jobExecution/log/download?taskId=" + taskId);
     }
 }

@@ -107,7 +107,7 @@ public class JobExecuteManager {
 
         this.executorService = Executors.newFixedThreadPool(5, new NamedThreadFactory("Server-thread"));
         this.jobExecuteService = Executors.newFixedThreadPool(
-                CommonPropertyUtils.getInt(CommonPropertyUtils.EXEC_THREADS,CommonPropertyUtils.EXEC_THREADS_DEFAULT),
+                CommonPropertyUtils.getInt(CommonPropertyUtils.EXEC_THREADS, CommonPropertyUtils.EXEC_THREADS_DEFAULT),
                 new NamedThreadFactory("Executor-execute-thread"));
         this.jobExternalService = SpringApplicationContext.getBean(JobExternalService.class);
         this.jobExecutionCache = JobExecutionCache.getInstance();
@@ -146,6 +146,7 @@ public class JobExecuteManager {
             while(Stopper.isRunning()) {
                 try {
                     CommandContext commandContext = jobExecutionQueue.take();
+                    logger.info("receive job execution command: {}", JSONUtils.toJsonString(commandContext));
                     Long jobExecutionId = commandContext.getJobExecutionId();
                     JobExecutionRequest jobExecutionRequest = commandContext.getJobExecutionRequest();
                     if (unFinishedJobExecutionMap.get(jobExecutionId) == null) {
@@ -189,7 +190,7 @@ public class JobExecuteManager {
                 Files.delete(path);
             }
         } catch(IOException e) {
-            logger.info("delete path error {0}",e);
+            logger.error("delete path error {0}",e);
         }
 
         jobExecutionRequest.setJobExecutionUniqueId(
@@ -208,6 +209,7 @@ public class JobExecuteManager {
         jobExecutionContext.setJobExecutionRequest(jobExecutionRequest);
         jobExecutionContext.setJobRunner(jobRunner);
         jobExecutionCache.cache(jobExecutionContext);
+        logger.info("submit job execution {} into threadpool",jobExecutionRequest.getJobExecutionUniqueId());
         jobExecuteService.submit(jobRunner);
     }
 
@@ -280,22 +282,30 @@ public class JobExecuteManager {
                     JobExecutionResponseContext jobExecutionResponse = responseQueue.take();
                     JobExecutionRequest jobExecutionRequest = jobExecutionResponse.getJobExecutionRequest();
                     JobExecution jobExecution = jobExternalService.getJobExecutionById(jobExecutionRequest.getJobExecutionId());
+                    if (jobExecution == null) {
+                        logger.warn("job execution id not exist: " + jobExecutionRequest.getJobExecutionId());
+                        minusEngine2ExecutionMap(jobExecutionRequest.getEngineType(), jobExecutionRequest.getJobExecutionId());
+                        unFinishedJobExecutionMap.remove(jobExecutionRequest.getJobExecutionId());
+                        jobExternalService.deleteJobExecutionResultByJobExecutionId(jobExecutionRequest.getJobExecutionId());
+                        jobExternalService.deleteActualValuesByJobExecutionId(jobExecutionRequest.getJobExecutionId());
+                        continue;
+                    }
+
                     switch (jobExecutionResponse.getCommandCode()) {
                         case JOB_EXECUTE_ACK:
-                            if (jobExecution != null) {
-                                jobExecution.setStartTime(jobExecutionRequest.getStartTime());
-                                jobExecution.setStatus(ExecutionStatus.of(jobExecutionRequest.getStatus()));
-                                jobExecution.setExecuteFilePath(jobExecutionRequest.getExecuteFilePath());
-                                jobExecution.setLogPath(jobExecutionRequest.getLogPath());
-                                jobExecution.setApplicationIdTag(jobExecutionRequest.getJobExecutionUniqueId());
-                                jobExecution.setExecuteHost(jobExecutionRequest.getExecuteHost());
-                                jobExternalService.updateJobExecution(jobExecution);
-                            }
+                            logger.info("job execution ack response: " + JSONUtils.toJsonString(jobExecutionRequest));
+                            jobExecution.setStartTime(jobExecutionRequest.getStartTime());
+                            jobExecution.setStatus(ExecutionStatus.of(jobExecutionRequest.getStatus()));
+                            jobExecution.setExecuteFilePath(jobExecutionRequest.getExecuteFilePath());
+                            jobExecution.setLogPath(jobExecutionRequest.getLogPath());
+                            jobExecution.setApplicationIdTag(jobExecutionRequest.getJobExecutionUniqueId());
+                            jobExecution.setExecuteHost(jobExecutionRequest.getExecuteHost());
+                            jobExternalService.updateJobExecution(jobExecution);
                             break;
                         case JOB_EXECUTE_RESPONSE:
-                            logger.info("jobExecution execute response: " + JSONUtils.toJsonString(jobExecutionRequest));
                             unFinishedJobExecutionMap.put(jobExecutionRequest.getJobExecutionId(), jobExecutionRequest);
                             if (ExecutionStatus.of(jobExecutionRequest.getStatus()).typeIsSuccess()) {
+                                logger.info("job execution success response: " + JSONUtils.toJsonString(jobExecutionRequest));
                                 unFinishedJobExecutionMap.remove(jobExecutionRequest.getJobExecutionId());
                                 jobExecution.setApplicationId(jobExecutionRequest.getApplicationId());
                                 jobExecution.setProcessId(jobExecutionRequest.getProcessId());
@@ -306,6 +316,7 @@ public class JobExecuteManager {
                                 jobResultValidator.operateDqExecuteResult(jobExecutionRequest);
                                 minusEngine2ExecutionMap(jobExecution.getEngineType(), jobExecution.getId());
                             } else if (ExecutionStatus.of(jobExecutionRequest.getStatus()).typeIsFailure()) {
+                                logger.info("job execution failure response: " + JSONUtils.toJsonString(jobExecutionRequest));
                                 int retryNum = jobExecution.getRetryTimes();
                                 if (jobExecution.getRetryTimes() > 0) {
                                     logger.info("retry job execution: " + JSONUtils.toJsonString(jobExecution));
@@ -323,45 +334,51 @@ public class JobExecuteManager {
                                     minusEngine2ExecutionMap(jobExecution.getEngineType(), jobExecution.getId());
                                 }
                             } else if(ExecutionStatus.of(jobExecutionRequest.getStatus()).typeIsCancel()) {
+                                logger.info("job execution cancel response: " + JSONUtils.toJsonString(jobExecutionRequest));
                                 updateJobExecutionAndRemoveCache(jobExecutionRequest, jobExecution);
                                 minusEngine2ExecutionMap(jobExecution.getEngineType(), jobExecution.getId());
                             } else if(ExecutionStatus.of(jobExecutionRequest.getStatus()).typeIsRunning()) {
-                                // do nothing
+                                logger.info("job execution running response: " + JSONUtils.toJsonString(jobExecutionRequest));
                             }
 
                             break;
                         default:
                             break;
                     }
-                } catch(Exception e) {
-                    logger.info("operate job response error {0}",e);
+                } catch (Exception e) {
+                    logger.error("operate job response error {0}",e);
                 }
             }
         }
     }
 
-    private void sendErrorEmail(JobExecution jobExecution){
-        LinkedList<String> messageList = new LinkedList<>();
+    private void sendErrorEmail(JobExecution jobExecution) {
+        try {
+            LinkedList<String> messageList = new LinkedList<>();
 
-        SlaNotificationMessage message = new SlaNotificationMessage();
-        Long jobId = jobExecution.getJobId();
-        JobService jobService = jobExternalService.getJobService();
-        Job job = jobService.getById(jobId);
-        String jobName = job.getName();
-        Long dataSourceId = job.getDataSourceId();
-        DataSource dataSource = dataSourceService.getDataSourceById(dataSourceId);
-        String dataSourceName = dataSource.getName();
-        String dataSourceType = dataSource.getType();
-        messageList.add(String.format("job %s on %s datasource %s failure, please check detail", jobName, dataSourceType, dataSourceName));
-        message.setSubject(String.format("datavines job %s execute failure", jobName));
-        String jsonMessage = JsonUtils.toJsonString(messageList);
-        message.setMessage(jsonMessage);
+            SlaNotificationMessage message = new SlaNotificationMessage();
+            Long jobId = jobExecution.getJobId();
+            JobService jobService = jobExternalService.getJobService();
+            Job job = jobService.getById(jobId);
+            String jobName = job.getName();
+            Long dataSourceId = job.getDataSourceId();
+            DataSource dataSource = dataSourceService.getDataSourceById(dataSourceId);
+            String dataSourceName = dataSource.getName();
+            String dataSourceType = dataSource.getType();
+            messageList.add(String.format("job %s on %s datasource %s failure, please check detail", jobName, dataSourceType, dataSourceName));
+            message.setSubject(String.format("datavines job %s execute failure", jobName));
+            String jsonMessage = JsonUtils.toJsonString(messageList);
+            message.setMessage(jsonMessage);
 
-        Map<SlaSenderMessage, Set<SlaConfigMessage>> config = slaNotificationService.getSlasNotificationConfigurationByJobId(jobId);
-        if (config.isEmpty()){
-            return;
+            Map<SlaSenderMessage, Set<SlaConfigMessage>> config = slaNotificationService.getSlasNotificationConfigurationByJobId(jobId);
+            if (config.isEmpty()){
+                return;
+            }
+            notificationClient.notify(message, config);
+        } catch (Exception e) {
+            logger.error("send job execution error email {0}", e);
         }
-        notificationClient.notify(message, config);
+
     }
 
     private void updateJobExecutionAndRemoveCache(JobExecutionRequest jobExecutionRequest, JobExecution jobExecution) {
@@ -398,11 +415,11 @@ public class JobExecuteManager {
         public void run(Timeout timeout) throws Exception {
             JobExecutionRequest jobExecutionRequest = unFinishedJobExecutionMap.get(this.jobExecutionId);
             if (jobExecutionRequest == null) {
-                logger.info("jobExecution {} is finished, do nothing...",jobExecutionId);
+                logger.info("job execution {} is finished, do nothing...", jobExecutionId);
                 return;
             }
 
-            logger.info("jobExecution {} is timeout, do something",jobExecutionId);
+            logger.info("job execution {} is timeout, will kill job execution", jobExecutionId);
             doKillCommand(jobExecutionId);
         }
     }

@@ -64,15 +64,17 @@ public enum ExecutionStatus {
     @Getter
     @EnumValue
     private final int code;
+
     @Getter
     private final String description;
+
     @Getter
     private final String zhDescription;
 
     private static final HashMap<Integer, ExecutionStatus> EXECUTION_STATUS_MAP = new HashMap<>();
 
     static {
-       for (ExecutionStatus executionStatus: ExecutionStatus.values()){
+       for (ExecutionStatus executionStatus: ExecutionStatus.values()) {
            EXECUTION_STATUS_MAP.put(executionStatus.code,executionStatus);
        }
     }
@@ -81,24 +83,23 @@ public enum ExecutionStatus {
     * status is success
     * @return status
     */
-    public boolean typeIsSuccess(){
-     return this == SUCCESS;
-   }
+    public boolean typeIsSuccess() {
+        return this == SUCCESS;
+    }
 
     /**
     * status is failure
     * @return status
     */
-    public boolean typeIsFailure(){
-     return this == FAILURE || this == NEED_FAULT_TOLERANCE || this == KILL;
-   }
+    public boolean typeIsFailure() {
+        return this == FAILURE || this == NEED_FAULT_TOLERANCE || this == KILL;
+    }
 
     /**
     * status is finished
     * @return status
     */
-    public boolean typeIsFinished(){
-
+    public boolean typeIsFinished() {
         return typeIsSuccess() || typeIsFailure() || typeIsCancel() || typeIsPause()
                || typeIsStop();
     }
@@ -107,22 +108,22 @@ public enum ExecutionStatus {
      * status is waiting thread
      * @return status
      */
-    public boolean typeIsWaitingThread(){
+    public boolean typeIsWaitingThread() {
        return this == WAITING_THREAD;
-   }
+    }
 
     /**
      * status is pause
      * @return status
      */
-    public boolean typeIsPause(){
+    public boolean typeIsPause() {
        return this == PAUSE;
-   }
+    }
     /**
      * status is pause
      * @return status
      */
-    public boolean typeIsStop(){
+    public boolean typeIsStop() {
         return this == STOP;
     }
 
@@ -130,26 +131,26 @@ public enum ExecutionStatus {
      * status is running
      * @return status
      */
-    public boolean typeIsRunning(){
+    public boolean typeIsRunning() {
        return this == RUNNING_EXECUTION || this == WAITING_DEPEND;
-   }
+    }
 
     /**
      * status is cancel
      * @return status
      */
-    public boolean typeIsCancel(){
+    public boolean typeIsCancel() {
         return this == KILL || this == STOP ;
     }
 
-    public static ExecutionStatus of(int status){
-       if(EXECUTION_STATUS_MAP.containsKey(status)){
+    public static ExecutionStatus of(int status) {
+       if (EXECUTION_STATUS_MAP.containsKey(status)) {
            return EXECUTION_STATUS_MAP.get(status);
        }
        throw new IllegalArgumentException("invalid status : " + status);
     }
 
-    public boolean canPause(){
+    public boolean canPause() {
         return this == SUBMITTED_SUCCESS || this == READY_PAUSE;
     }
 
