@@ -20,8 +20,12 @@ import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
+import io.datavines.common.utils.DateUtils;
 import io.datavines.common.utils.JSONUtils;
+import io.datavines.core.enums.Status;
+import io.datavines.core.exception.DataVinesServerException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.ParseException;
@@ -29,18 +33,17 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 
 import com.google.common.collect.Maps;
 
+import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -230,7 +233,28 @@ public class QuartzExecutors {
         return Date.from(instant);
     }
 
-    public  boolean isValid(String cronExpression){
+    public boolean isValid(String cronExpression) {
         return CronExpression.isValidExpression(cronExpression);
+    }
+
+
+    /**
+     * get future cron run time list
+     * @param cronExpression cron expression
+     * @param numTimes cron run nums
+     * @return future cron run time list
+     */
+    public List<String> listFutureCronRunTimes(String cronExpression, Integer numTimes) {
+        CronTriggerImpl cronTrigger = new CronTriggerImpl();
+        if (!isValid(cronExpression)) {
+            throw new DataVinesServerException(Status.SCHEDULE_CRON_IS_INVALID_ERROR, cronExpression);
+        }
+        try {
+            cronTrigger.setCronExpression(cronExpression);
+        } catch (ParseException e) {
+            throw new DataVinesServerException(Status.SCHEDULE_CRON_IS_INVALID_ERROR, cronExpression);
+        }
+        List<Date> computedFireTimeList = TriggerUtils.computeFireTimes(cronTrigger, null, numTimes);
+        return CollectionUtils.isEmpty(computedFireTimeList) ? new ArrayList<>() : computedFireTimeList.stream().map(DateUtils::dateToString).collect(Collectors.toList());
     }
 }

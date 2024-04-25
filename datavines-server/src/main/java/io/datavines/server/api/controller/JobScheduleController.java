@@ -60,4 +60,11 @@ public class JobScheduleController {
     public Object showCron(@Valid @RequestBody MapParam mapParam) throws DataVinesServerException {
         return jobScheduleService.getCron(mapParam);
     }
+
+
+    @ApiOperation(value = "get future cron run time list")
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value = "/cron/future/list")
+    public Object listFutureCronRunTimes(@Valid @RequestBody MapParam mapParam) throws DataVinesServerException {
+        return jobScheduleService.listFutureCronRunTimes(mapParam.getCrontab());
+    }
 }

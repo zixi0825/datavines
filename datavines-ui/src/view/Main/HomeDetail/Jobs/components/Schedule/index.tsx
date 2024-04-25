@@ -5,7 +5,7 @@ import React, {
 } from 'react';
 import { useIntl } from 'react-intl';
 import {
-    Input, InputNumber, Form, Radio, DatePicker, Col, Row, Button, FormInstance, message, Spin,
+    Input, InputNumber, Form, Radio, DatePicker, Col, Row, Button, FormInstance, message, Spin, Space, Modal, List,
 } from 'antd';
 import useRequiredRule from '@Editor/hooks/useRequiredRule';
 import dayjs from 'dayjs';
@@ -239,136 +239,214 @@ const Schedule: React.FC<ScheduleProps> = ({ formRef, detail }) => {
                 return <div style={{ marginBottom: 24, height: 32 }}> </div>;
         }
     };
+    const [futureCronRunTimesModalOpen, setFutureCronRunTimesModalOpen] = useState(false);
+    const [futureCronRunTimeList, setFutureCronRunTimeList] = useState([]);
+    const [customCronExpression, setCustomCronExpression] = useState(detail?.param?.crontab);
+    const calculateFutureCronRunTimes = async (cronExpression: string | null | undefined) => {
+        // 实现计算逻辑，返回一个时间数组
+        try {
+            const res = await $http.post('/job/schedule/cron/future/list', {
+                crontab: cronExpression,
+            });
+            setFutureCronRunTimeList(res);
+            setFutureCronRunTimesModalOpen(true);
+        } catch (error) {
+        } finally {
+        }
+    };
+    const handleInputChange = (event: { target: { value: React.SetStateAction<string | null | undefined>; }; }) => {
+        // Input变化时的处理器
+        setCustomCronExpression(event.target.value);
+    };
+
     return (
-        <Form form={form}>
-            <Form.Item
-                label={intl.formatMessage({ id: 'jobs_schedule_type' })}
-                name="type"
-                rules={requiredRule}
-                initialValue={detail?.type || 'cycle'}
-            >
-                <Radio.Group>
-                    <Radio value="cycle">{intl.formatMessage({ id: 'jobs_schedule_custom' })}</Radio>
-                    <Radio value="cron">{intl.formatMessage({ id: 'jobs_schedule_crontab' })}</Radio>
-                    <Radio value="offline">{intl.formatMessage({ id: 'jobs_schedule_offline' })}</Radio>
-                </Radio.Group>
-            </Form.Item>
-            <Form.Item noStyle dependencies={['type']}>
-                {() => {
-                    const value = form.getFieldValue('type');
-                    if (value !== 'cycle') {
-                        return null;
-                    }
-                    return (
-                        <>
-                            <Form.Item
-                                label={intl.formatMessage({ id: 'jobs_schedule_cycle' })}
-                                name="cycle"
-                                rules={requiredRule}
-                                initialValue={detail?.param?.cycle}
-                            >
-                                <CustomSelect source={cycleSource} style={{ width: 240 }} />
-                            </Form.Item>
-                            <Form.Item noStyle dependencies={['cycle']}>
-                                {() => {
-                                    const cycleValue = form.getFieldValue('cycle');
-                                    return (
-                                        <Row>
-                                            <div
-                                                className="ant-col ant-form-item-label"
-                                                style={{
-                                                    marginLeft: '11px',
-                                                    height: '32px',
-                                                    marginBottom: '20px',
-                                                    lineHeight: '32px',
-                                                }}
-                                            >
-                                                <label className="ant-form-item-required">
-                                                    {intl.formatMessage({ id: 'jobs_schedule_time' })}
-                                                    <span style={{
-                                                        marginBlock: '0',
-                                                        marginInlineStart: '2px',
-                                                        marginInlineEnd: '8px',
-                                                    }}
-                                                    >
-                                                        :
-
-                                                    </span>
-                                                </label>
-                                            </div>
-                                            {renderScheduleTime(cycleValue)}
-                                        </Row>
-                                    );
-                                }}
-                            </Form.Item>
-
-                            <Form.Item
-                                label={<span style={{ marginLeft: 11 }}>{intl.formatMessage({ id: 'jobs_schedule_express' })}</span>}
-                                name=" "
-                                initialValue={undefined}
-                                style={{ height: 32 }}
-                            >
-                                <div style={{ color: '#ff4d4f' }}>{detail?.cronExpression}</div>
-                            </Form.Item>
-                        </>
-                    );
-                }}
-            </Form.Item>
-            <Form.Item noStyle dependencies={['type']}>
-                {() => {
-                    const value = form.getFieldValue('type');
-                    if (value === 'cron') {
+        <div>
+            <Form form={form}>
+                <Form.Item
+                    label={intl.formatMessage({ id: 'jobs_schedule_type' })}
+                    name="type"
+                    rules={requiredRule}
+                    initialValue={detail?.type || 'cycle'}
+                >
+                    <Radio.Group>
+                        <Radio value="cycle">{intl.formatMessage({ id: 'jobs_schedule_custom' })}</Radio>
+                        <Radio value="cron">{intl.formatMessage({ id: 'jobs_schedule_crontab' })}</Radio>
+                        <Radio value="offline">{intl.formatMessage({ id: 'jobs_schedule_offline' })}</Radio>
+                    </Radio.Group>
+                </Form.Item>
+                <Form.Item noStyle dependencies={['type']}>
+                    {() => {
+                        const value = form.getFieldValue('type');
+                        if (value !== 'cycle') {
+                            return null;
+                        }
                         return (
-                            <Form.Item
-                                label={intl.formatMessage({ id: 'jobs_schedule_express' })}
-                                name="crontab"
-                                rules={requiredRule}
-                                initialValue={detail?.param?.crontab}
-                            >
-                                <Input autoComplete="off" style={{ width: 240 }} />
-                            </Form.Item>
-                        );
-                    }
-                    return null;
-                }}
-            </Form.Item>
-            <Form.Item noStyle dependencies={['type']}>
-                {() => {
-                    const value = form.getFieldValue('type');
-                    if (value === 'offline' || !value) {
-                        return null;
-                    }
-                    return (
-                        <Row>
-                            <Col style={{ display: 'inline-block' }}>
+                            <>
                                 <Form.Item
-                                    label={intl.formatMessage({ id: 'jobs_schedule_obtain_time' })}
-                                    name="startTime"
-                                    initialValue={detail?.startTime ? dayjs(detail?.startTime) : dayjs()}
+                                    label={intl.formatMessage({ id: 'jobs_schedule_cycle' })}
+                                    name="cycle"
                                     rules={requiredRule}
+                                    initialValue={detail?.param?.cycle}
+                                >
+                                    <CustomSelect source={cycleSource} style={{ width: 240 }} />
+                                </Form.Item>
+                                <Form.Item noStyle dependencies={['cycle']}>
+                                    {() => {
+                                        const cycleValue = form.getFieldValue('cycle');
+                                        return (
+                                            <Row>
+                                                <div
+                                                    className="ant-col ant-form-item-label"
+                                                    style={{
+                                                        marginLeft: '11px',
+                                                        height: '32px',
+                                                        marginBottom: '20px',
+                                                        lineHeight: '32px',
+                                                    }}
+                                                >
+                                                    <label className="ant-form-item-required">
+                                                        {intl.formatMessage({ id: 'jobs_schedule_time' })}
+                                                        <span style={{
+                                                            marginBlock: '0',
+                                                            marginInlineStart: '2px',
+                                                            marginInlineEnd: '8px',
+                                                        }}
+                                                        >
+                                                            :
+
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                                {renderScheduleTime(cycleValue)}
+                                            </Row>
+                                        );
+                                    }}
+                                </Form.Item>
+
+                                <Form.Item
+                                    label={<span style={{ marginLeft: 11 }}>{intl.formatMessage({ id: 'jobs_schedule_express' })}</span>}
+                                    name=" "
+                                    initialValue={undefined}
+                                    style={{ height: 32 }}
+                                >
+                                    <div style={{ color: '#ff4d4f' }}>
+                                        <Space>
+                                            {detail?.cronExpression}
+                                            <Button
+                                                type="primary"
+                                                size="small"
+                                                onClick={() => calculateFutureCronRunTimes(detail?.cronExpression)}
+                                            >
+                                                {intl.formatMessage({ id: 'view_future_execute_plan' })}
+                                            </Button>
+                                        </Space>
+                                    </div>
+                                </Form.Item>
+                            </>
+                        );
+                    }}
+                </Form.Item>
+                <Form.Item noStyle dependencies={['type']}>
+                    {() => {
+                        const value = form.getFieldValue('type');
+                        if (value === 'cron') {
+                            return (
+                                <Row gutter={16}>
+                                    <Col>
+                                        <Form.Item
+                                            label={intl.formatMessage({ id: 'jobs_schedule_express' })}
+                                            name="crontab"
+                                            rules={requiredRule}
+                                            initialValue={detail?.param?.crontab}
+                                        >
+                                            <Input
+                                                autoComplete="off"
+                                                style={{ width: 240 }}
+                                                onChange={handleInputChange}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                    <Col>
+                                        <Button
+                                            type="primary"
+                                            size="small"
+                                            onClick={() => calculateFutureCronRunTimes(customCronExpression)}
+                                        >
+                                            {intl.formatMessage({ id: 'view_future_execute_plan' })}
+                                        </Button>
+                                    </Col>
+                                </Row>
+                            );
+                        }
+                        return null;
+                    }}
+                </Form.Item>
+                <Form.Item noStyle dependencies={['type']}>
+                    {() => {
+                        const value = form.getFieldValue('type');
+                        if (value === 'offline' || !value) {
+                            return null;
+                        }
+                        return (
+                            <Row>
+                                <Col style={{ display: 'inline-block' }}>
+                                    <Form.Item
+                                        label={intl.formatMessage({ id: 'jobs_schedule_obtain_time' })}
+                                        name="startTime"
+                                        initialValue={detail?.startTime ? dayjs(detail?.startTime) : dayjs()}
+                                        rules={requiredRule}
+                                    >
+                                        {Date}
+                                    </Form.Item>
+
+                                </Col>
+                                <span style={{ margin: '5px 10px 0px' }}>
+                                    {getIntl('jobs_schedule_time_to')}
+                                </span>
+                                <Form.Item
+                                    label=""
+                                    name="endTime"
+                                    initialValue={detail?.endTime ? dayjs(detail?.endTime) : get100Years()}
+                                    rules={requiredRule}
+                                    style={{ display: 'inline-block' }}
                                 >
                                     {Date}
                                 </Form.Item>
+                            </Row>
+                        );
+                    }}
+                </Form.Item>
+            </Form>
+            <Modal
+                width="400px"
+                open={futureCronRunTimesModalOpen}
+                title={intl.formatMessage({ id: 'next_ten_cron_run_times' })}
+                maskClosable={false}
+                footer={[]}
+                onCancel={() => setFutureCronRunTimesModalOpen(false)}
+                destroyOnClose
+            >
+                <Form
+                    layout="vertical"
+                    style={{ marginTop: 20 }}
+                >
+                    <Form.Item
+                        name="cronRunTimeList"
+                    >
+                        <List
+                            size="small"
+                            dataSource={futureCronRunTimeList}
+                            renderItem={(item) => (
+                                <List.Item key={item}>
+                                    {item}
+                                </List.Item>
+                            )}
+                        />
+                    </Form.Item>
+                </Form>
 
-                            </Col>
-                            <span style={{ margin: '5px 10px 0px' }}>
-                                {getIntl('jobs_schedule_time_to')}
-                            </span>
-                            <Form.Item
-                                label=""
-                                name="endTime"
-                                initialValue={detail?.endTime ? dayjs(detail?.endTime) : get100Years()}
-                                rules={requiredRule}
-                                style={{ display: 'inline-block' }}
-                            >
-                                {Date}
-                            </Form.Item>
-                        </Row>
-                    );
-                }}
-            </Form.Item>
-
-        </Form>
+            </Modal>
+        </div>
     );
 };
 const ScheduleContainer = ({

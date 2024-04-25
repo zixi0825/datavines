@@ -306,4 +306,7 @@ export default {
     quality_dashboard_profile: '质量概览',
     quality_dashboard_trend: '质量趋势',
     quality_dashboard_failure_execution: '失败作业',
+
+    next_ten_cron_run_times: '未来十次执行时间',
+    view_future_execute_plan: '查看未来执行计划',
 };

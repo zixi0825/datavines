@@ -218,6 +218,11 @@ public class JobScheduleServiceImpl extends ServiceImpl<JobScheduleMapper, JobSc
         return listCron;
     }
 
+    @Override
+    public List<String> listFutureCronRunTimes(String cronExpression) {
+        return quartzExecutor.listFutureCronRunTimes(cronExpression, 10);
+    }
+
     private void updateJobScheduleParam(JobSchedule jobSchedule, String type, MapParam param) {
         String paramStr = JSONUtils.toJsonString(param);
         switch (JobScheduleType.of(type)){

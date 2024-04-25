@@ -38,4 +38,6 @@ public interface JobScheduleService extends IService<JobSchedule> {
     JobSchedule getByJobId(Long jobId);
 
     List<String> getCron(MapParam mapParam);
+
+    List<String> listFutureCronRunTimes(String cronExpression);
 }
