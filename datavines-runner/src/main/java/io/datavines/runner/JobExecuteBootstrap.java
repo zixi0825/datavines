@@ -67,7 +67,7 @@ public class JobExecuteBootstrap {
         JobExecutionRequest jobExecutionRequest = new JobExecutionRequest();
         jobExecutionRequest.setJobExecutionName(submitJob.getName());
         jobExecutionRequest.setJobExecutionId(id);
-        jobExecutionRequest.setJobExecutionUniqueId(submitJob.getName()+"_"+ id);
+        jobExecutionRequest.setJobExecutionUniqueId(submitJob.getName() + "_" + id);
         jobExecutionRequest.setApplicationParameter(JSONUtils.toJsonString(qualityConfig));
         jobExecutionRequest.setEngineType(submitJob.getEngineType());
         jobExecutionRequest.setEngineParameter(JSONUtils.toJsonString(submitJob.getEngineParameter()));
