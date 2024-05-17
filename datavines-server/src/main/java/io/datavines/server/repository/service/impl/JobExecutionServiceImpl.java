@@ -16,6 +16,7 @@
  */
 package io.datavines.server.repository.service.impl;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -36,6 +37,7 @@ import io.datavines.server.api.dto.bo.job.JobExecutionDashboardParam;
 import io.datavines.server.api.dto.bo.job.JobExecutionPageParam;
 import io.datavines.server.api.dto.vo.*;
 import io.datavines.core.exception.DataVinesServerException;
+import io.datavines.server.enums.DqJobExecutionState;
 import io.datavines.server.repository.entity.JobExecution;
 import io.datavines.server.repository.entity.JobExecutionResult;
 import io.datavines.server.repository.service.*;
@@ -113,8 +115,24 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
     @Override
     public IPage<JobExecutionVO> getJobExecutionPage(JobExecutionPageParam pageParam) {
         Page<JobExecutionVO> page = new Page<>(pageParam.getPageNumber(), pageParam.getPageSize());
-        return baseMapper.getJobExecutionPage(page, pageParam.getSearchVal(), pageParam.getJobId(), pageParam.getDatasourceId(), pageParam.getStatus(), pageParam.getMetricType(), pageParam.getSchemaName(), pageParam.getTableName(), pageParam.getColumnName(), pageParam.getStartTime(), pageParam.getEndTime(),
+        IPage<JobExecutionVO> result =  baseMapper.getJobExecutionPage(page, pageParam.getSearchVal(), pageParam.getJobId(), pageParam.getDatasourceId(), pageParam.getStatus(), pageParam.getMetricType(), pageParam.getSchemaName(), pageParam.getTableName(), pageParam.getColumnName(), pageParam.getStartTime(), pageParam.getEndTime(),
                 pageParam.getSchemaSearch(), pageParam.getTableSearch(), pageParam.getColumnSearch());
+        return result.convert(jobExecutionVO -> {
+            List<JobExecutionResult> executionResultList = jobExecutionResultService.listByJobExecutionId(jobExecutionVO.getId());
+            if (CollectionUtils.isEmpty(executionResultList)) {
+                jobExecutionVO.setCheckState(DqJobExecutionState.NONE);
+            }
+
+            DqJobExecutionState state = DqJobExecutionState.SUCCESS;
+            for (JobExecutionResult executionResult : executionResultList) {
+                if (executionResult.getState() == 2) {
+                    state = DqJobExecutionState.FAILURE;
+                    break;
+                }
+            }
+            jobExecutionVO.setCheckState(state);
+            return jobExecutionVO;
+        });
     }
 
     @Override
@@ -291,7 +309,7 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
             ResultFormula resultFormula =
                     PluginLoader.getPluginLoader(ResultFormula.class).getOrCreatePlugin(result.getResultFormula());
             MetricExecutionDashBoard executionDashBoard = new MetricExecutionDashBoard();
-            executionDashBoard.setValue(resultFormula.getResult(result.getActualValue(), Objects.isNull(result.getExpectedValue()) ? 0 : result.getExpectedValue()));
+            executionDashBoard.setValue(resultFormula.getResult(result.getActualValue(), Objects.isNull(result.getExpectedValue()) ? BigDecimal.valueOf(0) : result.getExpectedValue()));
             executionDashBoard.setType(resultFormula.getType().getDescription());
             executionDashBoard.setDatetime(result.getCreateTime().toString());
 

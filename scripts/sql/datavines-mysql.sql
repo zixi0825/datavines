@@ -169,7 +169,7 @@ CREATE TABLE `dv_actual_values` (
   `job_execution_id` bigint(20) DEFAULT NULL COMMENT '规则作业运行实例ID',
   `metric_name` varchar(255) DEFAULT NULL COMMENT '规则名称',
   `unique_code` varchar(255) DEFAULT NULL COMMENT '规则唯一编码',
-  `actual_value` double DEFAULT NULL COMMENT '实际值',
+  `actual_value` decimal(20,4) DEFAULT NULL COMMENT '实际值',
   `data_time` datetime DEFAULT NULL COMMENT '数据时间',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -357,7 +357,8 @@ CREATE TABLE `dv_catalog_tag_category` (
 DROP TABLE IF EXISTS `dv_catalog_metadata_fetch_task`;
 CREATE TABLE `dv_catalog_metadata_fetch_task` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `type` varchar(128) DEFAULT NULL COMMENT '类型',
+  `task_type` varchar(128) DEFAULT NULL COMMENT '任务类型',
+  `type` varchar(128) DEFAULT NULL COMMENT '粒度类型',
   `datasource_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '数据源ID',
   `database_name` varchar(128) DEFAULT NULL COMMENT '数据库',
   `table_name` varchar(128) DEFAULT NULL COMMENT '表',
@@ -576,18 +577,51 @@ CREATE TABLE `dv_job_execution_result` (
   `database_name` varchar(128) DEFAULT NULL COMMENT '数据库名称',
   `table_name` varchar(128) DEFAULT NULL COMMENT '表名称',
   `column_name` varchar(128) DEFAULT NULL COMMENT '列名称',
-  `actual_value` double DEFAULT NULL COMMENT '实际值',
-  `expected_value` double DEFAULT NULL COMMENT '期望值',
+  `actual_value` decimal(20,4) DEFAULT NULL COMMENT '实际值',
+  `expected_value` decimal(20,4) DEFAULT NULL COMMENT '期望值',
   `expected_type` varchar(255) DEFAULT NULL COMMENT '期望值类型',
   `result_formula` varchar(255) DEFAULT NULL COMMENT '计算结果公式',
   `operator` varchar(255) DEFAULT NULL COMMENT '比较符',
-  `threshold` double DEFAULT NULL COMMENT '阈值',
+  `threshold` decimal(20,4) DEFAULT NULL COMMENT '阈值',
+  `score` decimal(20,4) DEFAULT NULL COMMENT '质量评分',
   `state` int(2) NOT NULL DEFAULT '0' COMMENT '结果 1:success/2:fail',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `execution_id_un` (`job_execution_id`,`metric_unique_key`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='规则作业运行结果';
+
+-- ----------------------------
+-- Table structure for dv_job_quality_report
+-- ----------------------------
+DROP TABLE IF EXISTS `dv_job_quality_report`;
+CREATE TABLE `dv_job_quality_report` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `datasource_id` bigint(20) DEFAULT NULL COMMENT '数据源ID',
+    `entity_level` varchar(128) DEFAULT NULL COMMENT '实体级别：DATASOURCE，DATABASE，TABLE，COLUMN',
+    `database_name` varchar(128) DEFAULT NULL COMMENT '数据库名称',
+    `table_name` varchar(128) DEFAULT NULL COMMENT '表名称',
+    `column_name` varchar(128) DEFAULT NULL COMMENT '列名称',
+    `score` decimal(20,4) DEFAULT NULL COMMENT '质量评分',
+    `report_date` date DEFAULT NULL COMMENT '报告日期',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据质量报告';
+
+-- ----------------------------
+-- Table structure for dv_job_execution_result_report_rel
+-- ----------------------------
+DROP TABLE IF EXISTS `dv_job_execution_result_report_rel`;
+CREATE TABLE `dv_job_execution_result_report_rel` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `quality_report_id` bigint(20) NOT NULL COMMENT '质量报告ID',
+    `job_execution_result_id` bigint(20) NOT NULL COMMENT '作业执行结果ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `dv_execution_report_rel_un` (`job_execution_result_id`,`quality_report_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='质量报告和执行结果关联关系';
 
 -- ----------------------------
 -- Table structure for dv_job_issue_rel

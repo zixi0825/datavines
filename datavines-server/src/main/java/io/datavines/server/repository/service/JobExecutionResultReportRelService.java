@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.enums;
+package io.datavines.server.repository.service;
 
-/**
- * data base types
- */
-public enum StorageType {
-  /**
-   * 0 hdfs
-   * 1 s3
-   * 2 none
-   */
-  HDFS,
-  S3,
-  NONE
+import com.baomidou.mybatisplus.extension.service.IService;
+import io.datavines.server.repository.entity.JobExecutionResult;
+import io.datavines.server.repository.entity.JobExecutionResultReportRel;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+public interface JobExecutionResultReportRelService extends IService<JobExecutionResultReportRel> {
+
+    List<JobExecutionResult> listExecutionResultByReportId(Long reportId);
 }

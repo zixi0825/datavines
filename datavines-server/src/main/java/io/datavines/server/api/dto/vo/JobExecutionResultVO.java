@@ -19,6 +19,8 @@ package io.datavines.server.api.dto.vo;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Data
@@ -36,4 +38,7 @@ public class JobExecutionResultVO implements Serializable {
 
     private String resultFormulaFormat;
 
+    private BigDecimal score;
+
+    private LocalDateTime executionTime;
 }

@@ -29,6 +29,7 @@ import io.datavines.core.enums.Status;
 import io.datavines.core.exception.DataVinesServerException;
 import io.datavines.server.api.dto.bo.catalog.CatalogRefresh;
 import io.datavines.server.api.dto.vo.catalog.CatalogMetaDataFetchTaskVO;
+import io.datavines.server.enums.CommonTaskType;
 import io.datavines.server.enums.FetchType;
 import io.datavines.server.registry.RegistryHolder;
 import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchCommand;
@@ -72,6 +73,7 @@ public class CatalogMetaDataFetchTaskServiceImpl
         QueryWrapper<CatalogMetaDataFetchTask> queryWrapper = new QueryWrapper<>();
 
         queryWrapper.lambda().eq(CatalogMetaDataFetchTask::getStatus,0)
+                .eq(CatalogMetaDataFetchTask::getTaskType, CommonTaskType.CATALOG_METADATA_FETCH)
                 .eq(CatalogMetaDataFetchTask::getDataSourceId, catalogRefresh.getDatasourceId())
                 .eq(CatalogMetaDataFetchTask::getParameter, JSONUtils.toJsonString(catalogRefresh));
         List<CatalogMetaDataFetchTask> oldTaskList = baseMapper.selectList(queryWrapper);
@@ -83,6 +85,7 @@ public class CatalogMetaDataFetchTaskServiceImpl
         //生成任务之前需要检查是否有相同的任务在执行
         LocalDateTime now = LocalDateTime.now();
         CatalogMetaDataFetchTask catalogMetaDataFetchTask = new CatalogMetaDataFetchTask();
+        catalogMetaDataFetchTask.setTaskType(catalogRefresh.getTaskType());
         catalogMetaDataFetchTask.setParameter(JSONUtils.toJsonString(catalogRefresh));
         catalogMetaDataFetchTask.setDataSourceId(catalogRefresh.getDatasourceId());
         catalogMetaDataFetchTask.setStatus(0);
@@ -223,8 +226,8 @@ public class CatalogMetaDataFetchTaskServiceImpl
     }
 
     @Override
-    public IPage<CatalogMetaDataFetchTaskVO> getFetchTaskPage(Long datasourceId,Integer pageNumber, Integer pageSize) {
+    public IPage<CatalogMetaDataFetchTaskVO> getFetchTaskPage(Long datasourceId, String taskType, Integer pageNumber, Integer pageSize) {
         Page<CatalogMetaDataFetchTaskVO> page = new Page<>(pageNumber, pageSize);
-        return baseMapper.getJobExecutionPage(page, datasourceId);
+        return baseMapper.getJobExecutionPage(page, datasourceId, taskType);
     }
 }

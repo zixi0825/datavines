@@ -69,13 +69,13 @@ const Index = (props: any, ref:any) => {
     const initialTableItems = [
         { label: intl.formatMessage({ id: 'editor_dv_DashBoard' }), children: <DashBoard option={option} id={id} />, key: '1' },
         {
-            label: intl.formatMessage({ id: 'editor_dv_Configuation' }),
+            label: intl.formatMessage({ id: 'editor_dv_Configuration' }),
             children: <Inner
                 styleChildren={{
-                    height: 'calc(100vh - 324px)',
+                    height: 'calc(100vh - 324px)'
                 }}
                 styleTabContent={{
-                    height: 'calc(100vh - 324px)',
+                    height: 'calc(100vh - 324px)'
                 }}
                 baseData={baseData}
                 innerRef={innerRef}
@@ -96,7 +96,7 @@ const Index = (props: any, ref:any) => {
                         changeTabKey(value);
                         setActiveKey(value);
                     }}
-                    style={{ marginBottom: '0px' }}
+                    style={{ marginBottom: '0px',marginTop :'20px' }}
                     className="dv-tab-list"
                 />
             </div>

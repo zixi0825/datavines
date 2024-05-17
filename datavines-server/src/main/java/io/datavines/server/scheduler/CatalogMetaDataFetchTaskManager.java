@@ -14,18 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.catalog.metadata;
+package io.datavines.server.scheduler;
 
 import io.datavines.common.utils.*;
+import io.datavines.server.enums.CommonTaskType;
 import io.datavines.server.enums.FetchType;
-import io.datavines.server.catalog.metadata.task.CatalogTaskContext;
-import io.datavines.server.catalog.metadata.task.CatalogTaskResponse;
-import io.datavines.server.catalog.metadata.task.CatalogTaskResponseQueue;
-import io.datavines.server.catalog.metadata.task.CatalogMetaDataFetchRequest;
+import io.datavines.server.scheduler.metadata.CatalogMetaDataFetchTaskRunner;
+import io.datavines.server.scheduler.metadata.task.CatalogTaskContext;
+import io.datavines.server.scheduler.metadata.task.CatalogTaskResponse;
+import io.datavines.server.scheduler.metadata.task.CatalogTaskResponseQueue;
+import io.datavines.server.scheduler.metadata.task.CatalogMetaDataFetchRequest;
 import io.datavines.server.repository.entity.DataSource;
 import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchTask;
 import io.datavines.server.repository.service.CatalogMetaDataFetchTaskService;
 import io.datavines.server.repository.service.impl.JobExternalService;
+import io.datavines.server.scheduler.report.DataQualityReportTaskRunner;
 import io.datavines.server.utils.NamedThreadFactory;
 import io.datavines.server.utils.SpringApplicationContext;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +74,17 @@ public class CatalogMetaDataFetchTaskManager {
             while(Stopper.isRunning()) {
                 try {
                     CatalogTaskContext catalogTaskContext = taskQueue.take();
-                    taskExecuteService.execute(new CatalogMetaDataFetchTaskRunner(catalogTaskContext));
+                    switch (catalogTaskContext.getCommonTaskType()) {
+                        case CATALOG_METADATA_FETCH:
+                            taskExecuteService.execute(new CatalogMetaDataFetchTaskRunner(catalogTaskContext));
+                            break;
+                        case DATA_QUALITY_REPORT:
+                            taskExecuteService.execute(new DataQualityReportTaskRunner(catalogTaskContext));
+                            break;
+                        default:
+                            break;
+                    }
+
                     CatalogMetaDataFetchTask catalogMetaDataFetchTask = catalogMetaDataFetchTaskService.getById(catalogTaskContext.getCatalogTaskId());
                     if (catalogMetaDataFetchTask != null) {
                         catalogMetaDataFetchTask.setStartTime(LocalDateTime.now());
@@ -144,7 +157,7 @@ public class CatalogMetaDataFetchTaskManager {
             }
         }
 
-        CatalogTaskContext catalogTaskContext = new CatalogTaskContext(catalogMetaDataFetchRequest, catalogMetaDataFetchTask.getId());
+        CatalogTaskContext catalogTaskContext = new CatalogTaskContext(catalogMetaDataFetchTask.getTaskType(), catalogMetaDataFetchRequest, catalogMetaDataFetchTask.getId());
         taskQueue.put(catalogTaskContext);
     }
 }

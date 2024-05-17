@@ -218,10 +218,13 @@ public class QuartzExecutors {
      * @param schedule  schedule
      * @return map
      */
-    private static Map<String, Object> buildDataMap( ScheduleJobInfo schedule) {
+    private static Map<String, Object> buildDataMap(ScheduleJobInfo schedule) {
         Map<String, Object> dataMap = Maps.newHashMap();
         dataMap.put(DataVinesConstants.JOB_ID, schedule.getId());
         dataMap.put(DataVinesConstants.DATASOURCE_ID, schedule.getDatasourceId());
+        if (schedule.getTaskType() != null) {
+            dataMap.put(DataVinesConstants.COMMON_TASK_TYPE, schedule.getTaskType().getCode());
+        }
         dataMap.put(DataVinesConstants.SCHEDULE, JSONUtils.toJsonString(schedule));
         return dataMap;
     }

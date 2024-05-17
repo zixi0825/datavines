@@ -14,19 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.catalog.metadata.task;
+package io.datavines.server.scheduler.metadata.task;
 
-import lombok.Data;
+import org.springframework.stereotype.Component;
 
-@Data
-public class CatalogTaskResponse {
+import java.util.concurrent.LinkedBlockingQueue;
 
-    private Long catalogTaskId;
+@Component
+public class CatalogTaskResponseQueue {
 
-    private int status;
+    private final LinkedBlockingQueue<CatalogTaskResponse> responseQueue = new LinkedBlockingQueue<>();
 
-    public CatalogTaskResponse(Long catalogTaskId, int status) {
-        this.catalogTaskId = catalogTaskId;
-        this.status = status;
+    public boolean add(CatalogTaskResponse catalogTaskResponse) {
+        return responseQueue.add(catalogTaskResponse);
+    }
+
+    public CatalogTaskResponse take() throws InterruptedException {
+        return responseQueue.take();
     }
 }

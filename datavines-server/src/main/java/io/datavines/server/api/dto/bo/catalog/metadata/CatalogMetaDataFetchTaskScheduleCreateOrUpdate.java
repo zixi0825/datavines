@@ -18,6 +18,7 @@ package io.datavines.server.api.dto.bo.catalog.metadata;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.datavines.server.api.dto.bo.job.schedule.MapParam;
+import io.datavines.server.enums.CommonTaskType;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -29,6 +30,9 @@ import java.time.LocalDateTime;
 public class CatalogMetaDataFetchTaskScheduleCreateOrUpdate {
 
     private Long id;
+
+    @NotNull(message = "task type cannot be empty")
+    private CommonTaskType taskType;
 
     @NotNull(message = "DataSource id cannot be empty")
     private Long dataSourceId;

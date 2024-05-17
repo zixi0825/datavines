@@ -59,7 +59,6 @@ public class ColumnNotNull extends BaseSingleTableColumn {
 
     @Override
     public void prepare(Map<String, String> config) {
-
         if (config.containsKey("column")) {
             filters.add(" ${column} is not null ");
         }

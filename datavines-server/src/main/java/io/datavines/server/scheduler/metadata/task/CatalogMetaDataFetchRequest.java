@@ -14,22 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.catalog.metadata.task;
+package io.datavines.server.scheduler.metadata.task;
 
-import org.springframework.stereotype.Component;
+import io.datavines.server.enums.FetchType;
+import io.datavines.server.repository.entity.DataSource;
+import lombok.Data;
 
-import java.util.concurrent.LinkedBlockingQueue;
+@Data
+public class CatalogMetaDataFetchRequest {
 
-@Component
-public class CatalogTaskResponseQueue {
+    private DataSource dataSource;
 
-    private final LinkedBlockingQueue<CatalogTaskResponse> responseQueue = new LinkedBlockingQueue<>();
+    private FetchType fetchType;
 
-    public boolean add(CatalogTaskResponse catalogTaskResponse) {
-        return responseQueue.add(catalogTaskResponse);
-    }
+    private String database;
 
-    public CatalogTaskResponse take() throws InterruptedException {
-        return responseQueue.take();
-    }
+    private String table;
 }

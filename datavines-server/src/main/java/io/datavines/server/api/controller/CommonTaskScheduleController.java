@@ -33,24 +33,24 @@ import javax.validation.Valid;
 
 @Api(value = "catalog", tags = "catalog", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-@RequestMapping(value = DataVinesConstants.BASE_API_PATH + "/catalog/metadata/schedule", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = DataVinesConstants.BASE_API_PATH + "/common-task/schedule", produces = MediaType.APPLICATION_JSON_VALUE)
 @RefreshToken
 @Validated
-public class CatalogMetaDataScheduleController {
+public class CommonTaskScheduleController {
 
     @Autowired
     private CatalogMetaDataFetchTaskScheduleService catalogMetaDataFetchTaskScheduleService;
 
-    @ApiOperation(value = "create or update catalog metadata fetch task schedule")
+    @ApiOperation(value = "create or update common task schedule")
     @PostMapping(value = "/createOrUpdate",consumes = MediaType.APPLICATION_JSON_VALUE)
     public Object createOrUpdateJob(@Valid @RequestBody CatalogMetaDataFetchTaskScheduleCreateOrUpdate taskScheduleCreateOrUpdate) throws DataVinesServerException {
         return catalogMetaDataFetchTaskScheduleService.createOrUpdate(taskScheduleCreateOrUpdate);
     }
 
-    @ApiOperation(value = "get metadata fetch task schedule by datasource id")
-    @GetMapping(value = "/{dataSourceId}")
-    public Object getByDataSourceId(@PathVariable Long dataSourceId)  {
-        return catalogMetaDataFetchTaskScheduleService.getByDataSourceId(dataSourceId);
+    @ApiOperation(value = "get common task schedule by datasource id")
+    @GetMapping(value = "/{dataSourceId}/{taskType}")
+    public Object getByDataSourceId(@PathVariable String taskType, @PathVariable Long dataSourceId)  {
+        return catalogMetaDataFetchTaskScheduleService.getByDataSourceId(dataSourceId, taskType);
     }
 
     @ApiOperation(value = "get crontab expression by cycle")

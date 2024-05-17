@@ -867,7 +867,7 @@ const Index = ({ onShowModal, afterClose }:DIndexProps) => {
                                     // eslint-disable-next-line react/no-unstable-nested-components
                                         expandedRowRender: tableItems[+activeTableKey]?.name === 'Profile'
                                             // eslint-disable-next-line react/no-unstable-nested-components
-                                            ? (record:{ dataType: string;uuid:string, type:string}) => (
+                                            ? (record:{ dataType: string; uuid:string, type:string}) => (
                                                 <ProfileContent
                                                     uuid={record.uuid}
                                                     type={record.dataType}
@@ -962,8 +962,9 @@ const Index = ({ onShowModal, afterClose }:DIndexProps) => {
                     }}
                     width="100%"
                     style={{ height: 'auto' }}
-                    api="catalog/profile"
+                    api="catalog/profile/schedule"
                     jobId={selectDatabases[currentIndex]?.uuid}
+                    taskType={'-1'}
                 />
             </Modal>
             <Modal

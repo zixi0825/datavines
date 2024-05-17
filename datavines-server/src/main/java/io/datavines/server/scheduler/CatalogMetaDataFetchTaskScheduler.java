@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.catalog.metadata;
+package io.datavines.server.scheduler;
 
 import io.datavines.common.utils.*;
 import io.datavines.server.registry.Register;

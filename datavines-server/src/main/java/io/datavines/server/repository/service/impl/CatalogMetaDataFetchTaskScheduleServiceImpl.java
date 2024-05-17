@@ -29,6 +29,7 @@ import io.datavines.server.dqc.coordinator.quartz.QuartzExecutors;
 import io.datavines.server.dqc.coordinator.quartz.ScheduleJobInfo;
 import io.datavines.server.dqc.coordinator.quartz.cron.StrategyFactory;
 import io.datavines.server.dqc.coordinator.quartz.cron.FunCron;
+import io.datavines.server.enums.CommonTaskType;
 import io.datavines.server.enums.JobScheduleType;
 import io.datavines.server.enums.ScheduleJobType;
 import io.datavines.server.repository.entity.DataSource;
@@ -184,8 +185,8 @@ public class CatalogMetaDataFetchTaskScheduleServiceImpl extends ServiceImpl<Cat
     }
 
     @Override
-    public CatalogMetaDataFetchTaskSchedule getByDataSourceId(Long dataSourceId) {
-        return baseMapper.getByDataSourceId(dataSourceId);
+    public CatalogMetaDataFetchTaskSchedule getByDataSourceId(Long dataSourceId, String taskType) {
+        return baseMapper.getByDataSourceId(dataSourceId, taskType);
     }
 
     @Override
@@ -195,7 +196,7 @@ public class CatalogMetaDataFetchTaskScheduleServiceImpl extends ServiceImpl<Cat
 
     @Override
     public  List<String> getCron(MapParam mapParam){
-        List<String> listCron = new ArrayList<String>();
+        List<String> listCron = new ArrayList<>();
         FunCron api = StrategyFactory.getByType(mapParam.getCycle());
         CatalogMetaDataFetchTaskSchedule catalogMetaDataFetchTaskSchedule = new CatalogMetaDataFetchTaskSchedule();
         String result1 = JSONUtils.toJsonString(mapParam);
@@ -247,6 +248,7 @@ public class CatalogMetaDataFetchTaskScheduleServiceImpl extends ServiceImpl<Cat
     private ScheduleJobInfo getScheduleJobInfo(CatalogMetaDataFetchTaskSchedule catalogMetaDataFetchTaskSchedule) {
         return new ScheduleJobInfo(
                 ScheduleJobType.CATALOG,
+                catalogMetaDataFetchTaskSchedule.getTaskType(),
                 catalogMetaDataFetchTaskSchedule.getDataSourceId(),
                 catalogMetaDataFetchTaskSchedule.getId(),
                 catalogMetaDataFetchTaskSchedule.getCronExpression(),

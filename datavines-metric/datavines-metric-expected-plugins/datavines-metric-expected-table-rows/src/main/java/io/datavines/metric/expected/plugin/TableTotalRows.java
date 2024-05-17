@@ -48,7 +48,7 @@ public class TableTotalRows implements ExpectedValue {
     public String getExecuteSql(Map<String,String> inputParameter) {
         String uniqueKey = inputParameter.get(METRIC_UNIQUE_KEY);
         String newKey = "expected_value_" + uniqueKey;
-        return sql.toString().replace("expected_value",newKey);
+        return sql.toString().replace("expected_value", newKey);
     }
 
     @Override

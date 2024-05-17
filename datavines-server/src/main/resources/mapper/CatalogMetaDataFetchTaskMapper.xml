@@ -26,6 +26,9 @@
                 <if test="datasourceId != null">
                     datasource_id = #{datasourceId}
                 </if>
+                <if test="taskType != null">
+                     and task_type = #{taskType}
+                </if>
             </where>
     </sql>
 

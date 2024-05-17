@@ -45,5 +45,5 @@ public interface CatalogMetaDataFetchTaskService extends IService<CatalogMetaDat
 
     LocalDateTime getRefreshTime(long dataSourceId, String databaseName, String tableName);
 
-    IPage<CatalogMetaDataFetchTaskVO> getFetchTaskPage(Long datasourceId,Integer pageNumber, Integer pageSize);
+    IPage<CatalogMetaDataFetchTaskVO> getFetchTaskPage(Long datasourceId, String taskType, Integer pageNumber, Integer pageSize);
 }

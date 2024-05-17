@@ -14,9 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.catalog.metadata.task;
+package io.datavines.server.scheduler.metadata.task;
 
-public interface CatalogMetaDataFetchExecutor {
+import io.datavines.server.enums.CommonTaskType;
+import lombok.Data;
 
-    void execute() throws Exception;
+@Data
+public class CatalogTaskContext {
+
+    private CommonTaskType commonTaskType;
+
+    private CatalogMetaDataFetchRequest catalogMetaDataFetchRequest;
+
+    private Long catalogTaskId;
+
+    public CatalogTaskContext(CommonTaskType commonTaskType, CatalogMetaDataFetchRequest catalogMetaDataFetchRequest, Long catalogTaskId) {
+        this.commonTaskType = commonTaskType;
+        this.catalogMetaDataFetchRequest = catalogMetaDataFetchRequest;
+        this.catalogTaskId = catalogTaskId;
+    }
 }

@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.datavines.server.enums.CommonTaskType;
 import io.datavines.server.enums.FetchType;
 import lombok.Data;
 
@@ -35,6 +36,9 @@ public class CatalogMetaDataFetchTask implements Serializable {
 
     @TableId(type= IdType.AUTO)
     private Long id;
+
+    @TableField(value = "task_type")
+    private CommonTaskType taskType;
 
     @TableField(value = "type")
     private FetchType type;

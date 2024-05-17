@@ -35,7 +35,7 @@ public interface CatalogMetaDataFetchTaskScheduleService extends IService<Catalo
 
     CatalogMetaDataFetchTaskSchedule getById(long id);
 
-    CatalogMetaDataFetchTaskSchedule getByDataSourceId(Long dataSourceId);
+    CatalogMetaDataFetchTaskSchedule getByDataSourceId(Long dataSourceId, String taskType);
 
     List<String> getCron(MapParam mapParam);
 }

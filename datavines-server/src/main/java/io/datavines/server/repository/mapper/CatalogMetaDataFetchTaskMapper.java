@@ -29,5 +29,6 @@ import org.apache.ibatis.annotations.Param;
 public interface CatalogMetaDataFetchTaskMapper extends BaseMapper<CatalogMetaDataFetchTask>  {
 
     IPage<CatalogMetaDataFetchTaskVO> getJobExecutionPage(Page<CatalogMetaDataFetchTaskVO> page,
-                                                          @Param("datasourceId") Long datasourceId);
+                                                          @Param("datasourceId") Long datasourceId,
+                                                          @Param("taskType") String taskType);
 }

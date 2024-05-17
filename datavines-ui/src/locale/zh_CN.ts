@@ -123,6 +123,9 @@ export default {
     jobs_task_success_count: '执行成功数',
     jobs_task_fail_count: '执行失败数',
     jobs_task_last_time: '最近一次执行时间',
+    jobs_task_score: '质量评分',
+    jobs_task_report_date: '报告日期',
+    jobs_task_report_detail: '规则详情',
 
     jobs_task_check_result: '检查结果',
     jobs_task_check_subject: '检查对象',
@@ -306,6 +309,11 @@ export default {
     quality_dashboard_profile: '质量概览',
     quality_dashboard_trend: '质量趋势',
     quality_dashboard_failure_execution: '失败作业',
+
+    quality_report_dashboard_score: '质量评分',
+    quality_report_dashboard_trend: '质量评分趋势',
+    quality_report_dashboard_detail: '质量报告详情',
+    quality_report_schedule: '质量报告生成调度配置',
 
     next_ten_cron_run_times: '未来十次执行时间',
     view_future_execute_plan: '查看未来执行计划',

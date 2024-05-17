@@ -26,21 +26,22 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Api(value = "catalog", tags = "catalog", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value = "common-task", tags = "common-task", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-@RequestMapping(value = DataVinesConstants.BASE_API_PATH + "/catalog/metadata/task", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = DataVinesConstants.BASE_API_PATH + "/common-task", produces = MediaType.APPLICATION_JSON_VALUE)
 @RefreshToken
 @Validated
-public class CatalogMetaDataController {
+public class CommonTaskController {
 
     @Autowired
     private CatalogMetaDataFetchTaskService catalogMetaDataFetchTaskService;
 
-    @ApiOperation(value = "get job page")
+    @ApiOperation(value = "get task page")
     @GetMapping(value = "/page")
     public Object page(@RequestParam("datasourceId") Long datasourceId,
+                       @RequestParam("taskType") String taskType,
                        @RequestParam("pageNumber") Integer pageNumber,
                        @RequestParam("pageSize") Integer pageSize)  {
-        return catalogMetaDataFetchTaskService.getFetchTaskPage(datasourceId, pageNumber, pageSize);
+        return catalogMetaDataFetchTaskService.getFetchTaskPage(datasourceId, taskType.toLowerCase(), pageNumber, pageSize);
     }
 }

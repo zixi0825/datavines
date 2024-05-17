@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -60,10 +61,10 @@ public class JobExecutionResult implements Serializable {
     private String columnName;
 
     @TableField(value = "actual_value")
-    private Double actualValue;
+    private BigDecimal actualValue;
 
     @TableField(value = "expected_value")
-    private Double expectedValue;
+    private BigDecimal expectedValue;
 
     @TableField(value = "expected_type")
     private String expectedType;
@@ -75,7 +76,10 @@ public class JobExecutionResult implements Serializable {
     private String operator;
 
     @TableField(value = "threshold")
-    private Double threshold;
+    private BigDecimal threshold;
+
+    @TableField(value = "score")
+    private BigDecimal score;
 
     @TableField(value = "state")
     private int state;

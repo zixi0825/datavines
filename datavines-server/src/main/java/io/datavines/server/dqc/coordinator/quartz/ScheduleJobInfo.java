@@ -16,6 +16,7 @@
  */
 package io.datavines.server.dqc.coordinator.quartz;
 
+import io.datavines.server.enums.CommonTaskType;
 import io.datavines.server.enums.ScheduleJobType;
 import lombok.Data;
 
@@ -25,6 +26,8 @@ import java.time.LocalDateTime;
 public class ScheduleJobInfo {
 
     private ScheduleJobType type;
+
+    private CommonTaskType taskType;
 
     private Long datasourceId;
 
@@ -37,12 +40,14 @@ public class ScheduleJobInfo {
     private LocalDateTime endTime;
 
     public ScheduleJobInfo(ScheduleJobType type,
+                           CommonTaskType taskType,
                            Long datasourceId,
                            Long id,
                            String cronExpression,
                            LocalDateTime startTime,
                            LocalDateTime endTime) {
         this.type = type;
+        this.taskType = taskType;
         this.datasourceId = datasourceId;
         this.id = id;
         this.cronExpression = cronExpression;

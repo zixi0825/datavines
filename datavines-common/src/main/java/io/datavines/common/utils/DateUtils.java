@@ -43,6 +43,7 @@ public class DateUtils {
     public static final String YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
 
     public static final String YYYYMMDD = "yyyyMMdd";
+    public static final String YYYY_MM_DD = "yyyy-MM-dd";
 
     /**
      * date to local datetime

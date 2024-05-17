@@ -14,20 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.catalog.metadata.task;
+package io.datavines.server.api.dto.vo;
 
-import io.datavines.server.enums.FetchType;
-import io.datavines.server.repository.entity.DataSource;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
-public class CatalogMetaDataFetchRequest {
+public class JobQualityReportScore {
 
-    private DataSource dataSource;
+    private BigDecimal score;
 
-    private FetchType fetchType;
-
-    private String database;
-
-    private String table;
+    private String qualityLevel;
 }

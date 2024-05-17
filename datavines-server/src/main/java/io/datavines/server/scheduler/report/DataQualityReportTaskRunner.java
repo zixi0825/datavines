@@ -14,37 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.catalog.metadata;
+package io.datavines.server.scheduler.report;
 
 import io.datavines.common.enums.ExecutionStatus;
-import io.datavines.server.catalog.metadata.task.CatalogMetaDataFetchExecutorImpl;
-import io.datavines.server.catalog.metadata.task.CatalogTaskContext;
-import io.datavines.server.catalog.metadata.task.CatalogTaskResponse;
-import io.datavines.server.catalog.metadata.task.CatalogTaskResponseQueue;
+import io.datavines.server.repository.service.JobQualityReportService;
+import io.datavines.server.scheduler.metadata.task.CatalogMetaDataFetchExecutorImpl;
+import io.datavines.server.scheduler.metadata.task.CatalogTaskContext;
+import io.datavines.server.scheduler.metadata.task.CatalogTaskResponse;
+import io.datavines.server.scheduler.metadata.task.CatalogTaskResponseQueue;
 import io.datavines.server.utils.SpringApplicationContext;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CatalogMetaDataFetchTaskRunner implements Runnable {
+public class DataQualityReportTaskRunner implements Runnable {
 
     private final CatalogTaskContext taskContext;
 
     private final CatalogTaskResponseQueue responseQueue =
             SpringApplicationContext.getBean(CatalogTaskResponseQueue.class);
 
-    public CatalogMetaDataFetchTaskRunner(CatalogTaskContext taskContext) {
+    public DataQualityReportTaskRunner(CatalogTaskContext taskContext) {
         this.taskContext = taskContext;
     }
 
     @Override
     public void run() {
-        CatalogMetaDataFetchExecutorImpl fetchTask = new CatalogMetaDataFetchExecutorImpl(taskContext.getCatalogMetaDataFetchRequest());
         try {
-            fetchTask.execute();
-            log.info("fetch metadata finished");
+            JobQualityReportService jobQualityReportService = SpringApplicationContext.getBean(JobQualityReportService.class);
+            jobQualityReportService.generateQualityReport(taskContext.getCatalogMetaDataFetchRequest().getDataSource().getId());
+            log.info("data quality report generate finished");
             responseQueue.add(new CatalogTaskResponse(taskContext.getCatalogTaskId(), ExecutionStatus.SUCCESS.getCode()));
         } catch (Exception e) {
-            log.error("fetch metadata error: ", e);
+            log.error("data quality report generate error: ", e);
             responseQueue.add(new CatalogTaskResponse(taskContext.getCatalogTaskId(), ExecutionStatus.FAILURE.getCode()));
         }
     }

@@ -450,8 +450,8 @@ const Schedule: React.FC<ScheduleProps> = ({ formRef, detail }) => {
     );
 };
 const ScheduleContainer = ({
-    jobId, api = 'job', width, onSavaEnd, style = {}, isShowPush = false,
-}: {jobId: string | number, api?:string;width?:string;onSavaEnd?:()=>void;style?:any;isShowPush?:boolean}) => {
+    jobId, api = 'job', width, onSavaEnd, style = {}, isShowPush = false, taskType = '-1'
+}: {jobId: string | number, api?:string; width?:string; onSavaEnd?:()=>void; style?:any; isShowPush?:boolean; taskType: string }) => {
     const intl = useIntl();
     const globalSetLoading = useLoading();
     const [loading, setLoading] = useState(true);
@@ -485,7 +485,13 @@ const ScheduleContainer = ({
     };
     const getData = async () => {
         try {
-            const res = await $http.get(`/${api}/schedule/${jobId}`);
+            let res = null;
+            if (taskType === '-1') {
+                res = await $http.get(`/${api}/schedule/${jobId}`);
+            } else {
+                res = await $http.get(`/${api}/schedule/${jobId}/${taskType}`);
+            }
+
             if (res) {
                 if (res.param) {
                     res.param = JSON.parse(res.param);
@@ -548,6 +554,7 @@ const ScheduleContainer = ({
                 };
                 if (api === 'catalog/metadata') {
                     $params.dataSourceId = jobId;
+                    $params.taskType = taskType;
                 }
                 if (detail?.id) {
                     $params.id = detail?.id;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.catalog.metadata.task;
+package io.datavines.server.scheduler.metadata.task;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.datavines.common.CommonConstants;

@@ -105,9 +105,11 @@ public class JobResultValidator {
         MetricExecutionResult metricExecutionResult = new MetricExecutionResult();
         BeanUtils.copyProperties(jobExecutionResult, metricExecutionResult);
         if (MetricValidator.isSuccess(metricExecutionResult)) {
+            jobExecutionResult.setScore(MetricValidator.getQualityScore(metricExecutionResult, true));
             jobExecutionResult.setState(DqJobExecutionState.SUCCESS.getCode());
             result = true;
         } else {
+            jobExecutionResult.setScore(MetricValidator.getQualityScore(metricExecutionResult, false));
             jobExecutionResult.setState(DqJobExecutionState.FAILURE.getCode());
         }
 

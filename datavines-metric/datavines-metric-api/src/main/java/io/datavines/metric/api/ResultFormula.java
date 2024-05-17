@@ -18,6 +18,8 @@ package io.datavines.metric.api;
 
 import io.datavines.spi.SPI;
 
+import java.math.BigDecimal;
+
 @SPI
 public interface ResultFormula {
 
@@ -29,7 +31,9 @@ public interface ResultFormula {
         return isEn ? getName() : getZhName();
     }
 
-    Double getResult(Double actualValue, Double expectedValue);
+    BigDecimal getResult(BigDecimal actualValue, BigDecimal expectedValue);
+
+    BigDecimal getScore(BigDecimal actualValue, BigDecimal expectedValue, boolean isSuccess);
 
     String getResultFormat(boolean isEn);
 

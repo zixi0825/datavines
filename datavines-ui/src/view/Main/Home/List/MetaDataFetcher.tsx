@@ -30,8 +30,9 @@ const Index: React.FC<IndexProps> = ({datasourceId, onSavaEnd, refreshKey}) => {
     const getData = async (values?: any, $pageParams?: any) => {
         try {
             setLoading(true);
-            const res = (await $http.get('/catalog/metadata/task/page', {
+            const res = (await $http.get('/common-task/page', {
                 datasourceId: datasourceId,
+                taskType: 'CATALOG_METADATA_FETCH',
                 ...($pageParams || pageParams),
             })) || [];
             setTableData({
@@ -134,7 +135,7 @@ const Index: React.FC<IndexProps> = ({datasourceId, onSavaEnd, refreshKey}) => {
                 type="line"
                 size="small"
             >
-                <TabPane tab='调度配置' key = "1">
+                <TabPane tab={intl.formatMessage({ id: 'jobs_tabs_schedule' })} key = "1">
 
                     <Schedule
                         onSavaEnd={() => {
@@ -144,10 +145,11 @@ const Index: React.FC<IndexProps> = ({datasourceId, onSavaEnd, refreshKey}) => {
                         style={{ height: 'auto' }}
                         jobId={datasourceId}
                         isShowPush
-                        api="catalog/metadata"
+                        api="common-task"
+                        taskType={'CATALOG_METADATA_FETCH'}
                     />
                 </TabPane>
-                <TabPane tab='执行记录' key = "2">
+                <TabPane tab={intl.formatMessage({ id: 'jobs_view' })} key = "2">
 
                     <Table<TJobsInstanceTableItem>
                         size="middle"

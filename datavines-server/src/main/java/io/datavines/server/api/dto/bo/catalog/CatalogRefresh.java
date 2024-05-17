@@ -16,6 +16,7 @@
  */
 package io.datavines.server.api.dto.bo.catalog;
 
+import io.datavines.server.enums.CommonTaskType;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -26,6 +27,8 @@ public class CatalogRefresh {
 
     @NotNull(message = "DataSourceId cannot be empty")
     private Long datasourceId;
+
+    private CommonTaskType taskType;
 
     private String database;
 

@@ -30,22 +30,27 @@ const Jobs = ({ datasourceId }: TJobs) => {
             getData();
         }
     });
+
     const { Render: RenderJobsModal, show: showJobsModal } = useAddEditJobsModal({
         title: intl.formatMessage({ id: addType === 'quality' ? 'jobs_tabs_title' : 'jobs_tabs_comparison_title' }),
         afterClose() {
             getData();
         },
     });
+
     const { Render: RenderSLAsModal, show: showSLAsModal } = useSelectSLAsModal({
         afterClose() {
             getData();
         },
     });
+
     const [tableData, setTableData] = useState<TJobsTableData>({ list: [], total: 0 });
+
     const [pageParams, setPageParams] = useState({
         pageNumber: 1,
         pageSize: 10,
     });
+
     const handleMenuClick: MenuProps['onClick'] = (e) => {
         setAddType(e.key);
         store.dispatch({
@@ -67,6 +72,7 @@ const Jobs = ({ datasourceId }: TJobs) => {
             },
         });
     };
+
     const menu = (
         <Menu
             onClick={handleMenuClick}
@@ -82,7 +88,6 @@ const Jobs = ({ datasourceId }: TJobs) => {
             ]}
         />
     );
-
 
     const transDateFormat = (datetime: any, format: string) => {
         if (datetime){
@@ -115,22 +120,22 @@ const Jobs = ({ datasourceId }: TJobs) => {
             setLoading(false);
         }
     };
+
     useWatch([pageParams], () => {
         getData();
     }, { immediate: true });
-    // const onSearch = () => {
-    //     setPageParams({ ...pageParams, pageNumber: 1 });
-    // };
+
     const onSearch = (_values: any) => {
         setPageParams({ ...pageParams, pageNumber: 1 });
-        // getData()
     };
+
     const onChange = ({ current, pageSize }: any) => {
         setPageParams({
             pageNumber: current,
             pageSize,
         });
     };
+
     const onRun = async (record: TJobsTableItem) => {
         try {
             setLoading(true);
@@ -142,6 +147,7 @@ const Jobs = ({ datasourceId }: TJobs) => {
             setLoading(false);
         }
     };
+
     const onEdit = (record: TJobsTableItem) => {
         const type = record.type === 'DATA_RECONCILIATION' ? 'comparison' : 'quality';
         store.dispatch({
@@ -154,6 +160,7 @@ const Jobs = ({ datasourceId }: TJobs) => {
             record,
         });
     };
+
     const onDelete = async (record: TJobsTableItem) => {
         try {
             setLoading(true);
@@ -165,12 +172,15 @@ const Jobs = ({ datasourceId }: TJobs) => {
             setLoading(false);
         }
     };
+
     const onSLAs = (record: TJobsTableItem) => {
         showSLAsModal(record);
     };
+
     const onViewInstance = (record: TJobsTableItem) => {
         history.push(`${match.url}/instance?jobId=${record.id}`);
     };
+
     const onPreviewInstance = async (record: TJobsTableItem) => {
         showJobPreviewModal(record.id);
     };
