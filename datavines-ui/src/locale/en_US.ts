@@ -89,7 +89,6 @@ export default {
     home_metadata_fetch_now: 'Fetch',
     home_metadata_fetch_schedule: 'Metadata Schedule Manager',
 
-
     // jobs
     jobs_list: 'Jobs',
     jobs_add: 'Add',

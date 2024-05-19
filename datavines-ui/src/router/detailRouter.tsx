@@ -9,7 +9,7 @@ const detailRouter: TRouter = {
         key: '/main/detail/:id/dashboard',
         label: '',
         exact: true,
-        icon: <BarChartOutlined/>,
+        icon: <BarChartOutlined />,
         component: lazy(() => import(/* webpackChunkName: 'view-detail-dashboard' */ '@/view/Main/HomeDetail/Dashboard')),
     },
     'dv-detail-editor': {
