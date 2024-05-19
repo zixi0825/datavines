@@ -56,6 +56,8 @@
                                 <configuration>
                                     <nodeVersion>${node.version}</nodeVersion>
                                     <npmVersion>${npm.version}</npmVersion>
+                                    <nodeDownloadRoot>https://npmmirror.com/mirrors/node/</nodeDownloadRoot>
+                                    <npmDownloadRoot>https://registry.npmmirror.com/npm/-/</npmDownloadRoot>
                                 </configuration>
                             </execution>
                             <execution>
@@ -65,7 +67,7 @@
                                 </goals>
                                 <phase>generate-resources</phase>
                                 <configuration>
-                                    <arguments>install</arguments>
+                                    <arguments>install --registry=https://registry.npmmirror.com --sass-binary-site=https://npmmirror.com/mirrors/node-sass</arguments>
                                 </configuration>
                             </execution>
                             <execution>

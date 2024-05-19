@@ -83,18 +83,17 @@ public class ColumnHistogram extends BaseSingleTableColumn {
                 break;
         }
 
-        actualValueSql.append(" where 1=1 ");
-
         if (!filters.isEmpty()) {
-            actualValueSql.append(String.join(" and ", filters));
+            actualValueSql.append(" where ").append(String.join(" and ", filters));
         }
-
+        actualValueSql.append(" group by ${column} order by count desc ");
         switch (srcConnectorType){
             case "oracle":
-                actualValueSql.append(" and ${limit_top_50_key} group by ${column} order by count desc) T");
+                // oracle the rownum filter should be placed at the outermost layer of the query, otherwise it cannot be filtered
+                actualValueSql.append(" ) T where ${limit_top_50_key} ");
                 break;
             default:
-                actualValueSql.append(" group by ${column} order by count desc ${limit_top_50_key}) T");
+                actualValueSql.append(" ${limit_top_50_key}) T");
                 break;
         }
 
