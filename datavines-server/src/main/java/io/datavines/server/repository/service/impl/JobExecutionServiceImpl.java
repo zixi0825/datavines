@@ -133,7 +133,11 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
                                 JobExecutionAggState::getJobExecutionId,
                                 JobExecutionAggState::getCheckState
                         ));
-                jobExecutionList.forEach(jobExecution -> jobExecution.setCheckState(DqJobExecutionState.of(jobExecutionStateMap.get(jobExecution.getId()))));
+                jobExecutionList.forEach(jobExecution -> {
+                    if (jobExecutionStateMap.get(jobExecution.getId()) != null) {
+                        jobExecution.setCheckState(DqJobExecutionState.of(jobExecutionStateMap.get(jobExecution.getId())));
+                    }
+                });
             }
         }
         return jobExecutionPage;
