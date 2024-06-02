@@ -98,9 +98,9 @@ const QualityReportDashboard = ({ datasourceId }: TJobs) => {
 
     const [entityParam, setEntityParam] = useState<any>({
         schemaName: null,
-        tableName: null,
-        columnName: null
+        tableName: null
     });
+
     const [pageParam, setPageParam] = useState<any>({
         pageNumber : 1,
         pageSize : 5
@@ -111,7 +111,7 @@ const QualityReportDashboard = ({ datasourceId }: TJobs) => {
 
     const [reportDate, setReportDate] = useState<any>();
 
-    const onEntitySelectChange = async (value: (string | number)[], selectedOptions: Option[]) => {
+    const onEntitySelectChange = async (value: (string | number | null)[], selectedOptions: Option[]) => {
 
         if (value) {
             if (value.length == 1) {
@@ -124,18 +124,11 @@ const QualityReportDashboard = ({ datasourceId }: TJobs) => {
                     schemaName : value[0],
                     tableName : value[1]
                 })
-            } else if (value.length == 3) {
-                setEntityParam({
-                    schemaName : value[0],
-                    tableName : value[1],
-                    columnName : value[2]
-                })
             }
         } else {
             setEntityParam({
                 schemaName : null,
-                tableName : null,
-                columnName : null
+                tableName : null
             })
         }
     };
@@ -154,14 +147,7 @@ const QualityReportDashboard = ({ datasourceId }: TJobs) => {
                 targetOption.children = $reTables1;
                 setDataBases([...databases])
             } else if (selectedOptions.length == 2) {
-
-                const columns = await $http.get(`/datasource/${(match.params as any).id}/${selectedOptions[0].value}/${selectedOptions[1].value}/columns`);
-                let $reColumns = columns ? JSON.parse(JSON.stringify(columns)) : [];
-                const $reColumns1: ((prevState: never[]) => never[]) | { value: any; label: any; isLeaf:any;}[] = [];
-                $reColumns.forEach((item: { name: any; }) => {
-                    $reColumns1.push({value: item.name, label: item.name, isLeaf:true})
-                })
-                targetOption.children = $reColumns1;
+                targetOption.children = [];
                 setDataBases([...databases])
             }
         },1000);
@@ -185,7 +171,6 @@ const QualityReportDashboard = ({ datasourceId }: TJobs) => {
             const res = (await $http.post('/job/quality-report/page', {
                 schemaName : entityParam.schemaName,
                 tableName : entityParam.tableName,
-                columnName : entityParam.columnName,
                 datasourceId : datasourceId || (match.params as any).id,
                 reportDate: reportDate,
                 pageNumber : pageParam1.pageNumber,
@@ -208,7 +193,6 @@ const QualityReportDashboard = ({ datasourceId }: TJobs) => {
             const res = (await $http.post('/job/quality-report/score', {
                     schemaName : entityParam.schemaName,
                     tableName : entityParam.tableName,
-                    columnName : entityParam.columnName,
                     datasourceId : datasourceId || (match.params as any).id,
                     reportDate : reportDate
                 },
@@ -306,7 +290,6 @@ const QualityReportDashboard = ({ datasourceId }: TJobs) => {
             const res = (await $http.post('/job/quality-report/score-trend', {
                     schemaName : entityParam.schemaName,
                     tableName : entityParam.tableName,
-                    columnName : entityParam.columnName,
                     datasourceId : datasourceId || (match.params as any).id,
                     reportDate : reportDate
                 },
@@ -371,8 +354,7 @@ const QualityReportDashboard = ({ datasourceId }: TJobs) => {
     const refreshData = async () => {
         setEntityParam({
             schemaName: null,
-            tableName: null,
-            columnName: null
+            tableName: null
         })
 
         setStartTime(null)
@@ -477,7 +459,6 @@ const QualityReportDashboard = ({ datasourceId }: TJobs) => {
                     <Col span={24}>
                         <Cascader options={databases} loadData={loadData} onChange={onEntitySelectChange} changeOnSelect style = {{width:500}}/>
                         <span style = {{marginLeft: '20px'}}>报告时间</span> <DatePicker onChange={onStartTimeChange} style = {{marginLeft: '10px'}} ></DatePicker>
-                        {/*<span style = {{marginLeft: '20px'}}>结束时间</span> <DatePicker style = {{marginLeft: '10px'}} showTime onChange={onEndTimeChange}></DatePicker>*/}
                         <Button style = {{marginLeft: '20px'}} onClick={onQueryClick} >查询</Button>
                         <Button style = {{marginLeft: '20px'}} onClick={showSchedule} >定时配置</Button>
                     </Col>
