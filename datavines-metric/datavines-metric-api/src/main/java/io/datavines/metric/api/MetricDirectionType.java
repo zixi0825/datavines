@@ -24,10 +24,8 @@ import java.util.Map;
 
 public enum MetricDirectionType {
     /**
-     * 0-single_table
-     * 1-single_table_custom_sql
-     * 2-multi_table_accuracy
-     * 3-multi_table_comparison
+     * 0-positive
+     * 1-negative
      */
     POSITIVE(0,"positive"),
     NEGATIVE(1,"negative");
