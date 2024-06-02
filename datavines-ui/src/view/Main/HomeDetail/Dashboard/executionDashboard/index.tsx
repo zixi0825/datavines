@@ -102,7 +102,7 @@ const ExecutionDashboard = ({ datasourceId }: TJobs) => {
     const [startTime, setStartTime] = useState<any>();
     const [endTime, setEndTime] = useState<any>();
 
-    const onEntitySelectChange = async (value: (string | number)[], selectedOptions: Option[]) => {
+    const onEntitySelectChange = async (value: (string | number | null)[], selectedOptions: Option[]) => {
 
         if (value) {
             if (value.length == 1) {
