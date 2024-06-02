@@ -40,6 +40,7 @@ import io.datavines.core.exception.DataVinesServerException;
 import io.datavines.server.enums.DqJobExecutionState;
 import io.datavines.server.repository.entity.JobExecution;
 import io.datavines.server.repository.entity.JobExecutionResult;
+import io.datavines.server.repository.mapper.JobExecutionResultMapper;
 import io.datavines.server.repository.service.*;
 import io.datavines.server.repository.entity.Command;
 import io.datavines.server.repository.mapper.JobExecutionMapper;
@@ -62,13 +63,16 @@ import static io.datavines.common.CommonConstants.YYYY_MM_DD_HH_MM_SS;
 import static io.datavines.core.constant.DataVinesConstants.SPARK;
 
 @Service("jobExecutionService")
-public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, JobExecution>  implements JobExecutionService {
+public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, JobExecution> implements JobExecutionService {
 
     @Autowired
     private CommandService commandService;
 
     @Autowired
     private JobExecutionResultService jobExecutionResultService;
+
+    @Autowired
+    private JobExecutionResultMapper jobExecutionResultMapper;
 
     @Autowired
     private ActualValuesService actualValuesService;
@@ -115,24 +119,29 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
     @Override
     public IPage<JobExecutionVO> getJobExecutionPage(JobExecutionPageParam pageParam) {
         Page<JobExecutionVO> page = new Page<>(pageParam.getPageNumber(), pageParam.getPageSize());
-        IPage<JobExecutionVO> result =  baseMapper.getJobExecutionPage(page, pageParam.getSearchVal(), pageParam.getJobId(), pageParam.getDatasourceId(), pageParam.getStatus(), pageParam.getMetricType(), pageParam.getSchemaName(), pageParam.getTableName(), pageParam.getColumnName(), pageParam.getStartTime(), pageParam.getEndTime(),
+        IPage<JobExecutionVO> jobExecutionPage = baseMapper.getJobExecutionPage(page, pageParam.getSearchVal(), pageParam.getJobId(), pageParam.getDatasourceId(), pageParam.getStatus(), pageParam.getMetricType(), pageParam.getSchemaName(), pageParam.getTableName(), pageParam.getColumnName(), pageParam.getStartTime(), pageParam.getEndTime(),
                 pageParam.getSchemaSearch(), pageParam.getTableSearch(), pageParam.getColumnSearch());
-        return result.convert(jobExecutionVO -> {
-            List<JobExecutionResult> executionResultList = jobExecutionResultService.listByJobExecutionId(jobExecutionVO.getId());
-            if (CollectionUtils.isEmpty(executionResultList)) {
-                jobExecutionVO.setCheckState(DqJobExecutionState.NONE);
+        List<JobExecutionVO> jobExecutionList = jobExecutionPage.getRecords();
+        // get jobExecution checkState separately
+        if(CollectionUtils.isNotEmpty(jobExecutionList)){
+            List<Long> jobExecutionIdList = jobExecutionList.stream()
+                    .filter(r -> r != null && r.getId() != null)
+                    .map(JobExecutionVO::getId).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(jobExecutionIdList)) {
+                List<JobExecutionAggState> jobExecutionAggStateList = jobExecutionResultMapper.listByJobExecutionId(jobExecutionIdList);
+                Map<Long, Integer> jobExecutionStateMap = jobExecutionAggStateList.stream()
+                        .collect(Collectors.toMap(
+                                JobExecutionAggState::getJobExecutionId,
+                                JobExecutionAggState::getCheckState
+                        ));
+                jobExecutionList.forEach(jobExecution -> {
+                    if (jobExecutionStateMap.get(jobExecution.getId()) != null) {
+                        jobExecution.setCheckState(DqJobExecutionState.of(jobExecutionStateMap.get(jobExecution.getId())));
+                    }
+                });
             }
-
-            DqJobExecutionState state = DqJobExecutionState.SUCCESS;
-            for (JobExecutionResult executionResult : executionResultList) {
-                if (executionResult.getState() == 2) {
-                    state = DqJobExecutionState.FAILURE;
-                    break;
-                }
-            }
-            jobExecutionVO.setCheckState(state);
-            return jobExecutionVO;
-        });
+        }
+        return jobExecutionPage;
     }
 
     @Override
@@ -147,8 +156,8 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
             jobExecution.setExecutePlatformParameter(JSONUtils.toJsonString(submitJob.getExecutePlatformParameter()));
         }
 
-        if(SPARK.equals(jobExecution.getEngineType())) {
-            Map<String,Object> defaultEngineParameter = new HashMap<>();
+        if (SPARK.equals(jobExecution.getEngineType())) {
+            Map<String, Object> defaultEngineParameter = new HashMap<>();
             defaultEngineParameter.put("programType", "JAVA");
             defaultEngineParameter.put("deployMode", "cluster");
             defaultEngineParameter.put("driverCores", 1);
@@ -175,8 +184,8 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
     public Long executeJob(JobExecution jobExecution) throws DataVinesServerException {
         Long jobExecutionId = create(jobExecution);
 
-        Map<String,String> parameter = new HashMap<>();
-        parameter.put("engine",jobExecution.getEngineType());
+        Map<String, String> parameter = new HashMap<>();
+        parameter.put("engine", jobExecution.getEngineType());
         // add a command
         Command command = new Command();
         command.setType(CommandType.START);
@@ -196,8 +205,8 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
         }
 
         Command command = new Command();
-        Map<String,String> parameter = new HashMap<>();
-        parameter.put("engine",jobExecution.getEngineType());
+        Map<String, String> parameter = new HashMap<>();
+        parameter.put("engine", jobExecution.getEngineType());
 
         command.setType(CommandType.STOP);
         command.setPriority(Priority.MEDIUM);
@@ -219,7 +228,7 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
     public List<JobExecution> listJobExecutionNotInServerList(List<String> hostList) {
         return baseMapper.selectList(new QueryWrapper<JobExecution>().lambda()
                 .notIn(JobExecution::getExecuteHost, hostList)
-                .in(JobExecution::getStatus,ExecutionStatus.RUNNING_EXECUTION.getCode(), ExecutionStatus.SUBMITTED_SUCCESS.getCode()));
+                .in(JobExecution::getStatus, ExecutionStatus.RUNNING_EXECUTION.getCode(), ExecutionStatus.SUBMITTED_SUCCESS.getCode()));
     }
 
     private void checkJobExecutionParameter(JobExecutionParameter jobExecutionParameter, String engineType) throws DataVinesServerException {
@@ -274,22 +283,22 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
     }
 
 
-
     /**
      * get task host from jobExecutionId
+     *
      * @param jobExecutionId
      */
     @Override
     public String getJobExecutionHost(Long jobExecutionId) {
         JobExecution jobExecution = baseMapper.selectById(jobExecutionId);
-        if(null == jobExecution){
+        if (null == jobExecution) {
             throw new DataVinesServerException(Status.TASK_NOT_EXIST_ERROR, jobExecutionId);
         }
-        if(jobExecution.getStatus() == ExecutionStatus.SUBMITTED_SUCCESS){
+        if (jobExecution.getStatus() == ExecutionStatus.SUBMITTED_SUCCESS) {
             throw new DataVinesServerException(Status.TASK_EXECUTE_NOT_RUNNING, jobExecutionId);
         }
         String executeHost = jobExecution.getExecuteHost();
-        if(StringUtils.isEmpty(executeHost)){
+        if (StringUtils.isEmpty(executeHost)) {
             throw new DataVinesServerException(Status.TASK_EXECUTE_HOST_NOT_EXIST_ERROR, jobExecutionId);
         }
         return executeHost;
@@ -321,31 +330,31 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
 
     @Override
     public List<JobExecutionAggItem> getJobExecutionAggPie(JobExecutionDashboardParam dashboardParam) {
-        List<String> statusList = new ArrayList<>(Arrays.asList("6","7"));
+        List<String> statusList = new ArrayList<>(Arrays.asList("6", "7"));
 
         String startDateStr = "";
         String endDateStr = "";
         if (StringUtils.isEmpty(dashboardParam.getStartTime()) && StringUtils.isEmpty(dashboardParam.getEndTime())) {
-            startDateStr = DateUtils.format(DateUtils.addDays(new Date(), -5),"yyyy-MM-dd");
-            endDateStr = DateUtils.format(DateUtils.addDays(new Date(), +1),"yyyy-MM-dd");
+            startDateStr = DateUtils.format(DateUtils.addDays(new Date(), -5), "yyyy-MM-dd");
+            endDateStr = DateUtils.format(DateUtils.addDays(new Date(), +1), "yyyy-MM-dd");
         } else {
             if (StringUtils.isEmpty(dashboardParam.getEndTime()) && StringUtils.isNotEmpty(dashboardParam.getStartTime())) {
-                startDateStr = dashboardParam.getStartTime().substring(0,10);
+                startDateStr = dashboardParam.getStartTime().substring(0, 10);
                 Date startDate = DateUtils.stringToDate(dashboardParam.getStartTime());
-                endDateStr = DateUtils.format(DateUtils.addDays(startDate,7),"yyyy-MM-dd");
+                endDateStr = DateUtils.format(DateUtils.addDays(startDate, 7), "yyyy-MM-dd");
             } else if (StringUtils.isEmpty(dashboardParam.getStartTime()) && StringUtils.isNotEmpty(dashboardParam.getEndTime())) {
-                endDateStr = dashboardParam.getEndTime().substring(0,10);
+                endDateStr = dashboardParam.getEndTime().substring(0, 10);
                 Date endDate = DateUtils.stringToDate(dashboardParam.getEndTime());
-                startDateStr = DateUtils.format(DateUtils.addDays(endDate,-6),"yyyy-MM-dd");
+                startDateStr = DateUtils.format(DateUtils.addDays(endDate, -6), "yyyy-MM-dd");
             } else {
                 Date endDate = DateUtils.parse(dashboardParam.getEndTime(), YYYY_MM_DD_HH_MM_SS);
                 Date startDate = DateUtils.parse(dashboardParam.getStartTime(), YYYY_MM_DD_HH_MM_SS);
-                long days = DateUtils.diffDays(endDate,startDate);
+                long days = DateUtils.diffDays(endDate, startDate);
                 if (days > 7) {
                     endDate = DateUtils.addDays(startDate, 7);
                 }
-                startDateStr = DateUtils.format(startDate,"yyyy-MM-dd");
-                endDateStr = DateUtils.format(endDate,"yyyy-MM-dd");
+                startDateStr = DateUtils.format(startDate, "yyyy-MM-dd");
+                endDateStr = DateUtils.format(endDate, "yyyy-MM-dd");
             }
         }
         startDateStr += " 00:00:00";
@@ -404,26 +413,26 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
         String startDateStr = "";
         String endDateStr = "";
         if (StringUtils.isEmpty(dashboardParam.getStartTime()) && StringUtils.isEmpty(dashboardParam.getEndTime())) {
-            startDateStr = DateUtils.format(DateUtils.addDays(new Date(), -5),"yyyy-MM-dd");
-            endDateStr = DateUtils.format(DateUtils.addDays(new Date(), +1),"yyyy-MM-dd");
+            startDateStr = DateUtils.format(DateUtils.addDays(new Date(), -5), "yyyy-MM-dd");
+            endDateStr = DateUtils.format(DateUtils.addDays(new Date(), +1), "yyyy-MM-dd");
         } else {
             if (StringUtils.isEmpty(dashboardParam.getEndTime()) && StringUtils.isNotEmpty(dashboardParam.getStartTime())) {
-                startDateStr = dashboardParam.getStartTime().substring(0,10);
+                startDateStr = dashboardParam.getStartTime().substring(0, 10);
                 Date startDate = DateUtils.stringToDate(dashboardParam.getStartTime());
-                endDateStr = DateUtils.format(DateUtils.addDays(startDate,7),"yyyy-MM-dd");
+                endDateStr = DateUtils.format(DateUtils.addDays(startDate, 7), "yyyy-MM-dd");
             } else if (StringUtils.isEmpty(dashboardParam.getStartTime()) && StringUtils.isNotEmpty(dashboardParam.getEndTime())) {
-                endDateStr = dashboardParam.getEndTime().substring(0,10);
+                endDateStr = dashboardParam.getEndTime().substring(0, 10);
                 Date endDate = DateUtils.stringToDate(dashboardParam.getEndTime());
-                startDateStr = DateUtils.format(DateUtils.addDays(endDate,-6),"yyyy-MM-dd");
+                startDateStr = DateUtils.format(DateUtils.addDays(endDate, -6), "yyyy-MM-dd");
             } else {
                 Date endDate = DateUtils.parse(dashboardParam.getEndTime(), YYYY_MM_DD_HH_MM_SS);
                 Date startDate = DateUtils.parse(dashboardParam.getStartTime(), YYYY_MM_DD_HH_MM_SS);
-                long days = DateUtils.diffDays(endDate,startDate);
+                long days = DateUtils.diffDays(endDate, startDate);
                 if (days > 7) {
                     endDate = DateUtils.addDays(startDate, 7);
                 }
-                startDateStr = DateUtils.format(startDate,"yyyy-MM-dd");
-                endDateStr = DateUtils.format(endDate,"yyyy-MM-dd");
+                startDateStr = DateUtils.format(startDate, "yyyy-MM-dd");
+                endDateStr = DateUtils.format(endDate, "yyyy-MM-dd");
             }
         }
 
@@ -473,14 +482,14 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
             } else {
                 int success = 0;
                 int failure = 0;
-                for (JobExecutionTrendBarItem item :list) {
+                for (JobExecutionTrendBarItem item : list) {
                     if (item.getStatus() == 6) {
                         failure += item.getNum();
                     } else if (item.getStatus() == 7) {
                         success += item.getNum();
                     }
                 }
-                allList.add(failure+success);
+                allList.add(failure + success);
                 failureList.add(failure);
                 successList.add(success);
             }

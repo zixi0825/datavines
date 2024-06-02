@@ -16,6 +16,7 @@
  */
 package io.datavines.server.repository.mapper;
 
+import io.datavines.server.api.dto.vo.JobExecutionAggState;
 import io.datavines.server.repository.entity.JobExecutionResult;
 import org.apache.ibatis.annotations.Mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -44,4 +45,6 @@ public interface JobExecutionResultMapper extends BaseMapper<JobExecutionResult>
     List<JobExecutionResult> listByDatasourceIdAndTimeRange(@Param("datasourceId") Long datasourceId,
                                                             @Param("startTime")String startTime,
                                                             @Param("endTime")String endTime);
+
+    List<JobExecutionAggState> listByJobExecutionId(@Param("jobExecutionIdList") List<Long> jobExecutionIdList);
 }

@@ -52,11 +52,11 @@ public interface JobExecutionMapper extends BaseMapper<JobExecution>  {
                                                     @Param("metricType") String metricType, @Param("schemaName") String schemaName,
                                                     @Param("tableName") String tableName, @Param("columnName") String columnName,
                                                     @Param("startTime") String startTime, @Param("endTime") String endTime);
+
     List<JobExecutionTrendBarItem> getJobExecutionTrendBar(@Param("datasourceId") Long datasourceId,
                                                            @Param("metricType") String metricType, @Param("schemaName") String schemaName,
                                                            @Param("tableName") String tableName, @Param("columnName") String columnName,
                                                            @Param("startTime") String startTime, @Param("endTime") String endTime);
-
 
     JobExecutionStat getJobExecutionStat(@Param("jobId") Long jobId);
 }
