@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.scheduler.metadata.task;
+package io.datavines.server.scheduler;
 
 import io.datavines.server.enums.FetchType;
 import io.datavines.server.repository.entity.DataSource;
 import lombok.Data;
 
 @Data
-public class CatalogMetaDataFetchRequest {
+public class CommonTaskRequest {
 
     private DataSource dataSource;
 

@@ -16,6 +16,7 @@
  */
 package io.datavines.metric.result.formula;
 
+import io.datavines.metric.api.MetricDirectionType;
 import io.datavines.metric.api.ResultFormula;
 import io.datavines.metric.api.ResultFormulaType;
 
@@ -45,8 +46,17 @@ public class Percentage implements ResultFormula {
     }
 
     @Override
-    public BigDecimal getScore(BigDecimal actualValue, BigDecimal expectedValue, boolean isSuccess) {
-        return getResult(actualValue, expectedValue);
+    public BigDecimal getScore(BigDecimal actualValue, BigDecimal expectedValue, boolean isSuccess, MetricDirectionType direction) {
+        BigDecimal result = BigDecimal.valueOf(0);
+        if (expectedValue != null) {
+            if (MetricDirectionType.NEGATIVE == direction) {
+                result = new BigDecimal(100).subtract(actualValue.divide(expectedValue, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)));
+            } else if (MetricDirectionType.POSITIVE == direction) {
+                result = actualValue.divide(expectedValue, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+            }
+        }
+
+        return result;
     }
 
     @Override

@@ -14,17 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.repository.mapper;
+package io.datavines.server.scheduler;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchCommand;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import lombok.Data;
 
-@Mapper
-public interface CatalogMetaDataFetchCommandMapper extends BaseMapper<CatalogMetaDataFetchCommand> {
+@Data
+public class CommonTaskResponse {
 
-    @Select("SELECT * from dv_catalog_metadata_fetch_command where id % #{totalSlot} = #{currentSlot} order by update_time limit 1 ")
-    CatalogMetaDataFetchCommand getOne(@Param("totalSlot") int totalSlot, @Param("currentSlot") int currentSlot);
+    private Long catalogTaskId;
+
+    private int status;
+
+    public CommonTaskResponse(Long catalogTaskId, int status) {
+        this.catalogTaskId = catalogTaskId;
+        this.status = status;
+    }
 }

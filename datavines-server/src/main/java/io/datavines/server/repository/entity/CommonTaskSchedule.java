@@ -14,34 +14,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.repository.entity.catalog;
+package io.datavines.server.repository.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
+import io.datavines.server.enums.CommonTaskType;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("dv_catalog_metadata_fetch_command")
-public class CatalogMetaDataFetchCommand implements Serializable {
+@TableName("dv_common_task_schedule")
+public class CommonTaskSchedule implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
     @TableId(type= IdType.AUTO)
     private Long id;
 
-    @TableField(value = "task_id")
-    private Long taskId;
+    @TableField(value = "datasource_id")
+    private Long dataSourceId;
+
+    @TableField(value = "task_type")
+    private CommonTaskType taskType;
+
+    @TableField(value = "type")
+    private String type;
+
+    @TableField(value = "param")
+    private String param;
+
+    @TableField(value = "cron_expression")
+    private String cronExpression;
+
+    @TableField(value = "status")
+    private boolean status;
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @TableField(value = "start_time")
+    private LocalDateTime startTime;
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @TableField(value = "end_time")
+    private LocalDateTime endTime;
+
+    @TableField(value = "create_by")
+    private Long createBy;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @TableField(value = "create_time")
     private LocalDateTime createTime;
+
+    @TableField(value = "update_by")
+    private Long updateBy;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @TableField(value = "update_time")

@@ -18,10 +18,10 @@
 
 -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="io.datavines.server.repository.mapper.CatalogMetaDataFetchTaskMapper">
+<mapper namespace="io.datavines.server.repository.mapper.CommonTaskMapper">
 
     <sql id="basic_sql">
-        select * from dv_catalog_metadata_fetch_task
+        select * from dv_common_task
             <where>
                 <if test="datasourceId != null">
                     datasource_id = #{datasourceId}

@@ -19,9 +19,9 @@ package io.datavines.server.api.controller;
 import io.datavines.core.aop.RefreshToken;
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.core.exception.DataVinesServerException;
-import io.datavines.server.api.dto.bo.catalog.metadata.CatalogMetaDataFetchTaskScheduleCreateOrUpdate;
+import io.datavines.server.api.dto.bo.task.CommonTaskScheduleCreateOrUpdate;
 import io.datavines.server.api.dto.bo.job.schedule.MapParam;
-import io.datavines.server.repository.service.CatalogMetaDataFetchTaskScheduleService;
+import io.datavines.server.repository.service.CommonTaskScheduleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,23 +39,23 @@ import javax.validation.Valid;
 public class CommonTaskScheduleController {
 
     @Autowired
-    private CatalogMetaDataFetchTaskScheduleService catalogMetaDataFetchTaskScheduleService;
+    private CommonTaskScheduleService commonTaskScheduleService;
 
     @ApiOperation(value = "create or update common task schedule")
     @PostMapping(value = "/createOrUpdate",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Object createOrUpdateJob(@Valid @RequestBody CatalogMetaDataFetchTaskScheduleCreateOrUpdate taskScheduleCreateOrUpdate) throws DataVinesServerException {
-        return catalogMetaDataFetchTaskScheduleService.createOrUpdate(taskScheduleCreateOrUpdate);
+    public Object createOrUpdateJob(@Valid @RequestBody CommonTaskScheduleCreateOrUpdate taskScheduleCreateOrUpdate) throws DataVinesServerException {
+        return commonTaskScheduleService.createOrUpdate(taskScheduleCreateOrUpdate);
     }
 
     @ApiOperation(value = "get common task schedule by datasource id")
     @GetMapping(value = "/{dataSourceId}/{taskType}")
     public Object getByDataSourceId(@PathVariable String taskType, @PathVariable Long dataSourceId)  {
-        return catalogMetaDataFetchTaskScheduleService.getByDataSourceId(dataSourceId, taskType);
+        return commonTaskScheduleService.getByDataSourceId(dataSourceId, taskType);
     }
 
     @ApiOperation(value = "get crontab expression by cycle")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value = "/cron")
     public Object showCron(@Valid @RequestBody MapParam mapParam) throws DataVinesServerException {
-        return catalogMetaDataFetchTaskScheduleService.getCron(mapParam);
+        return commonTaskScheduleService.getCron(mapParam);
     }
 }

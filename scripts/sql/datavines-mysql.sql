@@ -177,12 +177,12 @@ CREATE TABLE `dv_actual_values` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='规则运行结果实际值';
 
 -- ----------------------------
--- Table structure for dv_catalog_metadata_fetch_command
+-- Table structure for dv_common_task_command
 -- ----------------------------
-DROP TABLE IF EXISTS `dv_catalog_metadata_fetch_command`;
-CREATE TABLE `dv_catalog_metadata_fetch_command` (
+DROP TABLE IF EXISTS `dv_common_task_command`;
+CREATE TABLE `dv_common_task_command` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `task_id` bigint(20) NOT NULL COMMENT '元数据抓取任务ID',
+  `task_id` bigint(20) NOT NULL COMMENT '通用任务ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
@@ -352,10 +352,10 @@ CREATE TABLE `dv_catalog_tag_category` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='标签分类';
 
 -- ----------------------------
--- Table structure for dv_catalog_metadata_fetch_task
+-- Table structure for dv_common_task
 -- ----------------------------
-DROP TABLE IF EXISTS `dv_catalog_metadata_fetch_task`;
-CREATE TABLE `dv_catalog_metadata_fetch_task` (
+DROP TABLE IF EXISTS `dv_common_task`;
+CREATE TABLE `dv_common_task` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `task_type` varchar(128) DEFAULT NULL COMMENT '任务类型',
   `type` varchar(128) DEFAULT NULL COMMENT '粒度类型',
@@ -375,11 +375,12 @@ CREATE TABLE `dv_catalog_metadata_fetch_task` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='元数据抓取任务';
 
 -- ----------------------------
--- Table structure for dv_catalog_metadata_fetch_task_schedule
+-- Table structure for dv_common_task_schedule
 -- ----------------------------
-DROP TABLE IF EXISTS `dv_catalog_metadata_fetch_task_schedule`;
-CREATE TABLE `dv_catalog_metadata_fetch_task_schedule` (
+DROP TABLE IF EXISTS `dv_common_task_schedule`;
+CREATE TABLE `dv_common_task_schedule` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `task_type` varchar(128) DEFAULT NULL COMMENT '任务类型',
   `type` varchar(255) NOT NULL COMMENT '调度类型',
   `param` text COMMENT '调度参数',
   `datasource_id` bigint(20) NOT NULL COMMENT '数据源ID',
@@ -583,7 +584,7 @@ CREATE TABLE `dv_job_execution_result` (
   `result_formula` varchar(255) DEFAULT NULL COMMENT '计算结果公式',
   `operator` varchar(255) DEFAULT NULL COMMENT '比较符',
   `threshold` decimal(20,4) DEFAULT NULL COMMENT '阈值',
-  `score` decimal(20,4) DEFAULT NULL COMMENT '质量评分',
+  `score` decimal(20,4) DEFAULT 0 COMMENT '质量评分',
   `state` int(2) NOT NULL DEFAULT '0' COMMENT '结果 1:success/2:fail',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',

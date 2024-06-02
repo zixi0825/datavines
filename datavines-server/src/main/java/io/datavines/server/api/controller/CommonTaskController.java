@@ -18,7 +18,7 @@ package io.datavines.server.api.controller;
 
 import io.datavines.core.aop.RefreshToken;
 import io.datavines.core.constant.DataVinesConstants;
-import io.datavines.server.repository.service.CatalogMetaDataFetchTaskService;
+import io.datavines.server.repository.service.CommonTaskService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.*;
 public class CommonTaskController {
 
     @Autowired
-    private CatalogMetaDataFetchTaskService catalogMetaDataFetchTaskService;
+    private CommonTaskService commonTaskService;
 
     @ApiOperation(value = "get task page")
     @GetMapping(value = "/page")
@@ -42,6 +42,6 @@ public class CommonTaskController {
                        @RequestParam("taskType") String taskType,
                        @RequestParam("pageNumber") Integer pageNumber,
                        @RequestParam("pageSize") Integer pageSize)  {
-        return catalogMetaDataFetchTaskService.getFetchTaskPage(datasourceId, taskType.toLowerCase(), pageNumber, pageSize);
+        return commonTaskService.getFetchTaskPage(datasourceId, taskType.toLowerCase(), pageNumber, pageSize);
     }
 }

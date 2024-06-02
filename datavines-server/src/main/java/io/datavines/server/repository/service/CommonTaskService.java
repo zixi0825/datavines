@@ -20,24 +20,24 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.datavines.server.api.dto.bo.catalog.CatalogRefresh;
 import io.datavines.server.api.dto.vo.catalog.CatalogMetaDataFetchTaskVO;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchTask;
+import io.datavines.server.repository.entity.CommonTask;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface CatalogMetaDataFetchTaskService extends IService<CatalogMetaDataFetchTask> {
+public interface CommonTaskService extends IService<CommonTask> {
 
     long refreshCatalog(CatalogRefresh catalogRefresh);
 
-    int update(CatalogMetaDataFetchTask catalogMetaDataFetchTask);
+    int update(CommonTask commonTask);
 
-    CatalogMetaDataFetchTask getById(long id);
+    CommonTask getById(long id);
 
     Long killCatalogTask(Long catalogTaskId);
 
-    List<CatalogMetaDataFetchTask> listNeedFailover(String host);
+    List<CommonTask> listNeedFailover(String host);
 
-    List<CatalogMetaDataFetchTask> listTaskNotInServerList(List<String> hostList);
+    List<CommonTask> listTaskNotInServerList(List<String> hostList);
 
     String getTaskExecuteHost(Long catalogTaskId);
 

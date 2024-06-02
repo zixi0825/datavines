@@ -18,22 +18,21 @@ package io.datavines.server.scheduler.report;
 
 import io.datavines.common.enums.ExecutionStatus;
 import io.datavines.server.repository.service.JobQualityReportService;
-import io.datavines.server.scheduler.metadata.task.CatalogMetaDataFetchExecutorImpl;
-import io.datavines.server.scheduler.metadata.task.CatalogTaskContext;
-import io.datavines.server.scheduler.metadata.task.CatalogTaskResponse;
-import io.datavines.server.scheduler.metadata.task.CatalogTaskResponseQueue;
+import io.datavines.server.scheduler.CommonTaskContext;
+import io.datavines.server.scheduler.CommonTaskResponse;
+import io.datavines.server.scheduler.CommonTaskResponseQueue;
 import io.datavines.server.utils.SpringApplicationContext;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DataQualityReportTaskRunner implements Runnable {
 
-    private final CatalogTaskContext taskContext;
+    private final CommonTaskContext taskContext;
 
-    private final CatalogTaskResponseQueue responseQueue =
-            SpringApplicationContext.getBean(CatalogTaskResponseQueue.class);
+    private final CommonTaskResponseQueue responseQueue =
+            SpringApplicationContext.getBean(CommonTaskResponseQueue.class);
 
-    public DataQualityReportTaskRunner(CatalogTaskContext taskContext) {
+    public DataQualityReportTaskRunner(CommonTaskContext taskContext) {
         this.taskContext = taskContext;
     }
 
@@ -41,12 +40,12 @@ public class DataQualityReportTaskRunner implements Runnable {
     public void run() {
         try {
             JobQualityReportService jobQualityReportService = SpringApplicationContext.getBean(JobQualityReportService.class);
-            jobQualityReportService.generateQualityReport(taskContext.getCatalogMetaDataFetchRequest().getDataSource().getId());
+            jobQualityReportService.generateQualityReport(taskContext.getCommonTaskRequest().getDataSource().getId());
             log.info("data quality report generate finished");
-            responseQueue.add(new CatalogTaskResponse(taskContext.getCatalogTaskId(), ExecutionStatus.SUCCESS.getCode()));
+            responseQueue.add(new CommonTaskResponse(taskContext.getCatalogTaskId(), ExecutionStatus.SUCCESS.getCode()));
         } catch (Exception e) {
             log.error("data quality report generate error: ", e);
-            responseQueue.add(new CatalogTaskResponse(taskContext.getCatalogTaskId(), ExecutionStatus.FAILURE.getCode()));
+            responseQueue.add(new CommonTaskResponse(taskContext.getCatalogTaskId(), ExecutionStatus.FAILURE.getCode()));
         }
     }
 }

@@ -18,17 +18,17 @@
 package io.datavines.server.repository.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchTaskSchedule;
+import io.datavines.server.repository.entity.CommonTaskSchedule;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 @Mapper
-public interface CatalogMetaDataFetchTaskScheduleMapper extends BaseMapper<CatalogMetaDataFetchTaskSchedule> {
+public interface CommonTaskScheduleMapper extends BaseMapper<CommonTaskSchedule> {
 
-    @Select("SELECT * from dv_catalog_metadata_fetch_task_schedule WHERE datasource_id = #{datasourceId} and task_type = #{taskType} limit 1")
-    CatalogMetaDataFetchTaskSchedule getByDataSourceId(@Param("datasourceId") long datasourceId , @Param("taskType")  String taskType);
+    @Select("SELECT * from dv_common_task_schedule WHERE datasource_id = #{datasourceId} and task_type = #{taskType} limit 1")
+    CommonTaskSchedule getByDataSourceIdAndType(@Param("datasourceId") long datasourceId , @Param("taskType")  String taskType);
 
-    @Select("SELECT * from dv_catalog_metadata_fetch_task_schedule WHERE datasource_id = #{datasourceId} limit 1")
-    CatalogMetaDataFetchTaskSchedule getByDataSourceId(long datasourceIde);
+    @Select("SELECT * from dv_common_task_schedule WHERE datasource_id = #{datasourceId} limit 1")
+    CommonTaskSchedule getByDataSourceId(long datasourceId);
 }

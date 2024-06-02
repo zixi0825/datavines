@@ -137,6 +137,7 @@ const Index = ({
             database: nodeData.parentName || nodeData.dataName,
             datasourceId: id,
             table: nodeData.parentName ? nodeData.dataName : '',
+            taskType: 'CATALOG_METADATA_FETCH'
         });
         message.success(intl.formatMessage({ id: 'common_success' }));
     };

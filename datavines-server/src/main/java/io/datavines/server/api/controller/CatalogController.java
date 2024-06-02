@@ -49,7 +49,7 @@ import java.util.Date;
 public class CatalogController {
 
     @Autowired
-    private CatalogMetaDataFetchTaskService catalogMetaDataFetchTaskService;
+    private CommonTaskService commonTaskService;
 
     @Autowired
     private CatalogEntityInstanceService catalogEntityInstanceService;
@@ -69,7 +69,7 @@ public class CatalogController {
     @ApiOperation(value = "refresh", response = Long.class)
     @PostMapping(value = "/refresh", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Object refreshCatalog(@Valid @RequestBody CatalogRefresh catalogRefresh) {
-        return catalogMetaDataFetchTaskService.refreshCatalog(catalogRefresh);
+        return commonTaskService.refreshCatalog(catalogRefresh);
     }
 
     @ApiOperation(value = "execute data profile job", response = Long.class)

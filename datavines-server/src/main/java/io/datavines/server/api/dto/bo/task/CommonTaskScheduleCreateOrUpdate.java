@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.api.dto.bo.catalog.metadata;
+package io.datavines.server.api.dto.bo.task;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.datavines.server.api.dto.bo.job.schedule.MapParam;
@@ -26,8 +26,8 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
-@NotNull(message = "Catalog MetaData Fetch Task Schedule Create Or Update cannot be null")
-public class CatalogMetaDataFetchTaskScheduleCreateOrUpdate {
+@NotNull(message = "Common Task Schedule Create Or Update cannot be null")
+public class CommonTaskScheduleCreateOrUpdate {
 
     private Long id;
 

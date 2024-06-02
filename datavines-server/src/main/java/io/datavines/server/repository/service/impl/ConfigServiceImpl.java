@@ -72,7 +72,8 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
             throw new DataVinesServerException(Status.CONFIG_NOT_EXIST_ERROR, configUpdate.getVarKey());
         }
 
-        BeanUtils.copyProperties(configUpdate, config);
+        config.setVarKey(configUpdate.getVarKey());
+        config.setVarValue(configUpdate.getVarValue());
         config.setUpdateBy(ContextHolder.getUserId());
         config.setUpdateTime(LocalDateTime.now());
 

@@ -14,20 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.repository.service;
+package io.datavines.server.scheduler;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchCommand;
+import io.datavines.server.enums.CommonTaskType;
+import lombok.Data;
 
-public interface CatalogMetaDataFetchCommandService extends IService<CatalogMetaDataFetchCommand> {
+@Data
+public class CommonTaskContext {
 
-    long create(CatalogMetaDataFetchCommand catalogMetaDataFetchCommand);
+    private CommonTaskType commonTaskType;
 
-    int update(CatalogMetaDataFetchCommand catalogMetaDataFetchCommand);
+    private CommonTaskRequest commonTaskRequest;
 
-    CatalogMetaDataFetchCommand getById(long id);
+    private Long catalogTaskId;
 
-    CatalogMetaDataFetchCommand getOne(int totalSlot,  int currentSlot);
-
-    int deleteById(long id);
+    public CommonTaskContext(CommonTaskType commonTaskType, CommonTaskRequest commonTaskRequest, Long catalogTaskId) {
+        this.commonTaskType = commonTaskType;
+        this.commonTaskRequest = commonTaskRequest;
+        this.catalogTaskId = catalogTaskId;
+    }
 }

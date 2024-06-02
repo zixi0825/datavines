@@ -18,34 +18,34 @@ package io.datavines.server.scheduler.metadata;
 
 import io.datavines.common.enums.ExecutionStatus;
 import io.datavines.server.scheduler.metadata.task.CatalogMetaDataFetchExecutorImpl;
-import io.datavines.server.scheduler.metadata.task.CatalogTaskContext;
-import io.datavines.server.scheduler.metadata.task.CatalogTaskResponse;
-import io.datavines.server.scheduler.metadata.task.CatalogTaskResponseQueue;
+import io.datavines.server.scheduler.CommonTaskContext;
+import io.datavines.server.scheduler.CommonTaskResponse;
+import io.datavines.server.scheduler.CommonTaskResponseQueue;
 import io.datavines.server.utils.SpringApplicationContext;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CatalogMetaDataFetchTaskRunner implements Runnable {
 
-    private final CatalogTaskContext taskContext;
+    private final CommonTaskContext taskContext;
 
-    private final CatalogTaskResponseQueue responseQueue =
-            SpringApplicationContext.getBean(CatalogTaskResponseQueue.class);
+    private final CommonTaskResponseQueue responseQueue =
+            SpringApplicationContext.getBean(CommonTaskResponseQueue.class);
 
-    public CatalogMetaDataFetchTaskRunner(CatalogTaskContext taskContext) {
+    public CatalogMetaDataFetchTaskRunner(CommonTaskContext taskContext) {
         this.taskContext = taskContext;
     }
 
     @Override
     public void run() {
-        CatalogMetaDataFetchExecutorImpl fetchTask = new CatalogMetaDataFetchExecutorImpl(taskContext.getCatalogMetaDataFetchRequest());
+        CatalogMetaDataFetchExecutorImpl fetchTask = new CatalogMetaDataFetchExecutorImpl(taskContext.getCommonTaskRequest());
         try {
             fetchTask.execute();
             log.info("fetch metadata finished");
-            responseQueue.add(new CatalogTaskResponse(taskContext.getCatalogTaskId(), ExecutionStatus.SUCCESS.getCode()));
+            responseQueue.add(new CommonTaskResponse(taskContext.getCatalogTaskId(), ExecutionStatus.SUCCESS.getCode()));
         } catch (Exception e) {
             log.error("fetch metadata error: ", e);
-            responseQueue.add(new CatalogTaskResponse(taskContext.getCatalogTaskId(), ExecutionStatus.FAILURE.getCode()));
+            responseQueue.add(new CommonTaskResponse(taskContext.getCatalogTaskId(), ExecutionStatus.FAILURE.getCode()));
         }
     }
 }

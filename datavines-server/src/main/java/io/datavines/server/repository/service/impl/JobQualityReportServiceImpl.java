@@ -57,9 +57,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.datavines.common.CommonConstants.YYYY_MM_DD_HH_MM_SS;
 import static io.datavines.common.ConfigConstants.*;
-import static io.datavines.common.ConfigConstants.FILTER;
 
 @Service("jobQualityReportService")
 public class JobQualityReportServiceImpl extends ServiceImpl<JobQualityReportMapper, JobQualityReport>  implements JobQualityReportService {
@@ -93,7 +91,6 @@ public class JobQualityReportServiceImpl extends ServiceImpl<JobQualityReportMap
             } else {
                 key = String.format("%s@#@%s@#@%s",executionResult.getDatabaseName(), executionResult.getTableName(), executionResult.getColumnName());
             }
-
 
             Set<String> metricSet = key2MetricMap.get(key);
             if (CollectionUtils.isEmpty(metricSet)) {

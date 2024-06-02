@@ -18,8 +18,8 @@ package io.datavines.server.scheduler;
 
 import io.datavines.common.utils.CommonPropertyUtils;
 import io.datavines.common.utils.NetUtils;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchTask;
-import io.datavines.server.repository.service.CatalogMetaDataFetchTaskService;
+import io.datavines.server.repository.entity.CommonTask;
+import io.datavines.server.repository.service.CommonTaskService;
 import io.datavines.server.utils.SpringApplicationContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,31 +27,31 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.util.List;
 
 @Slf4j
-public class CatalogMetaDataFetchTaskFailover {
+public class CommonTaskFailover {
 
-    private final CatalogMetaDataFetchTaskService metaDataFetchTaskService;
+    private final CommonTaskService commonTaskService;
 
-    private final CatalogMetaDataFetchTaskManager metaDataFetchTaskManager;
+    private final CommonTaskManager commonTaskManager;
 
-    public CatalogMetaDataFetchTaskFailover(CatalogMetaDataFetchTaskManager metaDataFetchTaskManager) {
-        this.metaDataFetchTaskService = SpringApplicationContext.getBean(CatalogMetaDataFetchTaskService.class);
-        this.metaDataFetchTaskManager = metaDataFetchTaskManager;
+    public CommonTaskFailover(CommonTaskManager commonTaskManager) {
+        this.commonTaskService = SpringApplicationContext.getBean(CommonTaskService.class);
+        this.commonTaskManager = commonTaskManager;
     }
 
     public void handleMetaDataFetchTaskFailover(String host) {
-        List<CatalogMetaDataFetchTask> needFailoverTaskList = metaDataFetchTaskService.listNeedFailover(host);
+        List<CommonTask> needFailoverTaskList = commonTaskService.listNeedFailover(host);
         innerHandleMetaDataFetchTaskFailover(needFailoverTaskList);
     }
 
-    private void innerHandleMetaDataFetchTaskFailover(List<CatalogMetaDataFetchTask> needFailover) {
+    private void innerHandleMetaDataFetchTaskFailover(List<CommonTask> needFailover) {
         if (CollectionUtils.isNotEmpty(needFailover)) {
             needFailover.forEach(task -> {
                 task.setExecuteHost(NetUtils.getAddr(
                         CommonPropertyUtils.getInt(CommonPropertyUtils.SERVER_PORT, CommonPropertyUtils.SERVER_PORT_DEFAULT)));
-                metaDataFetchTaskService.updateById(task);
+                commonTaskService.updateById(task);
 
                 try {
-                    metaDataFetchTaskManager.putCatalogTask(task);
+                    commonTaskManager.putCommonTask(task);
                 } catch (Exception e) {
                     log.error("put the task need failover into manager error : ", e);
                 }
@@ -60,7 +60,7 @@ public class CatalogMetaDataFetchTaskFailover {
     }
 
     public void handleMetaDataFetchTaskFailover(List<String> hostList) {
-        List<CatalogMetaDataFetchTask> needFailoverTaskList = metaDataFetchTaskService.listTaskNotInServerList(hostList);
+        List<CommonTask> needFailoverTaskList = commonTaskService.listTaskNotInServerList(hostList);
         innerHandleMetaDataFetchTaskFailover(needFailoverTaskList);
     }
 }

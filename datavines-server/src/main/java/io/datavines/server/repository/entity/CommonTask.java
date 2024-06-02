@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.repository.entity.catalog;
+package io.datavines.server.repository.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -29,8 +29,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("dv_catalog_metadata_fetch_task")
-public class CatalogMetaDataFetchTask implements Serializable {
+@TableName("dv_common_task")
+public class CommonTask implements Serializable {
 
     private static final long serialVersionUID = -1L;
 

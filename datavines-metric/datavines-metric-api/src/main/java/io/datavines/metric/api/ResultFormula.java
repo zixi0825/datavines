@@ -33,7 +33,7 @@ public interface ResultFormula {
 
     BigDecimal getResult(BigDecimal actualValue, BigDecimal expectedValue);
 
-    BigDecimal getScore(BigDecimal actualValue, BigDecimal expectedValue, boolean isSuccess);
+    BigDecimal getScore(BigDecimal actualValue, BigDecimal expectedValue, boolean isSuccess, MetricDirectionType direction);
 
     String getResultFormat(boolean isEn);
 

@@ -16,6 +16,7 @@
  */
 package io.datavines.metric.result.formula;
 
+import io.datavines.metric.api.MetricDirectionType;
 import io.datavines.metric.api.ResultFormula;
 import io.datavines.metric.api.ResultFormulaType;
 
@@ -39,7 +40,7 @@ public class ActualMinusExpectedDiff implements ResultFormula {
     }
 
     @Override
-    public BigDecimal getScore(BigDecimal actualValue, BigDecimal expectedValue, boolean isSuccess) {
+    public BigDecimal getScore(BigDecimal actualValue, BigDecimal expectedValue, boolean isSuccess, MetricDirectionType direction) {
         return isSuccess ? new BigDecimal(100) : new BigDecimal(0) ;
     }
 

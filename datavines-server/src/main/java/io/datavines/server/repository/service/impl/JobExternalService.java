@@ -28,8 +28,8 @@ import io.datavines.server.repository.entity.Command;
 import io.datavines.server.repository.entity.Job;
 import io.datavines.server.repository.entity.JobExecution;
 import io.datavines.server.repository.entity.JobExecutionResult;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchCommand;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchTask;
+import io.datavines.server.repository.entity.CommonTaskCommand;
+import io.datavines.server.repository.entity.CommonTask;
 import io.datavines.server.repository.service.*;
 import io.datavines.server.utils.DefaultDataSourceInfoUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -62,10 +62,10 @@ public class JobExternalService {
     private ActualValuesService actualValuesService;
 
     @Autowired
-    private CatalogMetaDataFetchCommandService catalogMetaDataFetchCommandService;
+    private CommonTaskCommandService commonTaskCommandService;
 
     @Autowired
-    private CatalogMetaDataFetchTaskService catalogMetaDataFetchTaskService;
+    private CommonTaskService commonTaskService;
 
     @Autowired
     private DataSourceService dataSourceService;
@@ -85,8 +85,8 @@ public class JobExternalService {
         return commandService.getOne(totalSlot, currentSlot);
     }
 
-    public CatalogMetaDataFetchCommand getCatalogCommand(int totalSlot,  int currentSlot){
-        return catalogMetaDataFetchCommandService.getOne(totalSlot, currentSlot);
+    public CommonTaskCommand getCatalogCommand(int totalSlot, int currentSlot){
+        return commonTaskCommandService.getOne(totalSlot, currentSlot);
     }
 
     public int deleteCommandById(long id){
@@ -94,15 +94,15 @@ public class JobExternalService {
     }
 
     public int deleteCatalogCommandById(long id){
-        return catalogMetaDataFetchCommandService.deleteById(id);
+        return commonTaskCommandService.deleteById(id);
     }
 
     public JobExecution executeCommand(Command command){
         return jobExecutionService.getById(command.getJobExecutionId());
     }
 
-    public CatalogMetaDataFetchTask executeCatalogCommand(CatalogMetaDataFetchCommand command){
-        return catalogMetaDataFetchTaskService.getById(command.getTaskId());
+    public CommonTask executeCatalogCommand(CommonTaskCommand command){
+        return commonTaskService.getById(command.getTaskId());
     }
 
     public int updateJobExecution(JobExecution jobExecution){
@@ -208,8 +208,8 @@ public class JobExternalService {
         return dataSourceService;
     }
 
-    public CatalogMetaDataFetchTaskService getCatalogTaskService() {
-        return catalogMetaDataFetchTaskService;
+    public CommonTaskService getCatalogTaskService() {
+        return commonTaskService;
     }
 
     public JobExecutionResultService getJobExecutionResultService() {

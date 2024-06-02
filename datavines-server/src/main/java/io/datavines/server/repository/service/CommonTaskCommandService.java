@@ -14,28 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.datavines.server.repository.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import io.datavines.core.exception.DataVinesServerException;
-import io.datavines.server.api.dto.bo.catalog.metadata.CatalogMetaDataFetchTaskScheduleCreateOrUpdate;
-import io.datavines.server.api.dto.bo.job.schedule.MapParam;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchTaskSchedule;
+import io.datavines.server.repository.entity.CommonTaskCommand;
 
-import java.util.List;
+public interface CommonTaskCommandService extends IService<CommonTaskCommand> {
 
-public interface CatalogMetaDataFetchTaskScheduleService extends IService<CatalogMetaDataFetchTaskSchedule> {
+    long create(CommonTaskCommand commonTaskCommand);
 
-    CatalogMetaDataFetchTaskSchedule createOrUpdate(CatalogMetaDataFetchTaskScheduleCreateOrUpdate scheduleCreate) throws DataVinesServerException;
+    int update(CommonTaskCommand commonTaskCommand);
 
-    boolean deleteById(long id);
+    CommonTaskCommand getById(long id);
 
-    boolean deleteByDataSourceId(long datasourceId);
+    CommonTaskCommand getOne(int totalSlot, int currentSlot);
 
-    CatalogMetaDataFetchTaskSchedule getById(long id);
-
-    CatalogMetaDataFetchTaskSchedule getByDataSourceId(Long dataSourceId, String taskType);
-
-    List<String> getCron(MapParam mapParam);
+    int deleteById(long id);
 }

@@ -14,23 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.scheduler.metadata.task;
+package io.datavines.server.repository.mapper;
 
-import io.datavines.server.enums.CommonTaskType;
-import lombok.Data;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
-@Data
-public class CatalogTaskContext {
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.datavines.server.api.dto.vo.catalog.CatalogMetaDataFetchTaskVO;
+import io.datavines.server.repository.entity.CommonTask;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-    private CommonTaskType commonTaskType;
+@Mapper
+public interface CommonTaskMapper extends BaseMapper<CommonTask>  {
 
-    private CatalogMetaDataFetchRequest catalogMetaDataFetchRequest;
-
-    private Long catalogTaskId;
-
-    public CatalogTaskContext(CommonTaskType commonTaskType, CatalogMetaDataFetchRequest catalogMetaDataFetchRequest, Long catalogTaskId) {
-        this.commonTaskType = commonTaskType;
-        this.catalogMetaDataFetchRequest = catalogMetaDataFetchRequest;
-        this.catalogTaskId = catalogTaskId;
-    }
+    IPage<CatalogMetaDataFetchTaskVO> getJobExecutionPage(Page<CatalogMetaDataFetchTaskVO> page,
+                                                          @Param("datasourceId") Long datasourceId, @Param("taskType") String taskType);
 }

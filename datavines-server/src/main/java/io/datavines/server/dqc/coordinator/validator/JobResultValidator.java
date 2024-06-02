@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.dqc.coordinator.operator;
+package io.datavines.server.dqc.coordinator.validator;
 
 import io.datavines.common.entity.JobExecutionRequest;
 import io.datavines.common.enums.OperatorType;

@@ -32,12 +32,12 @@ import io.datavines.server.api.dto.vo.catalog.CatalogMetaDataFetchTaskVO;
 import io.datavines.server.enums.CommonTaskType;
 import io.datavines.server.enums.FetchType;
 import io.datavines.server.registry.RegistryHolder;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchCommand;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchTask;
-import io.datavines.server.repository.mapper.CatalogMetaDataFetchTaskMapper;
-import io.datavines.server.repository.service.CatalogMetaDataFetchCommandService;
-import io.datavines.server.repository.service.CatalogMetaDataFetchTaskScheduleService;
-import io.datavines.server.repository.service.CatalogMetaDataFetchTaskService;
+import io.datavines.server.repository.entity.CommonTaskCommand;
+import io.datavines.server.repository.entity.CommonTask;
+import io.datavines.server.repository.mapper.CommonTaskMapper;
+import io.datavines.server.repository.service.CommonTaskCommandService;
+import io.datavines.server.repository.service.CommonTaskScheduleService;
+import io.datavines.server.repository.service.CommonTaskService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,16 +50,16 @@ import java.util.Map;
 import static io.datavines.common.ConfigConstants.DATABASE;
 import static io.datavines.common.ConfigConstants.TABLE;
 
-@Service("catalogMetaDataFetchTaskService")
-public class CatalogMetaDataFetchTaskServiceImpl
-        extends ServiceImpl<CatalogMetaDataFetchTaskMapper, CatalogMetaDataFetchTask>
-        implements CatalogMetaDataFetchTaskService {
+@Service("commonTaskService")
+public class CommonTaskServiceImpl
+        extends ServiceImpl<CommonTaskMapper, CommonTask>
+        implements CommonTaskService {
 
     @Autowired
-    private CatalogMetaDataFetchCommandService catalogMetaDataFetchCommandService;
+    private CommonTaskCommandService commonTaskCommandService;
 
     @Autowired
-    private CatalogMetaDataFetchTaskScheduleService catalogMetaDataFetchTaskScheduleService;
+    private CommonTaskScheduleService commonTaskScheduleService;
 
     @Autowired
     private RegistryHolder registryHolder;
@@ -70,13 +70,13 @@ public class CatalogMetaDataFetchTaskServiceImpl
 
         Long taskId = 0L;
         registryHolder.blockUtilAcquireLock("1028");
-        QueryWrapper<CatalogMetaDataFetchTask> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<CommonTask> queryWrapper = new QueryWrapper<>();
 
-        queryWrapper.lambda().eq(CatalogMetaDataFetchTask::getStatus,0)
-                .eq(CatalogMetaDataFetchTask::getTaskType, CommonTaskType.CATALOG_METADATA_FETCH)
-                .eq(CatalogMetaDataFetchTask::getDataSourceId, catalogRefresh.getDatasourceId())
-                .eq(CatalogMetaDataFetchTask::getParameter, JSONUtils.toJsonString(catalogRefresh));
-        List<CatalogMetaDataFetchTask> oldTaskList = baseMapper.selectList(queryWrapper);
+        queryWrapper.lambda().eq(CommonTask::getStatus,0)
+                .eq(CommonTask::getTaskType, CommonTaskType.CATALOG_METADATA_FETCH)
+                .eq(CommonTask::getDataSourceId, catalogRefresh.getDatasourceId())
+                .eq(CommonTask::getParameter, JSONUtils.toJsonString(catalogRefresh));
+        List<CommonTask> oldTaskList = baseMapper.selectList(queryWrapper);
 
         if (CollectionUtils.isNotEmpty(oldTaskList)) {
             registryHolder.release("1028");
@@ -84,15 +84,15 @@ public class CatalogMetaDataFetchTaskServiceImpl
         }
         //生成任务之前需要检查是否有相同的任务在执行
         LocalDateTime now = LocalDateTime.now();
-        CatalogMetaDataFetchTask catalogMetaDataFetchTask = new CatalogMetaDataFetchTask();
-        catalogMetaDataFetchTask.setTaskType(catalogRefresh.getTaskType());
-        catalogMetaDataFetchTask.setParameter(JSONUtils.toJsonString(catalogRefresh));
-        catalogMetaDataFetchTask.setDataSourceId(catalogRefresh.getDatasourceId());
-        catalogMetaDataFetchTask.setStatus(0);
-        catalogMetaDataFetchTask.setExecuteHost(NetUtils.getAddr(
+        CommonTask commonTask = new CommonTask();
+        commonTask.setTaskType(catalogRefresh.getTaskType());
+        commonTask.setParameter(JSONUtils.toJsonString(catalogRefresh));
+        commonTask.setDataSourceId(catalogRefresh.getDatasourceId());
+        commonTask.setStatus(0);
+        commonTask.setExecuteHost(NetUtils.getAddr(
                 CommonPropertyUtils.getInt(CommonPropertyUtils.SERVER_PORT, CommonPropertyUtils.SERVER_PORT_DEFAULT)));
-
-        String parameter = catalogMetaDataFetchTask.getParameter();
+        commonTask.setTaskType(catalogRefresh.getTaskType());
+        String parameter = commonTask.getParameter();
         if (StringUtils.isNotEmpty(parameter)) {
             Map<String, String> parameterMap = JSONUtils.toMap(parameter);
             if (parameterMap != null) {
@@ -100,7 +100,7 @@ public class CatalogMetaDataFetchTaskServiceImpl
                 String table = parameterMap.get(TABLE);
 
                 if (StringUtils.isEmpty(database) && StringUtils.isEmpty(table)) {
-                    catalogMetaDataFetchTask.setType(FetchType.DATASOURCE);
+                    commonTask.setType(FetchType.DATASOURCE);
                 }
 
                 if (StringUtils.isEmpty(database) && StringUtils.isNotEmpty(table)) {
@@ -108,42 +108,42 @@ public class CatalogMetaDataFetchTaskServiceImpl
                 }
 
                 if (StringUtils.isNotEmpty(database) && StringUtils.isEmpty(table)) {
-                    catalogMetaDataFetchTask.setDatabaseName(database);
-                    catalogMetaDataFetchTask.setType(FetchType.DATABASE);
+                    commonTask.setDatabaseName(database);
+                    commonTask.setType(FetchType.DATABASE);
                 }
 
                 if (StringUtils.isNotEmpty(database) && StringUtils.isNotEmpty(table)) {
-                    catalogMetaDataFetchTask.setTableName(table);
-                    catalogMetaDataFetchTask.setDatabaseName(database);
-                    catalogMetaDataFetchTask.setType(FetchType.TABLE);
+                    commonTask.setTableName(table);
+                    commonTask.setDatabaseName(database);
+                    commonTask.setType(FetchType.TABLE);
                 }
             }
         }
 
-        catalogMetaDataFetchTask.setSubmitTime(now);
-        catalogMetaDataFetchTask.setCreateTime(now);
-        catalogMetaDataFetchTask.setUpdateTime(now);
+        commonTask.setSubmitTime(now);
+        commonTask.setCreateTime(now);
+        commonTask.setUpdateTime(now);
 
-        baseMapper.insert(catalogMetaDataFetchTask);
+        baseMapper.insert(commonTask);
 
-        CatalogMetaDataFetchCommand catalogMetaDataFetchCommand = new CatalogMetaDataFetchCommand();
-        catalogMetaDataFetchCommand.setTaskId(catalogMetaDataFetchTask.getId());
-        catalogMetaDataFetchCommand.setCreateTime(now);
-        catalogMetaDataFetchCommand.setUpdateTime(now);
-        catalogMetaDataFetchCommandService.create(catalogMetaDataFetchCommand);
-        taskId = catalogMetaDataFetchTask.getId();
+        CommonTaskCommand commonTaskCommand = new CommonTaskCommand();
+        commonTaskCommand.setTaskId(commonTask.getId());
+        commonTaskCommand.setCreateTime(now);
+        commonTaskCommand.setUpdateTime(now);
+        commonTaskCommandService.create(commonTaskCommand);
+        taskId = commonTask.getId();
         registryHolder.release("1028");
 
         return taskId;
     }
 
     @Override
-    public int update(CatalogMetaDataFetchTask catalogMetaDataFetchTask) {
-        return baseMapper.updateById(catalogMetaDataFetchTask);
+    public int update(CommonTask commonTask) {
+        return baseMapper.updateById(commonTask);
     }
 
     @Override
-    public CatalogMetaDataFetchTask getById(long id) {
+    public CommonTask getById(long id) {
         return baseMapper.selectById(id);
     }
 
@@ -153,17 +153,17 @@ public class CatalogMetaDataFetchTaskServiceImpl
     }
 
     @Override
-    public List<CatalogMetaDataFetchTask> listNeedFailover(String host) {
-        return baseMapper.selectList(new QueryWrapper<CatalogMetaDataFetchTask>().lambda()
-                .eq(CatalogMetaDataFetchTask::getExecuteHost, host)
-                .in(CatalogMetaDataFetchTask::getStatus, ExecutionStatus.RUNNING_EXECUTION.getCode(), ExecutionStatus.SUBMITTED_SUCCESS.getCode()));
+    public List<CommonTask> listNeedFailover(String host) {
+        return baseMapper.selectList(new QueryWrapper<CommonTask>().lambda()
+                .eq(CommonTask::getExecuteHost, host)
+                .in(CommonTask::getStatus, ExecutionStatus.RUNNING_EXECUTION.getCode(), ExecutionStatus.SUBMITTED_SUCCESS.getCode()));
     }
 
     @Override
-    public List<CatalogMetaDataFetchTask> listTaskNotInServerList(List<String> hostList) {
-        return baseMapper.selectList(new QueryWrapper<CatalogMetaDataFetchTask>().lambda()
-                .notIn(CatalogMetaDataFetchTask::getExecuteHost, hostList)
-                .in(CatalogMetaDataFetchTask::getStatus,ExecutionStatus.RUNNING_EXECUTION.getCode(), ExecutionStatus.SUBMITTED_SUCCESS.getCode()));
+    public List<CommonTask> listTaskNotInServerList(List<String> hostList) {
+        return baseMapper.selectList(new QueryWrapper<CommonTask>().lambda()
+                .notIn(CommonTask::getExecuteHost, hostList)
+                .in(CommonTask::getStatus,ExecutionStatus.RUNNING_EXECUTION.getCode(), ExecutionStatus.SUBMITTED_SUCCESS.getCode()));
     }
 
     @Override
@@ -174,21 +174,21 @@ public class CatalogMetaDataFetchTaskServiceImpl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteByDataSourceId(long dataSourceId) {
-        remove(new QueryWrapper<CatalogMetaDataFetchTask>().lambda().eq(CatalogMetaDataFetchTask::getDataSourceId, dataSourceId));
-        catalogMetaDataFetchTaskScheduleService.deleteByDataSourceId(dataSourceId);
+        remove(new QueryWrapper<CommonTask>().lambda().eq(CommonTask::getDataSourceId, dataSourceId));
+        commonTaskScheduleService.deleteByDataSourceId(dataSourceId);
         return false;
     }
 
     @Override
     public LocalDateTime getRefreshTime(long dataSourceId, String databaseName, String tableName) {
 
-        CatalogMetaDataFetchTask task = null;
-        QueryWrapper<CatalogMetaDataFetchTask> queryWrapper = new QueryWrapper<>();
+        CommonTask task = null;
+        QueryWrapper<CommonTask> queryWrapper = new QueryWrapper<>();
         LocalDateTime refreshTime = null;
 
-        queryWrapper.lambda().eq(CatalogMetaDataFetchTask::getDataSourceId,dataSourceId)
-                .eq(CatalogMetaDataFetchTask::getType,FetchType.DATASOURCE)
-                .orderByDesc(CatalogMetaDataFetchTask::getCreateTime).last("limit 1");
+        queryWrapper.lambda().eq(CommonTask::getDataSourceId,dataSourceId)
+                .eq(CommonTask::getType,FetchType.DATASOURCE)
+                .orderByDesc(CommonTask::getCreateTime).last("limit 1");
         task = getOne(queryWrapper);
         if (task != null) {
             refreshTime = task.getCreateTime();
@@ -196,10 +196,10 @@ public class CatalogMetaDataFetchTaskServiceImpl
 
         if (StringUtils.isNotEmpty(databaseName)) {
             queryWrapper = new QueryWrapper<>();
-            queryWrapper.lambda().eq(CatalogMetaDataFetchTask::getDataSourceId,dataSourceId)
-                    .eq(CatalogMetaDataFetchTask::getDatabaseName, databaseName)
-                    .eq(CatalogMetaDataFetchTask::getType,FetchType.DATABASE)
-                    .orderByDesc(CatalogMetaDataFetchTask::getCreateTime).last("limit 1");
+            queryWrapper.lambda().eq(CommonTask::getDataSourceId,dataSourceId)
+                    .eq(CommonTask::getDatabaseName, databaseName)
+                    .eq(CommonTask::getType,FetchType.DATABASE)
+                    .orderByDesc(CommonTask::getCreateTime).last("limit 1");
             task = getOne(queryWrapper);
             if (task != null) {
                 if (refreshTime == null || task.getCreateTime().isAfter(refreshTime)) {
@@ -210,10 +210,10 @@ public class CatalogMetaDataFetchTaskServiceImpl
 
         if (StringUtils.isNotEmpty(databaseName) && StringUtils.isNotEmpty(tableName)) {
             queryWrapper = new QueryWrapper<>();
-            queryWrapper.lambda().eq(CatalogMetaDataFetchTask::getDataSourceId,dataSourceId)
-                    .eq(CatalogMetaDataFetchTask::getDatabaseName, databaseName)
-                    .eq(CatalogMetaDataFetchTask::getTableName,tableName)
-                    .orderByDesc(CatalogMetaDataFetchTask::getCreateTime).last("limit 1");
+            queryWrapper.lambda().eq(CommonTask::getDataSourceId,dataSourceId)
+                    .eq(CommonTask::getDatabaseName, databaseName)
+                    .eq(CommonTask::getTableName,tableName)
+                    .orderByDesc(CommonTask::getCreateTime).last("limit 1");
             task = getOne(queryWrapper);
             if (task != null) {
                 if (refreshTime == null || task.getCreateTime().isAfter(refreshTime)) {

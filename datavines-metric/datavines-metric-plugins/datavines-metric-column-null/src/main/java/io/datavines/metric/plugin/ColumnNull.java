@@ -18,6 +18,7 @@ package io.datavines.metric.plugin;
 
 import io.datavines.common.enums.DataVinesDataType;
 import io.datavines.metric.api.MetricDimension;
+import io.datavines.metric.api.MetricDirectionType;
 import io.datavines.metric.api.MetricType;
 import io.datavines.metric.plugin.base.BaseSingleTableColumn;
 
@@ -68,5 +69,10 @@ public class ColumnNull extends BaseSingleTableColumn {
     @Override
     public List<DataVinesDataType> suitableType() {
         return Arrays.asList(DataVinesDataType.NUMERIC_TYPE, DataVinesDataType.STRING_TYPE, DataVinesDataType.DATE_TIME_TYPE);
+    }
+
+    @Override
+    public MetricDirectionType getDirectionType() {
+        return MetricDirectionType.NEGATIVE;
     }
 }

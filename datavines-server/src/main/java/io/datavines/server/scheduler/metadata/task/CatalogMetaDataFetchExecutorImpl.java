@@ -40,6 +40,7 @@ import io.datavines.server.repository.entity.catalog.CatalogSchemaChange;
 import io.datavines.server.repository.service.CatalogEntityInstanceService;
 import io.datavines.server.repository.service.CatalogEntityRelService;
 import io.datavines.server.repository.service.CatalogSchemaChangeService;
+import io.datavines.server.scheduler.CommonTaskRequest;
 import io.datavines.server.utils.SpringApplicationContext;
 import io.datavines.spi.PluginLoader;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +58,7 @@ import static io.datavines.core.enums.Status.CATALOG_FETCH_DATASOURCE_NULL_ERROR
 @Slf4j
 public class CatalogMetaDataFetchExecutorImpl implements CatalogMetaDataFetchExecutor {
 
-    private final CatalogMetaDataFetchRequest request;
+    private final CommonTaskRequest request;
 
     private final ConnectorFactory connectorFactory;
 
@@ -69,7 +70,7 @@ public class CatalogMetaDataFetchExecutorImpl implements CatalogMetaDataFetchExe
 
     private final DataSource dataSource;
 
-    public CatalogMetaDataFetchExecutorImpl(CatalogMetaDataFetchRequest request) {
+    public CatalogMetaDataFetchExecutorImpl(CommonTaskRequest request) {
         this.request = request;
 
         if (request.getDataSource() == null) {

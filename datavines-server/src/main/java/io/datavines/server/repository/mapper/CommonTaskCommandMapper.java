@@ -17,18 +17,14 @@
 package io.datavines.server.repository.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.datavines.server.api.dto.vo.catalog.CatalogMetaDataFetchTaskVO;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchTask;
+import io.datavines.server.repository.entity.CommonTaskCommand;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 @Mapper
-public interface CatalogMetaDataFetchTaskMapper extends BaseMapper<CatalogMetaDataFetchTask>  {
+public interface CommonTaskCommandMapper extends BaseMapper<CommonTaskCommand> {
 
-    IPage<CatalogMetaDataFetchTaskVO> getJobExecutionPage(Page<CatalogMetaDataFetchTaskVO> page,
-                                                          @Param("datasourceId") Long datasourceId,
-                                                          @Param("taskType") String taskType);
+    @Select("SELECT * from dv_common_task_command where id % #{totalSlot} = #{currentSlot} order by update_time limit 1 ")
+    CommonTaskCommand getOne(@Param("totalSlot") int totalSlot, @Param("currentSlot") int currentSlot);
 }

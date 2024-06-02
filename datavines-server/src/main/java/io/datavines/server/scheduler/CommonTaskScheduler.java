@@ -18,8 +18,8 @@ package io.datavines.server.scheduler;
 
 import io.datavines.common.utils.*;
 import io.datavines.server.registry.Register;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchCommand;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchTask;
+import io.datavines.server.repository.entity.CommonTaskCommand;
+import io.datavines.server.repository.entity.CommonTask;
 import io.datavines.server.repository.service.impl.JobExternalService;
 import io.datavines.server.utils.SpringApplicationContext;
 import lombok.extern.slf4j.Slf4j;
@@ -28,29 +28,29 @@ import static io.datavines.common.CommonConstants.SLEEP_TIME_MILLIS;
 import static io.datavines.common.utils.CommonPropertyUtils.*;
 
 @Slf4j
-public class CatalogMetaDataFetchTaskScheduler extends Thread {
+public class CommonTaskScheduler extends Thread {
 
     private static final int[] RETRY_BACKOFF = {1, 2, 3, 5, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
 
     private final JobExternalService jobExternalService;
 
-    private final CatalogMetaDataFetchTaskManager catalogMetaDataFetchTaskManager;
+    private final CommonTaskManager commonTaskManager;
 
     private final Register register;
 
-    public CatalogMetaDataFetchTaskScheduler(CatalogMetaDataFetchTaskManager catalogMetaDataFetchTaskManager, Register register){
+    public CommonTaskScheduler(CommonTaskManager commonTaskManager, Register register){
         this.jobExternalService = SpringApplicationContext.getBean(JobExternalService.class);
-        this.catalogMetaDataFetchTaskManager = catalogMetaDataFetchTaskManager;
+        this.commonTaskManager = commonTaskManager;
         this.register = register;
     }
 
     @Override
     public void run() {
-        log.info("catalog metadata fetch task scheduler started");
+        log.info("common task scheduler started");
 
         int retryNum = 0;
         while (Stopper.isRunning()) {
-            CatalogMetaDataFetchCommand command = null;
+            CommonTaskCommand command = null;
             try {
                 boolean runCheckFlag = OSUtils.checkResource(
                         CommonPropertyUtils.getDouble(MAX_CPU_LOAD_AVG, MAX_CPU_LOAD_AVG_DEFAULT),
@@ -64,10 +64,10 @@ public class CatalogMetaDataFetchTaskScheduler extends Thread {
                 command = jobExternalService.getCatalogCommand(register.getTotalSlot(), register.getSlot());
 
                 if (command != null) {
-                    CatalogMetaDataFetchTask task = jobExternalService.executeCatalogCommand(command);
+                    CommonTask task = jobExternalService.executeCatalogCommand(command);
                     if (task != null) {
                         log.info("start submit catalog metadata fetch task : {} ", JSONUtils.toJsonString(task));
-                        catalogMetaDataFetchTaskManager.putCatalogTask(task);
+                        commonTaskManager.putCommonTask(task);
                         log.info(String.format("submit success, catalog metadata fetch task : %s", task.getParameter()) );
                     } else {
                         log.warn("catalog metadata fetch task {} is null", command.getTaskId());

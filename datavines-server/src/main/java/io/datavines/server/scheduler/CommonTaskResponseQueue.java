@@ -14,22 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.scheduler.metadata.task;
+package io.datavines.server.scheduler;
 
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
 @Component
-public class CatalogTaskResponseQueue {
+public class CommonTaskResponseQueue {
 
-    private final LinkedBlockingQueue<CatalogTaskResponse> responseQueue = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<CommonTaskResponse> responseQueue = new LinkedBlockingQueue<>();
 
-    public boolean add(CatalogTaskResponse catalogTaskResponse) {
-        return responseQueue.add(catalogTaskResponse);
+    public boolean add(CommonTaskResponse commonTaskResponse) {
+        return responseQueue.add(commonTaskResponse);
     }
 
-    public CatalogTaskResponse take() throws InterruptedException {
+    public CommonTaskResponse take() throws InterruptedException {
         return responseQueue.take();
     }
 }

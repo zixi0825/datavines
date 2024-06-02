@@ -92,4 +92,8 @@ public interface SqlMetric {
     default List<Map<String,Object>> getMetricParameter(Map<String,Object> metricParameter) {
         return Collections.singletonList(metricParameter);
     }
+
+    default MetricDirectionType getDirectionType() {
+        return MetricDirectionType.POSITIVE;
+    }
 }

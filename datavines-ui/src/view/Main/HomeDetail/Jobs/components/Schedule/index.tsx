@@ -535,9 +535,17 @@ const ScheduleContainer = ({
     }, [jobId]);
     const onSave = async (type:string = 'add') => {
         if (type === 'push') {
-            await $http.post('/catalog/refresh', {
-                datasourceId: jobId,
-            });
+            if (taskType === '-1') {
+                await $http.post('/catalog/refresh', {
+                    datasourceId: jobId
+                });
+            } else {
+                await $http.post('/catalog/refresh', {
+                    datasourceId: jobId,
+                    taskType: taskType
+                });
+            }
+
             // eslint-disable-next-line no-unused-expressions
             onSavaEnd && onSavaEnd();
             message.success(intl.formatMessage({ id: 'common_success' }));
@@ -552,7 +560,7 @@ const ScheduleContainer = ({
                     entityUUID: jobId,
                     ...params,
                 };
-                if (api === 'catalog/metadata') {
+                if (taskType !== '-1') {
                     $params.dataSourceId = jobId;
                     $params.taskType = taskType;
                 }

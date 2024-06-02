@@ -50,8 +50,10 @@ public class MetricValidator {
 
         ResultFormula resultFormula = PluginLoader.getPluginLoader(ResultFormula.class)
                 .getOrCreatePlugin(executionResult.getResultFormula());
+        SqlMetric metric = PluginLoader.getPluginLoader(SqlMetric.class)
+                .getOrCreatePlugin(executionResult.getMetricName());
 
-        return resultFormula.getScore(actualValue, expectedValue, isSuccess);
+        return resultFormula.getScore(actualValue, expectedValue, isSuccess, metric.getDirectionType());
     }
 
     private static boolean getCompareResult(OperatorType operatorType, BigDecimal srcValue, BigDecimal targetValue) {

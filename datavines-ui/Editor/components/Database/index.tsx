@@ -654,6 +654,7 @@ const Index = ({ onShowModal, afterClose }:DIndexProps) => {
             database: selectDatabases[1]?.name,
             datasourceId: id,
             table: selectDatabases[2] ? selectDatabases[2]?.name : '',
+            taskType: 'CATALOG_METADATA_FETCH'
         });
         message.success(intl.formatMessage({ id: 'common_success' }));
     };

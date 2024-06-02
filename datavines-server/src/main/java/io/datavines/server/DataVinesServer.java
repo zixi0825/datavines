@@ -23,9 +23,9 @@ import io.datavines.common.utils.Stopper;
 import io.datavines.common.utils.ThreadUtils;
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.registry.api.Registry;
-import io.datavines.server.scheduler.CatalogMetaDataFetchTaskManager;
-import io.datavines.server.scheduler.CatalogMetaDataFetchTaskScheduler;
-import io.datavines.server.scheduler.CatalogMetaDataFetchTaskFailover;
+import io.datavines.server.scheduler.CommonTaskManager;
+import io.datavines.server.scheduler.CommonTaskScheduler;
+import io.datavines.server.scheduler.CommonTaskFailover;
 import io.datavines.server.dqc.coordinator.cache.JobExecutionResponseProcessor;
 import io.datavines.server.registry.Register;
 import io.datavines.server.dqc.coordinator.cache.JobExecuteManager;
@@ -82,10 +82,10 @@ public class DataVinesServer {
 
         JobExecutionResponseProcessor.getInstance().setJobExecuteManager(jobExecuteManager);
 
-        CatalogMetaDataFetchTaskManager catalogMetaDataFetchTaskManager = new CatalogMetaDataFetchTaskManager();
-        catalogMetaDataFetchTaskManager.start();
+        CommonTaskManager commonTaskManager = new CommonTaskManager();
+        commonTaskManager.start();
 
-        CatalogMetaDataFetchTaskFailover catalogMetaDataFetchTaskFailover = new CatalogMetaDataFetchTaskFailover(catalogMetaDataFetchTaskManager);
+        CommonTaskFailover commonTaskFailover = new CommonTaskFailover(commonTaskManager);
 
         jobExecutionFailover = new JobExecutionFailover(jobExecuteManager);
 
@@ -96,15 +96,15 @@ public class DataVinesServer {
         registry.init(CommonPropertyUtils.getProperties());
         registryHolder.setRegistry(registry);
 
-        register = new Register(registry, jobExecutionFailover, catalogMetaDataFetchTaskFailover);
+        register = new Register(registry, jobExecutionFailover, commonTaskFailover);
         register.start();
 
         //start job scheduler
         JobScheduler jobScheduler = new JobScheduler(jobExecuteManager, register);
         jobScheduler.start();
 
-        CatalogMetaDataFetchTaskScheduler catalogMetaDataFetchTaskScheduler = new CatalogMetaDataFetchTaskScheduler(catalogMetaDataFetchTaskManager, register);
-        catalogMetaDataFetchTaskScheduler.start();
+        CommonTaskScheduler commonTaskScheduler = new CommonTaskScheduler(commonTaskManager, register);
+        commonTaskScheduler.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> close("shutdownHook")));
     }

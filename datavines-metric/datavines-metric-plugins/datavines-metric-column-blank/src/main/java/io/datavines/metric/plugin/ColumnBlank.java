@@ -18,10 +18,10 @@ package io.datavines.metric.plugin;
 
 import io.datavines.common.enums.DataVinesDataType;
 import io.datavines.metric.api.MetricDimension;
+import io.datavines.metric.api.MetricDirectionType;
 import io.datavines.metric.api.MetricType;
 import io.datavines.metric.plugin.base.BaseSingleTableColumn;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -68,5 +68,10 @@ public class ColumnBlank extends BaseSingleTableColumn {
     @Override
     public List<DataVinesDataType> suitableType() {
         return Collections.singletonList(DataVinesDataType.STRING_TYPE);
+    }
+
+    @Override
+    public MetricDirectionType getDirectionType() {
+        return MetricDirectionType.NEGATIVE;
     }
 }

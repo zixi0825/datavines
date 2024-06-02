@@ -17,35 +17,35 @@
 package io.datavines.server.repository.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.datavines.server.repository.entity.catalog.CatalogMetaDataFetchCommand;
-import io.datavines.server.repository.mapper.CatalogMetaDataFetchCommandMapper;
-import io.datavines.server.repository.service.CatalogMetaDataFetchCommandService;
+import io.datavines.server.repository.entity.CommonTaskCommand;
+import io.datavines.server.repository.mapper.CommonTaskCommandMapper;
+import io.datavines.server.repository.service.CommonTaskCommandService;
 
 import org.springframework.stereotype.Service;
 
-@Service("catalogCommandService")
-public class CatalogMetaDataFetchCommandServiceImpl
-        extends ServiceImpl<CatalogMetaDataFetchCommandMapper, CatalogMetaDataFetchCommand>
-        implements CatalogMetaDataFetchCommandService {
+@Service("ccommonTaskCommandService")
+public class CommonTaskCommandServiceImpl
+        extends ServiceImpl<CommonTaskCommandMapper, CommonTaskCommand>
+        implements CommonTaskCommandService {
 
     @Override
-    public long create(CatalogMetaDataFetchCommand catalogMetaDataFetchCommand) {
-        baseMapper.insert(catalogMetaDataFetchCommand);
-        return catalogMetaDataFetchCommand.getId();
+    public long create(CommonTaskCommand commonTaskCommand) {
+        baseMapper.insert(commonTaskCommand);
+        return commonTaskCommand.getId();
     }
 
     @Override
-    public int update(CatalogMetaDataFetchCommand catalogMetaDataFetchCommand) {
+    public int update(CommonTaskCommand commonTaskCommand) {
         return 0;
     }
 
     @Override
-    public CatalogMetaDataFetchCommand getById(long id) {
+    public CommonTaskCommand getById(long id) {
         return null;
     }
 
     @Override
-    public CatalogMetaDataFetchCommand getOne(int totalSlot,  int currentSlot) {
+    public CommonTaskCommand getOne(int totalSlot, int currentSlot) {
         return baseMapper.getOne(totalSlot, currentSlot);
     }
 
