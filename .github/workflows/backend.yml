@@ -79,6 +79,7 @@ jobs:
           key: ${{ runner.os }}-maven
       - name: Build and Package on ${{ matrix.java }}
         run: |
+          chmod 777 ./mvnw
           ./mvnw -B clean install \
                  -Dspotless.skip=true \
 
