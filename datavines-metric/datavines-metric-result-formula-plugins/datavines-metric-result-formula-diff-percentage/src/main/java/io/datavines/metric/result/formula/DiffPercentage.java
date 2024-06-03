@@ -16,8 +16,12 @@
  */
 package io.datavines.metric.result.formula;
 
+import io.datavines.metric.api.MetricDirectionType;
 import io.datavines.metric.api.ResultFormula;
 import io.datavines.metric.api.ResultFormulaType;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class DiffPercentage implements ResultFormula {
 
@@ -32,13 +36,19 @@ public class DiffPercentage implements ResultFormula {
     }
 
     @Override
-    public Double getResult(Double actualValue, Double expectedValue) {
-        double result = 0;
-        if (expectedValue > 0) {
-            result = Math.abs(expectedValue - actualValue) / expectedValue * 100;
+    public BigDecimal getResult(BigDecimal actualValue, BigDecimal expectedValue) {
+        BigDecimal result = BigDecimal.valueOf(0);
+        if (expectedValue != null) {
+            BigDecimal quotient = actualValue.divide(expectedValue, 2, RoundingMode.HALF_UP);
+            result = quotient.divide(expectedValue, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
         }
 
         return result;
+    }
+
+    @Override
+    public BigDecimal getScore(BigDecimal actualValue, BigDecimal expectedValue, boolean isSuccess, MetricDirectionType direction) {
+        return getResult(actualValue, expectedValue);
     }
 
     @Override

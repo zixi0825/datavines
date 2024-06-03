@@ -19,8 +19,9 @@ package io.datavines.server.dqc.coordinator.quartz;
 import io.datavines.common.utils.DateUtils;
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.server.api.dto.bo.catalog.CatalogRefresh;
+import io.datavines.server.enums.CommonTaskType;
 import io.datavines.server.repository.entity.DataSource;
-import io.datavines.server.repository.service.CatalogMetaDataFetchTaskService;
+import io.datavines.server.repository.service.CommonTaskService;
 import io.datavines.server.repository.service.impl.JobExternalService;
 import io.datavines.server.utils.SpringApplicationContext;
 import org.quartz.JobDataMap;
@@ -59,9 +60,13 @@ public class CatalogTaskScheduleJob implements org.quartz.Job {
         logger.info("scheduled fire time :{}, fire time :{}, dataSource id :{}", scheduleTime, fireTime, dataSourceId);
         logger.info("scheduled start work , dataSource id :{} ", dataSourceId);
 
-        CatalogMetaDataFetchTaskService catalogMetaDataFetchTaskService = getJobExternalService().getCatalogTaskService();
+        CommonTaskService commonTaskService = getJobExternalService().getCatalogTaskService();
         CatalogRefresh catalogRefresh = new CatalogRefresh();
         catalogRefresh.setDatasourceId(dataSourceId);
+        if (dataMap.get(DataVinesConstants.COMMON_TASK_TYPE) != null) {
+            Integer taskType = dataMap.getInt(DataVinesConstants.COMMON_TASK_TYPE);
+            catalogRefresh.setTaskType(CommonTaskType.of(taskType));
+        }
 
         DataSource dataSource = getJobExternalService().getDataSourceService().getDataSourceById(dataSourceId);
         if (dataSource == null) {
@@ -69,7 +74,7 @@ public class CatalogTaskScheduleJob implements org.quartz.Job {
             return;
         }
 
-        catalogMetaDataFetchTaskService.refreshCatalog(catalogRefresh);
+        commonTaskService.refreshCatalog(catalogRefresh);
     }
 
 }

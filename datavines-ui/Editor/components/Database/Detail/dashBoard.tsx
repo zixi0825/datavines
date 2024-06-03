@@ -1,5 +1,5 @@
 import * as echarts from 'echarts/core';
-import {LineChart, BarChart, PieChart} from 'echarts/charts';
+import {LineChart, BarChart, PieChart, GaugeChart} from 'echarts/charts';
 
 import {
     ToolboxComponent,
@@ -29,6 +29,7 @@ echarts.use([
     CanvasRenderer,
     BarChart,
     PieChart,
+    GaugeChart,
     LegendComponent,
     ToolboxComponent
 ]);

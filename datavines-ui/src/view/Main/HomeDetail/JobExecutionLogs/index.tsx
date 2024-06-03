@@ -82,35 +82,35 @@ const JobExecutionLogs = ({ datasourceId }: TJobExecutionLogs) => {
             dataIndex: 'name',
             key: 'name',
             width: 300,
-            render: (text) => defaultRender(text, 300),
+            render: (text: string) => defaultRender(text, 300),
         },
         {
             title: intl.formatMessage({ id: 'jobs_task_schema_name' }),
             dataIndex: 'schemaName',
             key: 'schemaName',
             width: 150,
-            render: (text) => defaultRender(text, 300),
+            render: (text: string) => defaultRender(text, 300),
         },
         {
             title: intl.formatMessage({ id: 'jobs_task_table_name' }),
             dataIndex: 'tableName',
             key: 'tableName',
             width: 150,
-            render: (text) => defaultRender(text, 300),
+            render: (text: string) => defaultRender(text, 300),
         },
         {
             title: intl.formatMessage({ id: 'jobs_task_column_name' }),
             dataIndex: 'columnName',
             key: 'columnName',
             width: 150,
-            render: (text) => defaultRender(text, 300),
+            render: (text: string) => defaultRender(text, 300),
         },
         {
             title: intl.formatMessage({ id: 'jobs_task_metric_type' }),
             dataIndex: 'metricType',
             key: 'metricType',
             width: 150,
-            render: (text) => defaultRender(text, 300),
+            render: (text: string) => defaultRender(text, 300),
         },
         {
             title: intl.formatMessage({ id: 'jobs_task_type' }),
@@ -301,8 +301,5 @@ const JobExecutionLogs = ({ datasourceId }: TJobExecutionLogs) => {
             <RenderResultModal />
         </div>
     );
-
-
-
 }
 export default JobExecutionLogs;

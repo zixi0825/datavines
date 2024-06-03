@@ -169,6 +169,7 @@ public class JobScheduleServiceImpl extends ServiceImpl<JobScheduleMapper, JobSc
     private ScheduleJobInfo getScheduleJobInfo(JobSchedule jobSchedule, Job job) {
         return new ScheduleJobInfo(
                             ScheduleJobType.DATA_QUALITY,
+                            null,
                             job.getDataSourceId(),
                             job.getId(),
                             jobSchedule.getCronExpression(),

@@ -5,8 +5,8 @@ import { ColumnsType } from 'antd/lib/table';
 import { useIntl } from 'react-intl';
 import querystring from 'querystring';
 import { TJobsInstanceTableData, TJobsInstanceTableItem } from '@/type/JobsInstance';
-import { Title, SearchForm } from '@/component';
-import { useMount, IF } from '@/common';
+import { SearchForm } from '@/component';
+import {IF, useWatch} from '@/common';
 import { $http } from '@/http';
 import { defaultRender } from '@/utils/helper';
 import { useLogger } from './useLogger';
@@ -26,12 +26,12 @@ const JobsInstance = () => {
         pageSize: 10,
     });
     const [qs] = useState(querystring.parse(window.location.href.split('?')[1] || ''));
-    const getData = async (values?: any, $pageParams?: any) => {
+    const getData = async (values: any = null) => {
         try {
             setLoading(true);
             const res = (await $http.post('/job/execution/page', {
                 jobId: qs.jobId,
-                ...($pageParams || pageParams),
+                ...pageParams,
                 ...(values || form.getFieldsValue()),
             })) || [];
             setTableData({
@@ -43,26 +43,25 @@ const JobsInstance = () => {
             setLoading(false);
         }
     };
-    useMount(() => {
+
+    useWatch([pageParams], () => {
         getData();
-    });
+    }, { immediate: true });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onSearch = (_values: any) => {
         setPageParams({ ...pageParams, pageNumber: 1 });
-        getData({
-            ..._values,
-            pageNumber: 1,
-        });
+        getData();
     };
+
     const onChange = ({ current, pageSize }: any) => {
         setPageParams({
             pageNumber: current,
             pageSize,
         });
-        getData(null, {
-            pageNumber: current,
-            pageSize,
-        });
+        getData();
     };
+
     const onStop = async (record: TJobsInstanceTableItem) => {
         try {
             setLoading(true);
@@ -88,35 +87,35 @@ const JobsInstance = () => {
             dataIndex: 'name',
             key: 'name',
             width: 300,
-            render: (text) => defaultRender(text, 300),
+            render: (text: string) => defaultRender(text, 300),
         },
         {
             title: intl.formatMessage({ id: 'jobs_task_schema_name' }),
             dataIndex: 'schemaName',
             key: 'schemaName',
             width: 100,
-            render: (text) => defaultRender(text, 300),
+            render: (text: string) => defaultRender(text, 300),
         },
         {
             title: intl.formatMessage({ id: 'jobs_task_table_name' }),
             dataIndex: 'tableName',
             key: 'tableName',
             width: 200,
-            render: (text) => defaultRender(text, 300),
+            render: (text: string) => defaultRender(text, 300),
         },
         {
             title: intl.formatMessage({ id: 'jobs_task_column_name' }),
             dataIndex: 'columnName',
             key: 'columnName',
             width: 200,
-            render: (text) => defaultRender(text, 300),
+            render: (text: string) => defaultRender(text, 300),
         },
         {
             title: intl.formatMessage({ id: 'jobs_task_metric_type' }),
             dataIndex: 'metricType',
             key: 'metricType',
             width: 200,
-            render: (text) => defaultRender(text, 300),
+            render: (text: string) => defaultRender(text, 300),
         },
         {
             title: intl.formatMessage({ id: 'jobs_task_type' }),
@@ -161,7 +160,7 @@ const JobsInstance = () => {
             width: 200,
             render: (text: string, record: TJobsInstanceTableItem) => (
                 <>
-                    <IF visible={record.status === 'submitted' || record.status === 'running'}>
+                    <IF visible={record.status === 'submitted' || record.status === 'running' || record.status === '已提交' || record.status === '执行中'}>
                         <a style={{ marginRight: 5 }} onClick={() => { onStop(record); }}>{intl.formatMessage({ id: 'jobs_task_stop_btn' })}</a>
                     </IF>
                     <a style={{ marginRight: 5 }} onClick={() => { onLog(record); }}>{intl.formatMessage({ id: 'jobs_task_log_btn' })}</a>

@@ -227,7 +227,7 @@ export const Inner = ({
                     </PageContainer>
                 </TabPane>
                 <TabPane tab={intl.formatMessage({ id: 'jobs_tabs_schedule' })} key="schedule">
-                    <IF visible={jobId}><Schedule jobId={jobId} style={styleTabContent || {}} /></IF>
+                    <IF visible={jobId}><Schedule jobId={jobId} style={styleTabContent || {}} taskType={'-1'} /></IF>
                 </TabPane>
                 <TabPane tab={intl.formatMessage({ id: 'jobs_tabs_SLA' })} key="SLA">
                     <IF visible={jobId}><SelectSLAsComponent jobId={jobId} id={slaId} style={styleTabContent || {}} /></IF>

@@ -68,6 +68,7 @@ public class ColumnMatchRegex extends BaseSingleTableColumn {
         }
         super.prepare(config);
     }
+
     @Override
     public List<DataVinesDataType> suitableType() {
         return Arrays.asList(DataVinesDataType.STRING_TYPE, DataVinesDataType.DATE_TIME_TYPE);

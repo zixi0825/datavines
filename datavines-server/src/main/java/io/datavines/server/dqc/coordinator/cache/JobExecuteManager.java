@@ -37,7 +37,7 @@ import io.datavines.server.dqc.command.CommandCode;
 import io.datavines.server.dqc.command.JobExecuteAckCommand;
 import io.datavines.server.dqc.command.JobExecuteResponseCommand;
 import io.datavines.common.exception.DataVinesException;
-import io.datavines.server.dqc.coordinator.operator.JobResultValidator;
+import io.datavines.server.dqc.coordinator.validator.JobResultValidator;
 import io.datavines.server.repository.entity.DataSource;
 import io.datavines.server.repository.entity.Job;
 import io.datavines.server.repository.entity.JobExecution;

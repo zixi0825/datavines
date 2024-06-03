@@ -20,15 +20,15 @@ import org.slf4j.Logger;
 
 public class LoggerFactory {
 
-    private static Logger logger;
+    private static ThreadLocal<Logger> logger = new ThreadLocal<>();
 
     public static void setLogger(Logger newLogger){
-        logger = newLogger;
+        logger.set(newLogger);
     }
 
     public static Logger getLogger(Class clazz) {
-        if (logger != null) {
-            return logger;
+        if (logger.get() != null) {
+            return logger.get();
         } else {
             return org.slf4j.LoggerFactory.getLogger(clazz);
         }

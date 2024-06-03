@@ -22,6 +22,7 @@ import lombok.Data;
 import org.apache.commons.collections4.MapUtils;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Map;
 
 @Data
@@ -29,15 +30,15 @@ public class MetricExecutionResult implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
-    private Double actualValue;
+    private BigDecimal actualValue;
 
-    private Double expectedValue;
+    private BigDecimal expectedValue;
 
     private String resultFormula;
 
     private String operator;
 
-    private Double threshold;
+    private BigDecimal threshold;
 
     private String expectedType;
 
@@ -62,11 +63,11 @@ public class MetricExecutionResult implements Serializable {
         }
 
         if (dataMap.get("actual_value") != null) {
-            actualValue = Double.valueOf(String.valueOf(dataMap.get("actual_value")).trim());
+            actualValue = new BigDecimal(String.valueOf(dataMap.get("actual_value")).trim());
         }
 
         if (dataMap.get("expected_value") != null) {
-            expectedValue = Double.valueOf(String.valueOf(dataMap.get("expected_value")).trim());
+            expectedValue = new BigDecimal(String.valueOf(dataMap.get("expected_value")).trim());
         }
 
         if (dataMap.get("result_formula") != null) {
@@ -78,7 +79,7 @@ public class MetricExecutionResult implements Serializable {
         }
 
         if (dataMap.get("threshold") != null) {
-            threshold = Double.valueOf(String.valueOf(dataMap.get("threshold")).trim());
+            threshold = new BigDecimal(String.valueOf(dataMap.get("threshold")).trim());
         }
 
         if (dataMap.get("metric_name") != null) {

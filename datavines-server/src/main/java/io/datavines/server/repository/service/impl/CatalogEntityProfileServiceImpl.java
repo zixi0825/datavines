@@ -95,9 +95,9 @@ public class CatalogEntityProfileServiceImpl extends ServiceImpl<CatalogEntityPr
                 .le(CatalogEntityProfile::getDataDate, endTime)
                 .orderByAsc(CatalogEntityProfile::getDataDate));
 
-        return tableRowCounts.stream().map(item -> {
-            return new DataTime2ValueItem(item.getDataDate(), item.getActualValue());
-        }).collect(Collectors.toList());
+        return tableRowCounts.stream()
+                .map(item -> new DataTime2ValueItem(item.getDataDate(), item.getActualValue()))
+                .collect(Collectors.toList());
     }
 
     @Override

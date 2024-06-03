@@ -26,7 +26,6 @@ import io.datavines.common.entity.SparkEngineParameter;
 import io.datavines.common.entity.job.BaseJobParameter;
 import io.datavines.common.enums.DataVinesDataType;
 import io.datavines.common.enums.EntityRelType;
-import io.datavines.common.enums.JobType;
 import io.datavines.common.utils.CommonPropertyUtils;
 import io.datavines.common.utils.DateUtils;
 import io.datavines.common.utils.JSONUtils;
@@ -54,7 +53,6 @@ import javax.annotation.Resource;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static io.datavines.common.enums.JobType.DATA_PROFILE;
@@ -83,7 +81,7 @@ public class CatalogEntityInstanceServiceImpl
     private CatalogEntityProfileService catalogEntityProfileService;
 
     @Autowired
-    private CatalogMetaDataFetchTaskService catalogMetaDataFetchTaskService;
+    private CommonTaskService commonTaskService;
 
     @Override
     public String create(CatalogEntityInstance entityInstance) {
@@ -333,7 +331,7 @@ public class CatalogEntityInstanceServiceImpl
         detail.setName(databaseInstance.getDisplayName());
         detail.setType(databaseInstance.getType());
         detail.setUuid(uuid);
-        detail.setUpdateTime(catalogMetaDataFetchTaskService.getRefreshTime(databaseInstance.getDatasourceId(), databaseInstance.getDisplayName(),null));
+        detail.setUpdateTime(commonTaskService.getRefreshTime(databaseInstance.getDatasourceId(), databaseInstance.getDisplayName(),null));
         List<CatalogEntityInstance> tableList = getCatalogEntityInstances(uuid);
         detail.setTables((long)(CollectionUtils.isEmpty(tableList)? 0 : tableList.size()));
         detail.setMetrics(getEntityMetricCount(uuid));
@@ -360,7 +358,7 @@ public class CatalogEntityInstanceServiceImpl
         if (values.length == 2) {
             database = values[0];
             table = values[1];
-            detail.setUpdateTime(catalogMetaDataFetchTaskService.getRefreshTime(instance.getDatasourceId(), database,table));
+            detail.setUpdateTime(commonTaskService.getRefreshTime(instance.getDatasourceId(), database,table));
         } else {
             detail.setUpdateTime(instance.getUpdateTime());
         }
@@ -396,7 +394,7 @@ public class CatalogEntityInstanceServiceImpl
         if (values.length == 3) {
             database = values[0];
             table = values[1];
-            detail.setUpdateTime(catalogMetaDataFetchTaskService.getRefreshTime(instance.getDatasourceId(), database,table));
+            detail.setUpdateTime(commonTaskService.getRefreshTime(instance.getDatasourceId(), database,table));
         } else {
             detail.setUpdateTime(instance.getUpdateTime());
         }

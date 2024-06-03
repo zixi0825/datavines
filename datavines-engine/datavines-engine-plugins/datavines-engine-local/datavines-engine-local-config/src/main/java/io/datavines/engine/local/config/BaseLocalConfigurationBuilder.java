@@ -69,7 +69,6 @@ public abstract class BaseLocalConfigurationBuilder extends BaseJobConfiguration
                     connectorParameterMap.putAll(metricInputParameter);
                     connectorParameterMap = connectorFactory.getConnectorParameterConverter().converter(connectorParameterMap);
 
-
                     metricInputParameter.put(DATABASE_NAME, metricInputParameter.get(DATABASE));
                     metricInputParameter.put(TABLE_NAME, metricInputParameter.get(TABLE));
                     metricInputParameter.put(COLUMN_NAME, metricInputParameter.get(COLUMN));
@@ -139,7 +138,6 @@ public abstract class BaseLocalConfigurationBuilder extends BaseJobConfiguration
                                                                     metricInputParameter.get(TABLE2), true);
                     connectorParameterMap.put(TABLE, table);
                     connectorParameterMap = connectorFactory.getConnectorParameterConverter().converter(connectorParameterMap);
-
 
                     String outputTable = metricInputParameter.get(TABLE2);
                     connectorParameterMap.put(OUTPUT_TABLE, outputTable);

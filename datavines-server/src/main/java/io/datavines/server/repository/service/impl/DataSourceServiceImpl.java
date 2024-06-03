@@ -32,6 +32,7 @@ import io.datavines.core.enums.Status;
 import io.datavines.server.api.dto.bo.datasource.DataSourceCreate;
 import io.datavines.server.api.dto.bo.datasource.DataSourceUpdate;
 import io.datavines.server.api.dto.vo.DataSourceVO;
+import io.datavines.server.enums.CommonTaskType;
 import io.datavines.server.repository.entity.DataSource;
 import io.datavines.server.repository.mapper.DataSourceMapper;
 import io.datavines.server.repository.service.*;
@@ -64,7 +65,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
     private JobService jobService;
 
     @Autowired
-    private CatalogMetaDataFetchTaskService catalogMetaDataFetchTaskService;
+    private CommonTaskService commonTaskService;
 
     @Autowired
     private CatalogEntityInstanceService catalogEntityInstanceService;
@@ -123,7 +124,8 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
 
         CatalogRefresh catalogRefresh = new CatalogRefresh();
         catalogRefresh.setDatasourceId(dataSource.getId());
-        catalogMetaDataFetchTaskService.refreshCatalog(catalogRefresh);
+        catalogRefresh.setTaskType(CommonTaskType.CATALOG_METADATA_FETCH);
+        commonTaskService.refreshCatalog(catalogRefresh);
         return dataSource.getId();
     }
 
@@ -209,7 +211,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
         if (dataSource != null) {
             catalogEntityInstanceService.deleteEntityByUUID(dataSource.getUuid());
             jobService.deleteByDataSourceId(id);
-            catalogMetaDataFetchTaskService.deleteByDataSourceId(id);
+            commonTaskService.deleteByDataSourceId(id);
             removeById(id);
             return 1;
         }

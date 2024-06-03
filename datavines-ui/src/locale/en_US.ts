@@ -39,7 +39,7 @@ export default {
     '/main/warning': 'Warning',
     '/main/userManage': 'User',
     '/main/errorDataManage': 'ErrorData',
-    '/main/detail/:id/jobExecutionLogs': 'JobExecutionLogs',
+    '/main/detail/:id/jobExecutionLogs': 'JobExecutions',
     '/main/detail/:id/dashboard': 'Dashboard',
     '/main/detail/:id/editor': 'Catalog',
     '/main/detail/:id/jobs': 'Jobs',
@@ -123,6 +123,9 @@ export default {
     jobs_task_success_count: 'Success Count',
     jobs_task_fail_count: 'Fail Count',
     jobs_task_last_time: 'Last Job Execution Time',
+    jobs_task_score: 'Score',
+    jobs_task_report_date: 'Report Date',
+    jobs_task_report_detail: 'Report Detail',
 
     jobs_task_check_result: 'Check Result',
     jobs_task_check_subject: 'Check Subject',
@@ -308,6 +311,11 @@ export default {
     quality_dashboard_profile: 'Quality Profile',
     quality_dashboard_trend: 'Quality Trend',
     quality_dashboard_failure_execution: 'Fail Check',
+
+    quality_report_dashboard_score: 'Quality Score',
+    quality_report_dashboard_trend: 'Quality Score Trend',
+    quality_report_dashboard_detail: 'Quality Report Detail',
+    quality_report_schedule: 'DataQuality Report Scheduler',
 
     next_ten_cron_run_times: 'Next ten cron run times',
     view_future_execute_plan: 'view future execute plan',

@@ -32,8 +32,8 @@ public class MetricValidator {
      */
     public static boolean isSuccess(MetricExecutionResult executionResult) {
 
-        Double actualValue = executionResult.getActualValue();
-        Double expectedValue = executionResult.getExpectedValue();
+        BigDecimal actualValue = executionResult.getActualValue();
+        BigDecimal expectedValue = executionResult.getExpectedValue();
 
         OperatorType operatorType = OperatorType.of(StringUtils.trim(executionResult.getOperator()));
         ResultFormula resultFormula = PluginLoader.getPluginLoader(ResultFormula.class)
@@ -44,26 +44,36 @@ public class MetricValidator {
                 executionResult.getThreshold());
     }
 
-    private static boolean getCompareResult(OperatorType operatorType, Double srcValue, Double targetValue) {
+    public static BigDecimal getQualityScore(MetricExecutionResult executionResult, boolean isSuccess) {
+        BigDecimal actualValue = executionResult.getActualValue();
+        BigDecimal expectedValue = executionResult.getExpectedValue();
+
+        ResultFormula resultFormula = PluginLoader.getPluginLoader(ResultFormula.class)
+                .getOrCreatePlugin(executionResult.getResultFormula());
+        SqlMetric metric = PluginLoader.getPluginLoader(SqlMetric.class)
+                .getOrCreatePlugin(executionResult.getMetricName());
+
+        return resultFormula.getScore(actualValue, expectedValue, isSuccess, metric.getDirectionType());
+    }
+
+    private static boolean getCompareResult(OperatorType operatorType, BigDecimal srcValue, BigDecimal targetValue) {
         if (srcValue == null || targetValue == null) {
             return false;
         }
 
-        BigDecimal src = BigDecimal.valueOf(srcValue);
-        BigDecimal target = BigDecimal.valueOf(targetValue);
         switch (operatorType) {
             case EQ:
-                return src.compareTo(target) == 0;
+                return srcValue.compareTo(targetValue) == 0;
             case LT:
-                return src.compareTo(target) <= -1;
+                return srcValue.compareTo(targetValue) <= -1;
             case LTE:
-                return src.compareTo(target) == 0 || src.compareTo(target) <= -1;
+                return srcValue.compareTo(targetValue) == 0 || srcValue.compareTo(targetValue) <= -1;
             case GT:
-                return src.compareTo(target) >= 1;
+                return srcValue.compareTo(targetValue) >= 1;
             case GTE:
-                return src.compareTo(target) == 0 || src.compareTo(target) >= 1;
+                return srcValue.compareTo(targetValue) == 0 || srcValue.compareTo(targetValue) >= 1;
             case NE:
-                return src.compareTo(target) != 0;
+                return srcValue.compareTo(targetValue) != 0;
             default:
                 return true;
         }
