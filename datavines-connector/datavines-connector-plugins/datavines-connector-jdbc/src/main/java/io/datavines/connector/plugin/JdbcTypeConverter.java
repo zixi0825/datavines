@@ -37,22 +37,28 @@ public class JdbcTypeConverter implements TypeConverter {
             case "TINYINT":
                 return DataType.BYTE_TYPE;
             case "TINYINT_UNSIGNED":
+            case "TINYINT UNSIGNED":
             case "SMALLINT":
                 return DataType.SHORT_TYPE;
             case "SMALLINT_UNSIGNED":
+            case "SMALLINT UNSIGNED":
             case "INT":
             case "INTEGER":
             case "MEDIUMINT":
             case "MEDIUMINT_UNSIGNED":
+            case "MEDIUMINT UNSIGNED":
                 return DataType.INT_TYPE;
             case "INT_UNSIGNED":
+            case "INT UNSIGNED":
             case "BIGINT":
                 return DataType.LONG_TYPE;
             case "FLOAT":
             case "FLOAT_UNSIGNED":
+            case "FLOAT UNSIGNED":
                 return DataType.FLOAT_TYPE;
             case "DOUBLE":
             case "DOUBLE_UNSIGNED":
+            case "DOUBLE UNSIGNED":
                 return DataType.DOUBLE_TYPE;
             case "TIME":
                 return DataType.TIME_TYPE;
@@ -81,8 +87,10 @@ public class JdbcTypeConverter implements TypeConverter {
             case "GEOMETRY":
                 return DataType.BYTES_TYPE;
             case "BIGINT_UNSIGNED":
+            case "BIGINT UNSIGNED":
             case "DECIMAL":
             case "DECIMAL_UNSIGNED":
+            case "DECIMAL UNSIGNED":
                 return DataType.BIG_DECIMAL_TYPE;
             default:
                 throw new UnsupportedOperationException(String.format("Doesn't support sql type '%s' yet", originType));
