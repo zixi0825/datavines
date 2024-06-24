@@ -243,7 +243,12 @@ public abstract class JdbcConnector implements Connector, IJdbcDataSourceInfo {
                 String name = rs.getString("COLUMN_NAME");
                 String rawType = rs.getString("TYPE_NAME");
                 String comment = rs.getString("REMARKS");
-                columnList.add(new ColumnInfo(name, rawType, comment,false));
+                String curTableName = rs.getString("TABLE_NAME");
+                // If the meta database is case-insensitive, it will identify fields that are not in the current table.
+                // e.g. When querying a table named test, both the test and TEST table fields will be queried simultaneously.
+                if(tableName.equals(curTableName)){
+                    columnList.add(new ColumnInfo(name, rawType, comment,false));
+                }
             }
         } catch (Exception e) {
             logger.error("get column error, param is {} :", schema + "." + tableName, e);
