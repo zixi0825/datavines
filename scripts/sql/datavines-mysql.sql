@@ -216,7 +216,7 @@ CREATE TABLE `dv_catalog_entity_instance` (
   `uuid` varchar(64) NOT NULL COMMENT '实体实例UUID',
   `type` varchar(127) NOT NULL COMMENT '实体类型',
   `datasource_id` bigint(20) NOT NULL COMMENT '数据源ID',
-  `fully_qualified_name` varchar(255) NOT NULL COMMENT '全限定名',
+  `fully_qualified_name` varchar(255) collate utf8mb4_bin NOT NULL COMMENT '全限定名',
   `display_name` varchar(255) NOT NULL COMMENT '展示名字',
   `description` varchar(1024) DEFAULT NULL COMMENT '描述',
   `properties` text COMMENT '其他参数，用map存储',
