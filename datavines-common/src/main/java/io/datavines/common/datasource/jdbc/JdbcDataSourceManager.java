@@ -49,45 +49,54 @@ public class JdbcDataSourceManager {
 
         HikariDataSource dataSource = dataSourceMap.get(baseJdbcDataSourceInfo.getUniqueKey());
         if (dataSource == null) {
-            HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setJdbcUrl(baseJdbcDataSourceInfo.getJdbcUrl());
-            hikariConfig.setUsername(baseJdbcDataSourceInfo.getUser());
-            hikariConfig.setPassword(StringUtils.isEmptyOrNullStr(baseJdbcDataSourceInfo.getPassword()) ? null : baseJdbcDataSourceInfo.getPassword());
-            hikariConfig.setDriverClassName(baseJdbcDataSourceInfo.getDriverClass());
-            hikariConfig.setMaximumPoolSize(10);
-            HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
-            dataSourceMap.put(baseJdbcDataSourceInfo.getUniqueKey(), hikariDataSource);
-            return hikariDataSource;
+            synchronized (JdbcDataSourceManager.class) {
+                dataSource = dataSourceMap.get(baseJdbcDataSourceInfo.getUniqueKey());
+                if (dataSource == null) {
+                    HikariConfig hikariConfig = new HikariConfig();
+                    hikariConfig.setJdbcUrl(baseJdbcDataSourceInfo.getJdbcUrl());
+                    hikariConfig.setUsername(baseJdbcDataSourceInfo.getUser());
+                    hikariConfig.setPassword(StringUtils.isEmptyOrNullStr(baseJdbcDataSourceInfo.getPassword()) ? null : baseJdbcDataSourceInfo.getPassword());
+                    hikariConfig.setDriverClassName(baseJdbcDataSourceInfo.getDriverClass());
+                    hikariConfig.setMaximumPoolSize(10);
+                    HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
+                    dataSourceMap.put(baseJdbcDataSourceInfo.getUniqueKey(), hikariDataSource);
+                    return hikariDataSource;
+                }
+            }
         }
 
         return dataSource;
     }
 
-    public DataSource getDataSource(Map<String,Object> configMap) throws SQLException {
+    public synchronized DataSource getDataSource(Map<String,Object> configMap) throws SQLException {
         String uniqueKey = getUniqueKey(configMap);
-        // 暂时用 HikariDataSource 替代 DruidDataSource
         HikariDataSource dataSource = dataSourceMap.get(getUniqueKey(configMap));
 
         if (dataSource == null) {
-            String driver = String.valueOf(configMap.get(DRIVER));
-            String url = String.valueOf(configMap.get(URL));
-            String username = String.valueOf(configMap.get(USER));
-            String password = String.valueOf(configMap.get(PASSWORD));
-            HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setJdbcUrl(url);
-            hikariConfig.setUsername(username);
-            hikariConfig.setPassword(StringUtils.isEmptyOrNullStr(password) ? null : password);
-            hikariConfig.setDriverClassName(driver);
-            hikariConfig.setMaximumPoolSize(10);
-            HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
-            dataSourceMap.put(uniqueKey, hikariDataSource);
-            return hikariDataSource;
+            synchronized (JdbcDataSourceManager.class) {
+                dataSource = dataSourceMap.get(getUniqueKey(configMap));
+                if (dataSource == null) {
+                    String driver = String.valueOf(configMap.get(DRIVER));
+                    String url = String.valueOf(configMap.get(URL));
+                    String username = String.valueOf(configMap.get(USER));
+                    String password = String.valueOf(configMap.get(PASSWORD));
+                    HikariConfig hikariConfig = new HikariConfig();
+                    hikariConfig.setJdbcUrl(url);
+                    hikariConfig.setUsername(username);
+                    hikariConfig.setPassword(StringUtils.isEmptyOrNullStr(password) ? null : password);
+                    hikariConfig.setDriverClassName(driver);
+                    hikariConfig.setMaximumPoolSize(10);
+                    HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
+                    dataSourceMap.put(uniqueKey, hikariDataSource);
+                    return hikariDataSource;
+                }
+            }
         }
 
         return dataSource;
     }
 
-    public DataSource getDataSource(Properties properties) throws SQLException {
+    public synchronized DataSource getDataSource(Properties properties) throws SQLException {
         Map<String,Object> configMap = new HashMap<>();
         configMap.put(URL, properties.getProperty("url"));
         configMap.put(DRIVER, properties.getProperty("driver"));
@@ -98,19 +107,24 @@ public class JdbcDataSourceManager {
         HikariDataSource dataSource = dataSourceMap.get(getUniqueKey(configMap));
 
         if (dataSource == null) {
-            String driver = String.valueOf(configMap.get(DRIVER));
-            String url = String.valueOf(configMap.get(URL));
-            String username = String.valueOf(configMap.get(USER));
-            String password = String.valueOf(configMap.get(PASSWORD));
-            HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setJdbcUrl(url);
-            hikariConfig.setUsername(username);
-            hikariConfig.setPassword(StringUtils.isEmptyOrNullStr(password) ? null : password);
-            hikariConfig.setDriverClassName(driver);
-            hikariConfig.setMaximumPoolSize(10);
-            HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
-            dataSourceMap.put(uniqueKey, hikariDataSource);
-            return hikariDataSource;
+            synchronized (JdbcDataSourceManager.class) {
+                dataSource = dataSourceMap.get(getUniqueKey(configMap));
+                if (dataSource == null) {
+                    String driver = String.valueOf(configMap.get(DRIVER));
+                    String url = String.valueOf(configMap.get(URL));
+                    String username = String.valueOf(configMap.get(USER));
+                    String password = String.valueOf(configMap.get(PASSWORD));
+                    HikariConfig hikariConfig = new HikariConfig();
+                    hikariConfig.setJdbcUrl(url);
+                    hikariConfig.setUsername(username);
+                    hikariConfig.setPassword(StringUtils.isEmptyOrNullStr(password) ? null : password);
+                    hikariConfig.setDriverClassName(driver);
+                    hikariConfig.setMaximumPoolSize(10);
+                    HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
+                    dataSourceMap.put(uniqueKey, hikariDataSource);
+                    return hikariDataSource;
+                }
+            }
         }
 
         return dataSource;

@@ -89,6 +89,13 @@ public class CommonPropertyUtils {
     public static final String DATAVINES_FQDN = "datavines.fqdn";
     public static final String DATAVINES_FQDN_DEFAULT = "http://127.0.0.1:5600";
 
+    public static final String PROFILE_EXECUTE_ENGINE_SPARK_USER = "profile.execute.engine.spark.user";
+    public static final String PROFILE_EXECUTE_ENGINE_SPARK_USER_DEFAULT = "ods";
+
+    public static final String PROFILE_EXECUTE_ENGINE_SPARK_ENV = "profile.execute.engine.spark.env";
+    public static final String PROFILE_EXECUTE_ENGINE_SPARK_ENV_DEFAULT = "export SPARK_HOME2=/usr/hdp/2.6.3.0-235/spark-2.4.8-bin-hadoop2.7";
+
+
     private static final Logger logger = LoggerFactory.getLogger(CommonPropertyUtils.class);
 
     public static final String COMMON_PROPERTIES_PATH = "/common.properties";
