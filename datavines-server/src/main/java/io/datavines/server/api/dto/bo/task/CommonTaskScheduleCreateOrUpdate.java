@@ -31,13 +31,13 @@ public class CommonTaskScheduleCreateOrUpdate {
 
     private Long id;
 
-    @NotNull(message = "task type cannot be empty")
+    @NotNull(message = "Task type cannot be empty")
     private CommonTaskType taskType;
 
     @NotNull(message = "DataSource id cannot be empty")
     private Long dataSourceId;
 
-    @NotBlank(message = "Catalog MetaData Fetch Task schedule type cannot be empty")
+    @NotBlank(message = "Task schedule type cannot be empty")
     private String type;
 
     private MapParam param;

@@ -16,11 +16,11 @@
  */
 package io.datavines.http.client;
 
-import io.datavines.http.client.base.DataVinesApiEnum;
+import io.datavines.http.client.base.DatavinesApiEnum;
 import io.datavines.http.client.base.DatavinesApiException;
 import io.datavines.http.client.base.DatavinesBaseClient;
 import io.datavines.http.client.request.*;
-import io.datavines.http.client.response.DataVinesResponse;
+import io.datavines.http.client.response.DatavinesResponse;
 import io.datavines.http.client.response.UserBaseInfo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,8 +41,8 @@ public class DataVinesClient extends DatavinesBaseClient {
      * @param params
      * @return
      */
-    public DataVinesResponse submitTask(String params) throws DatavinesApiException {
-        DataVinesResponse res = callAPI(DataVinesApiEnum.TASK_SUBMIT_API.getDataVinesApi(), params);
+    public DatavinesResponse submitTask(String params) throws DatavinesApiException {
+        DatavinesResponse res = callAPI(DatavinesApiEnum.TASK_SUBMIT_API.getDatavinesApi(), params);
         return res;
     }
 
@@ -51,8 +51,8 @@ public class DataVinesClient extends DatavinesBaseClient {
      * @param request
      * @return
      */
-    public DataVinesResponse submitTask(SubmitTaskRequest request) throws DatavinesApiException {
-        DataVinesResponse res = callAPI(DataVinesApiEnum.TASK_SUBMIT_API.getDataVinesApi(), request);
+    public DatavinesResponse submitTask(SubmitTaskRequest request) throws DatavinesApiException {
+        DatavinesResponse res = callAPI(DatavinesApiEnum.TASK_SUBMIT_API.getDatavinesApi(), request);
         return res;
     }
 
@@ -62,8 +62,8 @@ public class DataVinesClient extends DatavinesBaseClient {
      * @return
      * @throws DatavinesApiException
      */
-    public DataVinesResponse killTask(Long taskId) throws DatavinesApiException {
-       return callApiWithPathParam(DataVinesApiEnum.TASK_KILL_API, taskId);
+    public DatavinesResponse killTask(Long taskId) throws DatavinesApiException {
+       return callApiWithPathParam(DatavinesApiEnum.TASK_KILL_API, taskId);
     }
 
     /**
@@ -72,8 +72,8 @@ public class DataVinesClient extends DatavinesBaseClient {
      * @return task status
      * @throws DatavinesApiException
      */
-    public DataVinesResponse taskStatus(Long taskId) throws DatavinesApiException{
-        return callApiWithPathParam(DataVinesApiEnum.TASK_STATUS_API, taskId);
+    public DatavinesResponse taskStatus(Long taskId) throws DatavinesApiException {
+        return callApiWithPathParam(DatavinesApiEnum.TASK_STATUS_API, taskId);
     }
 
     /**
@@ -82,8 +82,8 @@ public class DataVinesClient extends DatavinesBaseClient {
      * @return task result
      * @throws DatavinesApiException
      */
-    public DataVinesResponse taskResultInfo(Long taskId) throws DatavinesApiException{
-        return callApiWithPathParam(DataVinesApiEnum.TASK_RESULT_API, taskId);
+    public DatavinesResponse taskResultInfo(Long taskId) throws DatavinesApiException {
+        return callApiWithPathParam(DatavinesApiEnum.TASK_RESULT_API, taskId);
     }
 
     /**
@@ -91,8 +91,8 @@ public class DataVinesClient extends DatavinesBaseClient {
      * @return metric list
      * @throws DatavinesApiException
      */
-    public DataVinesResponse metricList() throws DatavinesApiException {
-        return callAPI(DataVinesApiEnum.METRIC_LIST_API);
+    public DatavinesResponse metricList() throws DatavinesApiException {
+        return callAPI(DatavinesApiEnum.METRIC_LIST_API);
     }
 
     /**
@@ -101,61 +101,61 @@ public class DataVinesClient extends DatavinesBaseClient {
      * @return metric info
      * @throws DatavinesApiException
      */
-    public DataVinesResponse metricInfo(String name) throws DatavinesApiException {
-        return callApiWithPathParam(DataVinesApiEnum.METRIC_INFO_API, name);
+    public DatavinesResponse metricInfo(String name) throws DatavinesApiException {
+        return callApiWithPathParam(DatavinesApiEnum.METRIC_INFO_API, name);
     }
 
-    public DataVinesResponse createWorkSpace(String spaceName) throws DatavinesApiException{
-        DataVinesResponse result = callAPI(DataVinesApiEnum.CREATE_WORKSPACE.getDataVinesApi(), new WorkSpaceCreateRequest(spaceName));
+    public DatavinesResponse createWorkSpace(String spaceName) throws DatavinesApiException {
+        DatavinesResponse result = callAPI(DatavinesApiEnum.CREATE_WORKSPACE.getDatavinesApi(), new WorkSpaceCreateRequest(spaceName));
         return result;
     }
 
-    public DataVinesResponse createWorkSpace(WorkSpaceCreateRequest spaceName) throws DatavinesApiException{
-        DataVinesResponse result = callAPI(DataVinesApiEnum.CREATE_WORKSPACE.getDataVinesApi(), spaceName);
+    public DatavinesResponse createWorkSpace(WorkSpaceCreateRequest spaceName) throws DatavinesApiException {
+        DatavinesResponse result = callAPI(DatavinesApiEnum.CREATE_WORKSPACE.getDatavinesApi(), spaceName);
         return result;
     }
 
-    public DataVinesResponse updateWorkSpace(WorkSpaceUpdateRequest update) throws DatavinesApiException{
-        DataVinesResponse result = callAPI(DataVinesApiEnum.UPDATE_WORKSPACE.getDataVinesApi(), update);
+    public DatavinesResponse updateWorkSpace(WorkSpaceUpdateRequest update) throws DatavinesApiException {
+        DatavinesResponse result = callAPI(DatavinesApiEnum.UPDATE_WORKSPACE.getDatavinesApi(), update);
         return result;
     }
 
-    public DataVinesResponse deleteWorkSpace(Long workspaceId) throws DatavinesApiException{
-        DataVinesResponse result = callApiWithPathParam(DataVinesApiEnum.DELETE_WORKSPACE, workspaceId);
+    public DatavinesResponse deleteWorkSpace(Long workspaceId) throws DatavinesApiException {
+        DatavinesResponse result = callApiWithPathParam(DatavinesApiEnum.DELETE_WORKSPACE, workspaceId);
         return result;
     }
 
-    public DataVinesResponse listWorkSpace() throws DatavinesApiException{
-        DataVinesResponse result = callAPI(DataVinesApiEnum.LIST_WORKSPACE);
+    public DatavinesResponse listWorkSpace() throws DatavinesApiException {
+        DatavinesResponse result = callAPI(DatavinesApiEnum.LIST_WORKSPACE);
         return result;
     }
 
-    public DataVinesResponse register(UserRegisterRequest registerRequest) throws DatavinesApiException{
-        DataVinesResponse result = callAPI(DataVinesApiEnum.REGISTER.getDataVinesApi(), registerRequest);
+    public DatavinesResponse register(UserRegisterRequest registerRequest) throws DatavinesApiException {
+        DatavinesResponse result = callAPI(DatavinesApiEnum.REGISTER.getDatavinesApi(), registerRequest);
         return result;
     }
 
-    public DataVinesResponse login(UserLoginRequest loginRequest) throws DatavinesApiException{
-        DataVinesResponse result = callAPI(DataVinesApiEnum.LOGIN.getDataVinesApi(), loginRequest);
+    public DatavinesResponse login(UserLoginRequest loginRequest) throws DatavinesApiException {
+        DatavinesResponse result = callAPI(DatavinesApiEnum.LOGIN.getDatavinesApi(), loginRequest);
         return result;
     }
 
-    public DataVinesResponse<UserBaseInfo> login(String name, String password) throws DatavinesApiException{
-        DataVinesResponse<UserBaseInfo> result = callAPI(DataVinesApiEnum.LOGIN.getDataVinesApi(), new UserLoginRequest(name, password));
+    public DatavinesResponse<UserBaseInfo> login(String name, String password) throws DatavinesApiException {
+        DatavinesResponse<UserBaseInfo> result = callAPI(DatavinesApiEnum.LOGIN.getDatavinesApi(), new UserLoginRequest(name, password));
         return result;
     }
 
-    private <T> DataVinesResponse<T> callApiWithPathParam(DataVinesApiEnum dataVinesAPI, Serializable id) throws DatavinesApiException{
+    private <T> DatavinesResponse<T> callApiWithPathParam(DatavinesApiEnum dataVinesAPI, Serializable id) throws DatavinesApiException {
         if (Objects.isNull(id)){
             log.error("task id must not null!");
             throw new DatavinesApiException("task id must not null!");
         }
-        DataVinesResponse result = callAPI(dataVinesAPI.getDataVinesApi(String.valueOf(id)), null);
+        DatavinesResponse result = callAPI(dataVinesAPI.getDatavinesApi(String.valueOf(id)), null);
         return result;
     }
 
-    private <T> DataVinesResponse<T> callAPI(DataVinesApiEnum dataVinesAPI) throws DatavinesApiException{
-        DataVinesResponse result = callAPI(dataVinesAPI.getDataVinesApi(), null);
+    private <T> DatavinesResponse<T> callAPI(DatavinesApiEnum dataVinesAPI) throws DatavinesApiException {
+        DatavinesResponse result = callAPI(dataVinesAPI.getDatavinesApi(), null);
         return result;
     }
 }

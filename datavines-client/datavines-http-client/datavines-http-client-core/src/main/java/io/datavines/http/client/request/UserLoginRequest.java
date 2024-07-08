@@ -16,7 +16,6 @@
  */
 package io.datavines.http.client.request;
 
-
 public class UserLoginRequest {
 
     private String username;

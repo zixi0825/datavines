@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import {
-    Input, ModalProps, Form, FormInstance, Button, message,
+    Input, ModalProps, Form, FormInstance, Button, message, Radio,
 } from 'antd';
 import {
     useModal, useImmutable, FormRender, IFormRenderItem, IFormRender, CustomSelect, usePersistFn, useLoading, useContextModal, useMount,
@@ -25,6 +25,27 @@ const Inner = ({ form }: InnerProps) => {
             const res = (await $http.get(`/datasource/config/${type}`) || '[]');
             const array = (JSON.parse(res) || []) as ICreateDataSourceItem[];
             setDynamicMeta(array.map((item) => {
+
+                const object = {
+                    label: item.title,
+                    name: item.field,
+                    initialValue: item.value || undefined,
+                    rules: (item.validate || []).map(($item) => (pickProps($item, ['message', 'required']))),
+                };
+                if (item.type === 'radio') {
+                    return {
+                        ...object,
+                        widget: (
+                            <Radio.Group>
+                                {
+                                    (item.options || []).map((sub) => <Radio key={`${sub.value}`} value={sub.value} disabled={sub.disabled}>{sub.label}</Radio>)
+                                }
+                            </Radio.Group>
+                        ),
+                    };
+                }
+
+
                 const isTextarea = item.type === 'input' && item.props?.type === 'textarea';
                 const $props = pickProps(item.props || {}, ['placeholder', isTextarea && 'rows', 'disabled'].filter(Boolean) as string[]);
                 $props.autoComplete = 'off';

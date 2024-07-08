@@ -951,7 +951,7 @@ const Index = ({ onShowModal, afterClose }:DIndexProps) => {
             <Modal
                 width="700px"
                 footer={[]}
-                title="Profile Schedule"
+                title={intl.formatMessage({ id: 'profile_schedule' })}
                 onCancel={() => {
                     setisScheduleOpen(false);
                 }}
@@ -963,7 +963,7 @@ const Index = ({ onShowModal, afterClose }:DIndexProps) => {
                     }}
                     width="100%"
                     style={{ height: 'auto' }}
-                    api="catalog/profile/schedule"
+                    api="catalog/profile"
                     jobId={selectDatabases[currentIndex]?.uuid}
                     taskType={'-1'}
                 />

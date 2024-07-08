@@ -24,6 +24,7 @@ import io.datavines.common.config.enums.SourceType;
 import io.datavines.common.entity.ConnectorParameter;
 import io.datavines.common.entity.job.BaseJobParameter;
 import io.datavines.common.exception.DataVinesException;
+import io.datavines.common.utils.CommonPropertyUtils;
 import io.datavines.common.utils.JSONUtils;
 import io.datavines.common.utils.StringUtils;
 import io.datavines.connector.api.ConnectorFactory;
@@ -47,6 +48,23 @@ public abstract class BaseSparkConfigurationBuilder extends BaseJobConfiguration
     protected EnvConfig getEnvConfig() {
         EnvConfig envConfig = new EnvConfig();
         envConfig.setEngine(jobExecutionInfo.getEngineType());
+        Map<String,Object> configMap = envConfig.getConfig();
+        if (configMap == null) {
+            configMap = new HashMap<>();
+        }
+
+        ConnectorParameter connectorParameter = jobExecutionParameter.getConnectorParameter();
+        String srcConnectorType = connectorParameter.getType();
+
+        ConnectorParameter connectorParameter2 = jobExecutionParameter.getConnectorParameter2();
+        String srcConnectorType2 = connectorParameter2.getType();
+
+        if (("hive".equals(srcConnectorType) || "hive".equals(srcConnectorType2)) && CommonPropertyUtils.getBoolean(ENABLE_SPARK_HIVE_SUPPORT)) {
+            configMap.put(ENABLE_SPARK_HIVE_SUPPORT, true);
+        }
+
+        envConfig.setConfig(configMap);
+
         return envConfig;
     }
 
@@ -79,23 +97,20 @@ public abstract class BaseSparkConfigurationBuilder extends BaseJobConfiguration
                     ConnectorFactory connectorFactory = PluginLoader
                             .getPluginLoader(ConnectorFactory.class)
                             .getNewPlugin(connectorParameter.getType());
-                    String table = connectorFactory.getDialect()
-                            .getFullQualifiedTableName(metricInputParameter.get(DATABASE),
-                                    metricInputParameter.get(SCHEMA),metricInputParameter.get(TABLE), false);
 
-                    connectorParameterMap.put(TABLE, table);
+                    connectorParameterMap.put(TABLE, metricInputParameter.get(TABLE));
                     connectorParameterMap.put(DATABASE, metricInputParameter.get(DATABASE));
                     connectorParameterMap = connectorFactory.getConnectorParameterConverter().converter(connectorParameterMap);
                     connectorParameterMap.put(PASSWORD, ParserUtils.encode((String)connectorParameterMap.get(PASSWORD)));
 
                     String outputTable = getOutputTable(metricInputParameter.get(DATABASE), metricInputParameter.get(SCHEMA), metricInputParameter.get(TABLE));
                     String tableAlias = getTableAlias(metricInputParameter.get(DATABASE), metricInputParameter.get(SCHEMA), metricInputParameter.get(TABLE), "1");
-                    connectorParameterMap.put(OUTPUT_TABLE, QuoteIdentifier.quote(outputTable));
+                    connectorParameterMap.put(OUTPUT_TABLE, outputTable);
                     connectorParameterMap.put(DRIVER, connectorFactory.getDialect().getDriver());
 
-                    metricInputParameter.put(TABLE, QuoteIdentifier.quote(outputTable));
-                    metricInputParameter.put(TABLE_ALIAS, QuoteIdentifier.quote(tableAlias));
-                    metricInputParameter.put(COLUMN, QuoteIdentifier.quote(metricInputParameter.get(COLUMN)));
+                    metricInputParameter.put(TABLE, outputTable);
+                    metricInputParameter.put(TABLE_ALIAS, tableAlias);
+                    metricInputParameter.put(COLUMN, metricInputParameter.get(COLUMN));
                     metricInputParameter.put(REGEX_KEY, "regexp(${column}, ${regex})");
                     metricInputParameter.put(NOT_REGEX_KEY, "!regexp(${column}, ${regex})");
                     metricInputParameter.put(STRING_TYPE, "string");
@@ -131,11 +146,8 @@ public abstract class BaseSparkConfigurationBuilder extends BaseJobConfiguration
                     ConnectorFactory connectorFactory = PluginLoader
                             .getPluginLoader(ConnectorFactory.class)
                             .getNewPlugin(connectorParameter2.getType());
-                    String table = connectorFactory.getDialect().getFullQualifiedTableName(metricInputParameter.get(DATABASE2),
-                                                                                           metricInputParameter.get(SCHEMA2),
-                                                                                           metricInputParameter.get(TABLE2),false);
 
-                    connectorParameterMap.put(TABLE, table);
+                    connectorParameterMap.put(TABLE, metricInputParameter.get(TABLE2));
                     connectorParameterMap.put(DATABASE, metricInputParameter.get(DATABASE2));
                     connectorParameterMap = connectorFactory.getConnectorParameterConverter().converter(connectorParameterMap);
                     connectorParameterMap.put(PASSWORD, ParserUtils.encode((String)connectorParameterMap.get(PASSWORD)));
@@ -146,10 +158,10 @@ public abstract class BaseSparkConfigurationBuilder extends BaseJobConfiguration
                     String tableAlias2 = getTableAlias(metricInputParameter.get(DATABASE2),
                                                         metricInputParameter.get(SCHEMA2),
                                                         metricInputParameter.get(TABLE2) ,"2");
-                    connectorParameterMap.put(OUTPUT_TABLE, QuoteIdentifier.quote(outputTable));
+                    connectorParameterMap.put(OUTPUT_TABLE, outputTable);
                     connectorParameterMap.put(DRIVER, connectorFactory.getDialect().getDriver());
-                    metricInputParameter.put(TABLE2, QuoteIdentifier.quote(outputTable));
-                    metricInputParameter.put(TABLE2_ALIAS, QuoteIdentifier.quote(tableAlias2));
+                    metricInputParameter.put(TABLE2, outputTable);
+                    metricInputParameter.put(TABLE2_ALIAS, tableAlias2);
 
                     String connectorUUID = connectorFactory.getConnectorParameterConverter().getConnectorUUID(connectorParameterMap);
                     if (targetConnectorSet.contains(connectorUUID)) {

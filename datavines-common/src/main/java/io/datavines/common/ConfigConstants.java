@@ -18,6 +18,7 @@ package io.datavines.common;
 
 public class ConfigConstants {
 
+    public static final String ENGINE_TYPE = "engine_type";
     public static final String CONNECTOR_TYPE = "connector_type";
     public static final String DATASOURCE_ID = "datasource_id";
     public static final String TABLE = "table";

@@ -16,7 +16,6 @@
  */
 package io.datavines.http.client.request;
 
-
 import io.datavines.http.client.response.UserBaseInfo;
 
 public class UserLoginResult extends UserBaseInfo {

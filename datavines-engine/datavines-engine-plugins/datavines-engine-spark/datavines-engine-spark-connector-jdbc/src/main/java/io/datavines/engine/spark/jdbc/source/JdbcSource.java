@@ -83,6 +83,7 @@ public class JdbcSource implements SparkBatchSource {
         if (env.enableSparkHiveSupport() && "org.apache.hive.jdbc.HiveDriver".equals(driver)) {
            return hiveSourceData(env);
         }
+
         Properties properties = new Properties();
         properties.setProperty(USER, config.getString(USER));
         properties.setProperty(DRIVER, config.getString(DRIVER));

@@ -18,8 +18,6 @@ package io.datavines.http.client.request;
 
 import java.util.Map;
 
-
-
 public class SubmitTaskRequest {
 
     private String name;

@@ -21,7 +21,7 @@ import io.datavines.http.client.DataVinesClient;
 import io.datavines.http.client.base.DatavinesApiException;
 import io.datavines.http.client.request.UserRegisterRequest;
 import io.datavines.http.client.request.WorkSpaceCreateRequest;
-import io.datavines.http.client.response.DataVinesResponse;
+import io.datavines.http.client.response.DatavinesResponse;
 import io.datavines.http.client.response.UserBaseInfo;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,13 +36,13 @@ public class DataVinesClientTest {
 
     @Test
     public void register() throws DatavinesApiException{
-        DataVinesResponse test = client.register(new UserRegisterRequest("test1", "13435@163.com", "123456", "12436456"));
+        DatavinesResponse test = client.register(new UserRegisterRequest("test1", "13435@163.com", "123456", "12436456"));
         System.out.println(test);
     }
 
     @Before
     public void login() throws DatavinesApiException {
-        DataVinesResponse<UserBaseInfo> test = client.login("test1", "123456");
+        DatavinesResponse<UserBaseInfo> test = client.login("test1", "123456");
         UserBaseInfo data = test.getData();
         System.out.println(test);
         client.setToken(test.getToken());
@@ -51,55 +51,55 @@ public class DataVinesClientTest {
     @Test
     public void submitTask() throws DatavinesApiException {
         String json = "{\"name\":\"test\",\"parameter\":{\"metricType\":\"column_length\",\"metricParameter\":{\"table\":\"task\",\"column\":\"parameter\",\"comparator\":\">\",\"length\":1},\"srcConnectorParameter\":{\"type\":\"postgresql\",\"parameters\":{\"database\":\"datavines\",\"password\":\"lwslws\",\"port\":\"5432\",\"host\":\"localhost\",\"user\":\"postgres\",\"properties\":\"useUnicode=true&characterEncoding=UTF-8\"}}}}";
-        DataVinesResponse task = client.submitTask(json);
+        DatavinesResponse task = client.submitTask(json);
         System.out.println(task);
     }
 
     @Test
     public void taskStatus() throws DatavinesApiException{
-        DataVinesResponse DataVinesResponse = client.taskStatus(1516045488414031873L);
+        DatavinesResponse DataVinesResponse = client.taskStatus(1516045488414031873L);
         System.out.println(DataVinesResponse);
     }
 
     @Test
     public void taskResultInfo() throws DatavinesApiException{
-        DataVinesResponse DataVinesResponse = client.taskResultInfo(1516045488414031873L);
+        DatavinesResponse DataVinesResponse = client.taskResultInfo(1516045488414031873L);
         System.out.println(DataVinesResponse);
     }
 
     @Test
     public void killTask() throws DatavinesApiException{
-        DataVinesResponse DataVinesResponse = client.killTask(1516045488414031873L);
+        DatavinesResponse DataVinesResponse = client.killTask(1516045488414031873L);
         System.out.println(DataVinesResponse);
     }
 
     @Test
     public void metricInfo() throws DatavinesApiException{
-        DataVinesResponse DataVinesResponse = client.metricInfo("column_length");
+        DatavinesResponse DataVinesResponse = client.metricInfo("column_length");
         System.out.println(DataVinesResponse);
     }
 
     @Test
     public void metricList() throws DatavinesApiException{
-        DataVinesResponse DataVinesResponse = client.metricList();
+        DatavinesResponse DataVinesResponse = client.metricList();
         System.out.println(DataVinesResponse);
     }
 
     @Test
     public void createWorkSpaceByName() throws DatavinesApiException{
-        DataVinesResponse test = client.createWorkSpace("test");
+        DatavinesResponse test = client.createWorkSpace("test");
         System.out.println(test);
     }
 
     @Test
     public void createWorkSpaceByCreateRequest() throws DatavinesApiException{
-        DataVinesResponse test = client.createWorkSpace(new WorkSpaceCreateRequest("test2"));
+        DatavinesResponse test = client.createWorkSpace(new WorkSpaceCreateRequest("test2"));
         System.out.println(test);
     }
 
     @Test
     public void listWorkSpace() throws DatavinesApiException {
-        DataVinesResponse response = client.listWorkSpace();
+        DatavinesResponse response = client.listWorkSpace();
         System.out.println(response);
     }
 }

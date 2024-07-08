@@ -18,7 +18,7 @@ package io.datavines.http.client.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-public class DataVinesResponse<T> {
+public class DatavinesResponse<T> {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private Integer code;
@@ -32,7 +32,7 @@ public class DataVinesResponse<T> {
     @JsonIgnoreProperties(ignoreUnknown = true)
     private String token;
 
-    public DataVinesResponse() {
+    public DatavinesResponse() {
     }
 
     public Integer getCode() {
@@ -69,7 +69,7 @@ public class DataVinesResponse<T> {
 
     @Override
     public String toString() {
-        return "DataVinesResponse{" +
+        return "DatavinesResponse{" +
                 "code=" + code +
                 ", msg='" + msg + '\'' +
                 ", data=" + data +
