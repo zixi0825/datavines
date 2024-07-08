@@ -42,3 +42,6 @@ CREATE TABLE `dv_job_execution_result_report_rel` (
     UNIQUE KEY `dv_execution_report_rel_un` (`job_execution_result_id`,`quality_report_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='质量报告和执行结果关联关系';
 
+
+-- update  collate
+alter table dv_catalog_entity_instance modify fully_qualified_name varchar(255) collate utf8mb4_bin not null comment '全限定名';

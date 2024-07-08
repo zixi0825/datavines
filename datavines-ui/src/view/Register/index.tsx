@@ -75,7 +75,7 @@ const Index = () => {
                 rules: [
                     { required: true, message: `${phoneText}${requiredTop}` },
                 ],
-                widget: <Input autoComplete="off" placeholder={`${inputTip}${emailText}`} />,
+                widget: <Input autoComplete="off" placeholder={`${inputTip}${phoneText}`} />,
             },
             {
                 label: `${verificationCodeText}`,

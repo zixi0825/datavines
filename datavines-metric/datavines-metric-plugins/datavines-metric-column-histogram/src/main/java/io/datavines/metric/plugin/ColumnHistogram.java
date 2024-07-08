@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static io.datavines.common.CommonConstants.SPARK;
 import static io.datavines.common.ConfigConstants.METRIC_UNIQUE_KEY;
 
 public class ColumnHistogram extends BaseSingleTableColumn {
@@ -73,40 +74,37 @@ public class ColumnHistogram extends BaseSingleTableColumn {
         StringBuilder actualValueSql = new StringBuilder();
 
         String engineType = inputParameter.get("engine_type");
-        switch (engineType){
-            case "local":
-                // oracle concat function: Only two parameters are supported
-                String srcConnectorType = inputParameter.get("src_connector_type");
-                switch (srcConnectorType){
-                    case "oracle":
-                        actualValueSql.append("select concat(concat(k, '\001'), count) as actual_value_").append(uniqueKey).append(" from (select ${if_case_key} as k, count(1) as count from ${table}");
-                        break;
-                    default:
-                        actualValueSql.append("select concat(k, '\001', cast(count as ${string_type})) as actual_value_").append(uniqueKey).append(" from (select ${if_case_key} as k, count(1) as count from ${table}");
-                        break;
-                }
+        if (SPARK.equalsIgnoreCase(engineType)) {
+            actualValueSql.append("select concat(k, '\001', cast(count as ${string_type})) as actual_value_").append(uniqueKey).append(" from (select if(${column} is null, 'NULL', cast(${column} as ${string_type})) as k, count(1) as count from ${table}");
+            if (filters.size() > 0) {
+                actualValueSql.append(" where ").append(String.join(" and ", filters));
+            }
 
-                if (!filters.isEmpty()) {
-                    actualValueSql.append(" where ").append(String.join(" and ", filters));
-                }
-                actualValueSql.append(" group by ${column} order by count desc ");
-                switch (srcConnectorType){
-                    case "oracle":
-                        // oracle the rownum filter should be placed at the outermost layer of the query, otherwise it cannot be filtered
-                        actualValueSql.append(" ) T where ${limit_top_50_key} ");
-                        break;
-                    default:
-                        actualValueSql.append(" ${limit_top_50_key}) T");
-                        break;
-                }
-                break;
-            default:
-                actualValueSql.append("select concat(k, '\001', cast(count as ${string_type})) as actual_value_").append(uniqueKey).append(" from (select if(${column} is null, 'NULL', cast(${column} as ${string_type})) as k, count(1) as count from ${table}");
-                if (!filters.isEmpty()) {
-                    actualValueSql.append(" where ").append(String.join(" and ", filters));
-                }
-                actualValueSql.append(" group by ${column} order by count desc limit 50) T");
-                break;
+            actualValueSql.append(" group by ${column} order by count desc limit 50) T");
+        } else {
+            String srcConnectorType = inputParameter.get("src_connector_type");
+            switch (srcConnectorType){
+                case "oracle":
+                    actualValueSql.append("select concat(concat(k, '\001'), count) as actual_value_").append(uniqueKey).append(" from (select ${if_case_key} as k, count(1) as count from ${table}");
+                    break;
+                default:
+                    actualValueSql.append("select concat(k, '\001', cast(count as ${string_type})) as actual_value_").append(uniqueKey).append(" from (select ${if_case_key} as k, count(1) as count from ${table}");
+                    break;
+            }
+
+            if (!filters.isEmpty()) {
+                actualValueSql.append(" where ").append(String.join(" and ", filters));
+            }
+            actualValueSql.append(" group by ${column} order by count desc ");
+            switch (srcConnectorType){
+                case "oracle":
+                    // oracle the rownum filter should be placed at the outermost layer of the query, otherwise it cannot be filtered
+                    actualValueSql.append(" ) T where ${limit_top_50_key} ");
+                    break;
+                default:
+                    actualValueSql.append(" ${limit_top_50_key}) T");
+                    break;
+            }
         }
 
         executeSql.setSql(actualValueSql.toString());

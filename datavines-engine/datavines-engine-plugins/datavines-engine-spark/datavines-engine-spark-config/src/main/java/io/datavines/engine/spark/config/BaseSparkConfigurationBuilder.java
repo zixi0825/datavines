@@ -24,24 +24,24 @@ import io.datavines.common.config.enums.SourceType;
 import io.datavines.common.entity.ConnectorParameter;
 import io.datavines.common.entity.job.BaseJobParameter;
 import io.datavines.common.exception.DataVinesException;
-import io.datavines.common.utils.CommonPropertyUtils;
 import io.datavines.common.utils.JSONUtils;
 import io.datavines.common.utils.StringUtils;
 import io.datavines.connector.api.ConnectorFactory;
 import io.datavines.engine.common.utils.ParserUtils;
-import io.datavines.engine.common.utils.QuoteIdentifier;
 import io.datavines.engine.config.BaseJobConfigurationBuilder;
 import io.datavines.metric.api.ExpectedValue;
 import io.datavines.spi.PluginLoader;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.datavines.common.CommonConstants.DATABASE2;
-import static io.datavines.common.CommonConstants.TABLE2;
+import static io.datavines.common.CommonConstants.*;
 import static io.datavines.common.ConfigConstants.*;
+import static io.datavines.common.ConfigConstants.TABLE;
 
+@Slf4j
 public abstract class BaseSparkConfigurationBuilder extends BaseJobConfigurationBuilder {
 
     @Override
@@ -54,17 +54,32 @@ public abstract class BaseSparkConfigurationBuilder extends BaseJobConfiguration
         }
 
         ConnectorParameter connectorParameter = jobExecutionParameter.getConnectorParameter();
-        String srcConnectorType = connectorParameter.getType();
+        String srcConnectorType = "";
+        boolean isEnableSparkHiveSupport = false;
+        if (connectorParameter != null) {
+            srcConnectorType = connectorParameter.getType();
+            if (connectorParameter.getParameters().get(ENABLE_SPARK_HIVE_SUPPORT) != null) {
+                isEnableSparkHiveSupport = Boolean.parseBoolean((String) connectorParameter.getParameters().get(ENABLE_SPARK_HIVE_SUPPORT));
+            }
+        }
 
         ConnectorParameter connectorParameter2 = jobExecutionParameter.getConnectorParameter2();
-        String srcConnectorType2 = connectorParameter2.getType();
 
-        if (("hive".equals(srcConnectorType) || "hive".equals(srcConnectorType2)) && CommonPropertyUtils.getBoolean(ENABLE_SPARK_HIVE_SUPPORT)) {
-            configMap.put(ENABLE_SPARK_HIVE_SUPPORT, true);
+        String srcConnectorType2 = "";
+        boolean isEnableSparkHiveSupport2 = false;
+        if (connectorParameter2 != null) {
+            srcConnectorType2 = connectorParameter2.getType();
+            if (connectorParameter2.getParameters().get(ENABLE_SPARK_HIVE_SUPPORT) != null) {
+                isEnableSparkHiveSupport2 = Boolean.parseBoolean((String) connectorParameter2.getParameters().get(ENABLE_SPARK_HIVE_SUPPORT));
+            }
+        }
+
+        if ((HIVE.equalsIgnoreCase(srcConnectorType) && isEnableSparkHiveSupport) ||
+                (HIVE.equalsIgnoreCase(srcConnectorType2) && isEnableSparkHiveSupport2)) {
+            configMap.put(ENABLE_SPARK_HIVE_SUPPORT, Boolean.TRUE);
         }
 
         envConfig.setConfig(configMap);
-
         return envConfig;
     }
 
@@ -117,6 +132,8 @@ public abstract class BaseSparkConfigurationBuilder extends BaseJobConfiguration
                     metricInputParameter.put(IF_FUNCTION_KEY, "if");
                     metricInputParameter.put(LIMIT_TOP_50_KEY, " limit 50");
                     metricInputParameter.put(LENGTH_KEY, "length(${column})");
+                    metricInputParameter.put(SRC_CONNECTOR_TYPE, SPARK);
+                    metricInputParameter.put(ENGINE_TYPE, connectorParameter.getType());
 
                     String connectorUUID = connectorFactory.getConnectorParameterConverter().getConnectorUUID(connectorParameterMap);
 

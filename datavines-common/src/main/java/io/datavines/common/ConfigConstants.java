@@ -28,6 +28,7 @@ public class ConfigConstants {
     public static final String TABLE2_ALIAS_COLUMNS = "table2_alias_columns";
     public static final String FILTER = "filter";
     public static final String COLUMN = "column";
+    public static final String ENGINE_TYPE = "engine_type";
     public static final String SRC_CONNECTOR_TYPE = "src_connector_type";
     public static final String TARGET_CONNECTOR_TYPE = "target_connector_type";
     public static final String TARGET_DATASOURCE_ID = "target_datasource_id";

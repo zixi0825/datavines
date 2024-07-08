@@ -583,12 +583,28 @@ public class JobExecuteManager {
         jobExecutionRequest.setStatus(jobExecution.getStatus().getCode());
         jobExecutionRequest.setExecuteHost(NetUtils.getAddr(CommonPropertyUtils.getInt(CommonPropertyUtils.SERVER_PORT, CommonPropertyUtils.SERVER_PORT_DEFAULT)));
         jobExecutionRequest.setApplicationParameter(JSONUtils.toJsonString(qualityConfig));
-        jobExecutionRequest.setTenantCode(jobExecution.getTenantCode());
+
+        if (StringUtils.isEmpty(jobExecution.getTenantCode())) {
+            jobExecutionRequest.setEnv(CommonPropertyUtils.getString(
+                    CommonPropertyUtils.PROFILE_EXECUTE_ENGINE_SPARK_USER,
+                    CommonPropertyUtils.PROFILE_EXECUTE_ENGINE_SPARK_USER_DEFAULT));
+        } else {
+            jobExecutionRequest.setTenantCode(jobExecution.getTenantCode());
+        }
+
         jobExecutionRequest.setRetryTimes(jobExecution.getRetryTimes());
         jobExecutionRequest.setRetryInterval(jobExecution.getRetryInterval());
         jobExecutionRequest.setTimeout(jobExecution.getTimeout());
         jobExecutionRequest.setTimeoutStrategy(jobExecution.getTimeoutStrategy());
-        jobExecutionRequest.setEnv(jobExecution.getEnv());
+
+        if (StringUtils.isEmpty(jobExecution.getEnv())) {
+            jobExecutionRequest.setEnv(CommonPropertyUtils.getString(
+                    CommonPropertyUtils.PROFILE_EXECUTE_ENGINE_SPARK_ENV,
+                    CommonPropertyUtils.PROFILE_EXECUTE_ENGINE_SPARK_ENV_DEFAULT));
+        } else {
+            jobExecutionRequest.setEnv(jobExecution.getEnv());
+        }
+
         jobExecutionRequest.setApplicationId(jobExecution.getApplicationId());
         jobExecutionRequest.setProcessId(jobExecution.getProcessId());
         return jobExecutionRequest;
