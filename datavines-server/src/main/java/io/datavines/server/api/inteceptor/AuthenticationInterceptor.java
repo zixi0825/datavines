@@ -16,6 +16,7 @@
  */
 package io.datavines.server.api.inteceptor;
 
+import io.datavines.common.utils.StringUtils;
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.server.api.annotation.AuthIgnore;
 import io.datavines.core.enums.Status;
@@ -33,7 +34,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
-import java.util.Objects;
 
 @Slf4j
 public class AuthenticationInterceptor implements HandlerInterceptor {
@@ -64,9 +64,14 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         }
 
         String token = request.getHeader(DataVinesConstants.TOKEN_HEADER_STRING);
-        if (Objects.isNull(token)){
-            throw new DataVinesServerException(Status.TOKEN_IS_NULL_ERROR);
+
+        if (StringUtils.isEmpty(token)){
+            token = request.getParameter(DataVinesConstants.TOKEN_HEADER_STRING);
+            if (StringUtils.isEmpty(token)) {
+                throw new DataVinesServerException(Status.TOKEN_IS_NULL_ERROR);
+            }
         }
+
         String username = tokeManager.getUsername(token);
         User user = userService.getByUsername(username);
         if (null == user) {

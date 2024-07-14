@@ -20,14 +20,13 @@ import io.datavines.common.enums.DataVinesDataType;
 import io.datavines.metric.api.ConfigItem;
 import io.datavines.metric.api.MetricDimension;
 import io.datavines.metric.api.MetricType;
-import io.datavines.metric.plugin.base.BaseSingleTableColumn;
+import io.datavines.metric.plugin.base.BaseSingleTableColumnNotUseView;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class Freshness extends BaseSingleTableColumn {
+public class Freshness extends BaseSingleTableColumnNotUseView {
 
     public Freshness(){
         configMap.put("begin_time",new ConfigItem("begin_time", "开始时间", "begin_time"));

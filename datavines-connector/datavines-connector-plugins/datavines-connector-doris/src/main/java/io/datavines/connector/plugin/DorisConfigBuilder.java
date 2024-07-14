@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class StarRocksConfigBuilder extends JdbcConfigBuilder {
+public class DorisConfigBuilder extends JdbcConfigBuilder {
 
     @Override
     protected InputParam getPropertiesInput(boolean isEn) {

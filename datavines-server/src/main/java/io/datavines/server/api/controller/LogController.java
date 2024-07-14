@@ -26,13 +26,16 @@ import io.datavines.server.dqc.coordinator.log.LogService;
 import io.datavines.server.utils.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.io.Charsets;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import static io.datavines.common.utils.OSUtils.judgeConcurrentHost;
 
@@ -57,8 +60,8 @@ public class LogController {
         if (isConcurrentHost) {
             return logService.queryWholeLog(taskId);
         }
-        response.setHeader("Authorization", request.getHeader("Authorization"));
-        response.sendRedirect(request.getScheme() + "://" + taskHost + "/api/v1/task/log/queryWholeLog?taskId=" + taskId);
+
+        response.sendRedirect(request.getScheme() + "://" + taskHost + "/api/v1/task/log/queryWholeLog?taskId=" + taskId +"&Authorization="+request.getHeader("Authorization"));
         return null;
     }
 
@@ -72,9 +75,9 @@ public class LogController {
         if (isConcurrentHost) {
             return logService.queryLog(taskId, offsetLine);
         }
-        response.setHeader("Authorization", request.getHeader("Authorization"));
+
         response.sendRedirect(request.getScheme() + "://" + taskHost +
-                "/api/v1/task/log/queryLogWithOffsetLine?offsetLine="+offsetLine+"&taskId="+taskId);
+                "/api/v1/task/log/queryLogWithOffsetLine?offsetLine="+offsetLine+"&taskId="+taskId+"&Authorization="+request.getHeader("Authorization"));
         return null;
     }
 
@@ -88,9 +91,9 @@ public class LogController {
         if (isConcurrentHost) {
             return logService.queryLog(taskId, offsetLine, limit);
         }
-        response.setHeader("Authorization", request.getHeader("Authorization"));
+
         response.sendRedirect(request.getScheme() + "://" + taskHost +
-                "/api/v1/task/log/queryLogWithLimit?limit="+limit+"&offsetLine="+offsetLine+"&taskId="+taskId);
+                "/api/v1/task/log/queryLogWithLimit?limit="+limit+"&offsetLine="+offsetLine+"&taskId="+taskId+"&Authorization="+request.getHeader("Authorization"));
         return null;
     }
 
@@ -113,7 +116,6 @@ public class LogController {
             FileUtils.downloadToResp(jobExecution.getLogPath(), response);
             return;
         }
-        response.setHeader("Authorization", request.getHeader("Authorization"));
-        response.sendRedirect(request.getScheme() + "://" + taskHost + "/api/v1/jobExecution/log/download?taskId=" + taskId);
+        response.sendRedirect(request.getScheme() + "://" + taskHost + "/api/v1/jobExecution/log/download?taskId=" + taskId+"&Authorization="+request.getHeader("Authorization"));
     }
 }

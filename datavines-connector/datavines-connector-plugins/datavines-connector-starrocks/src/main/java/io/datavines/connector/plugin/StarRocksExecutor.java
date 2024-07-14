@@ -25,6 +25,7 @@ public class StarRocksExecutor extends MysqlExecutor {
     public StarRocksExecutor(DataSourceClient dataSourceClient) {
         super(dataSourceClient);
     }
+
     @Override
     public BaseJdbcDataSourceInfo getDatasourceInfo(JdbcConnectionInfo jdbcConnectionInfo) {
         return new StarRocksDataSourceInfo(jdbcConnectionInfo);

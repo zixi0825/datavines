@@ -132,8 +132,8 @@ public abstract class BaseSparkConfigurationBuilder extends BaseJobConfiguration
                     metricInputParameter.put(IF_FUNCTION_KEY, "if");
                     metricInputParameter.put(LIMIT_TOP_50_KEY, " limit 50");
                     metricInputParameter.put(LENGTH_KEY, "length(${column})");
-                    metricInputParameter.put(SRC_CONNECTOR_TYPE, SPARK);
-                    metricInputParameter.put(ENGINE_TYPE, connectorParameter.getType());
+                    metricInputParameter.put(SRC_CONNECTOR_TYPE, connectorParameter.getType());
+                    metricInputParameter.put(ENGINE_TYPE, SPARK);
 
                     String connectorUUID = connectorFactory.getConnectorParameterConverter().getConnectorUUID(connectorParameterMap);
 

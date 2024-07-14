@@ -38,7 +38,7 @@ public class HiveConfigBuilder extends JdbcConfigBuilder {
         List<PluginParams> list = new ArrayList<>();
 
         InputParam enableSparkHiveSupport = getInputParam("enable_spark_hive_support",
-                "ENABLE_SPARK_HIVE_SUPPORT",
+                "spark.enable.hive.support",
                 isEn ? "please enter true or false" : "请填入 true 或者 false", 2, null,
                 "true");
 

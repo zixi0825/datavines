@@ -259,8 +259,8 @@ const Jobs = ({ datasourceId }: TJobs) => {
         {
             title: intl.formatMessage({ id: 'common_action' }),
             fixed: 'right',
-            key: 'right',
-            dataIndex: 'right',
+            key: 'action',
+            dataIndex: 'action',
             width: 300,
             render: (text: string, record: TJobsTableItem) => {
                 const editComp = <a style={{ marginRight: 5 }} onClick={() => { onEdit(record); }}>{intl.formatMessage({ id: 'common_edit' })}</a>;
@@ -404,10 +404,10 @@ const Jobs = ({ datasourceId }: TJobs) => {
                 </div>
             </div>
             <Table<TJobsTableItem>
+                // virtual
                 loading={loading}
                 size="middle"
                 rowKey="id"
-                bordered
                 columns={columns}
                 dataSource={tableData.list || []}
                 onChange={onChange}

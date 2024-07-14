@@ -155,9 +155,9 @@ const JobsInstance = () => {
         {
             title: intl.formatMessage({ id: 'common_action' }),
             fixed: 'right',
-            key: 'right',
-            dataIndex: 'right',
-            width: 200,
+            key: 'action',
+            dataIndex: 'action',
+            width: 300,
             render: (text: string, record: TJobsInstanceTableItem) => (
                 <>
                     <IF visible={record.status === 'submitted' || record.status === 'running' || record.status === '已提交' || record.status === '执行中'}>
@@ -191,6 +191,7 @@ const JobsInstance = () => {
                 columns={columns}
                 dataSource={tableData.list || []}
                 onChange={onChange}
+                // scroll={{ x: 1500 }}
                 pagination={{
                     size: 'small',
                     total: tableData.total,

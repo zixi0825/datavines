@@ -76,7 +76,7 @@ public class ColumnHistogram extends BaseSingleTableColumn {
         String engineType = inputParameter.get("engine_type");
         if (SPARK.equalsIgnoreCase(engineType)) {
             actualValueSql.append("select concat(k, '\001', cast(count as ${string_type})) as actual_value_").append(uniqueKey).append(" from (select if(${column} is null, 'NULL', cast(${column} as ${string_type})) as k, count(1) as count from ${table}");
-            if (filters.size() > 0) {
+            if (!filters.isEmpty()) {
                 actualValueSql.append(" where ").append(String.join(" and ", filters));
             }
 

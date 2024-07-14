@@ -18,7 +18,9 @@ package io.datavines.core.entity;
 
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.core.enums.Status;
+import io.datavines.core.exception.DataVinesServerException;
 import io.datavines.core.utils.TokenManager;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +30,7 @@ public class ResultMap extends HashMap<String, Object> {
 
     public static final String EMPTY = "";
 
+    @Getter
     private int code;
 
     private TokenManager tokenManager;
@@ -58,8 +61,19 @@ public class ResultMap extends HashMap<String, Object> {
 
     public ResultMap successAndRefreshToken(HttpServletRequest request) {
         String token = request.getHeader(DataVinesConstants.TOKEN_HEADER_STRING);
-        if(StringUtils.isEmpty(token)) {
+        if (StringUtils.isEmpty(token)) {
             token = (String)request.getAttribute(DataVinesConstants.TOKEN_HEADER_STRING);
+            if (StringUtils.isEmpty(token)) {
+                token = request.getParameter(DataVinesConstants.TOKEN_HEADER_STRING);
+                if (StringUtils.isEmpty(token)) {
+                    throw new DataVinesServerException(Status.TOKEN_IS_NULL_ERROR);
+                }
+            }
+        } else {
+            token = request.getParameter(DataVinesConstants.TOKEN_HEADER_STRING);
+            if (StringUtils.isEmpty(token)) {
+                throw new DataVinesServerException(Status.TOKEN_IS_NULL_ERROR);
+            }
         }
         this.code = Status.SUCCESS.getCode();
         this.put("code", this.code);
@@ -89,6 +103,20 @@ public class ResultMap extends HashMap<String, Object> {
         this.put("msg", Status.FAIL.getMsg());
 
         String token = request.getHeader(DataVinesConstants.TOKEN_HEADER_STRING);
+        if (StringUtils.isEmpty(token)) {
+            token = (String)request.getAttribute(DataVinesConstants.TOKEN_HEADER_STRING);
+            if (StringUtils.isEmpty(token)) {
+                token = request.getParameter(DataVinesConstants.TOKEN_HEADER_STRING);
+                if (StringUtils.isEmpty(token)) {
+                    throw new DataVinesServerException(Status.TOKEN_IS_NULL_ERROR);
+                }
+            }
+        } else {
+            token = request.getParameter(DataVinesConstants.TOKEN_HEADER_STRING);
+            if (StringUtils.isEmpty(token)) {
+                throw new DataVinesServerException(Status.TOKEN_IS_NULL_ERROR);
+            }
+        }
 
         if (!StringUtils.isEmpty(token)) {
             this.put("token", this.tokenManager.refreshToken(token));
@@ -107,7 +135,4 @@ public class ResultMap extends HashMap<String, Object> {
         return this;
     }
 
-    public int getCode() {
-        return code;
-    }
 }

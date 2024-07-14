@@ -28,7 +28,6 @@ public class ConfigConstants {
     public static final String TABLE2_ALIAS_COLUMNS = "table2_alias_columns";
     public static final String FILTER = "filter";
     public static final String COLUMN = "column";
-    public static final String ENGINE_TYPE = "engine_type";
     public static final String SRC_CONNECTOR_TYPE = "src_connector_type";
     public static final String TARGET_CONNECTOR_TYPE = "target_connector_type";
     public static final String TARGET_DATASOURCE_ID = "target_datasource_id";
@@ -107,6 +106,7 @@ public class ConfigConstants {
     public static final String DATA_DIR = "data_dir";
 
     public static final String ENABLE_SPARK_HIVE_SUPPORT = "enable_spark_hive_support";
+    public static final String ENABLE_USE_VIEW = "enable_use_view";
 
     public static final String FILE = "file";
 
@@ -162,4 +162,6 @@ public class ConfigConstants {
     public static final String POST_SQL = "post_sql";
 
     public static final String SAVE_MODE = "save_mode";
+
+    public static final String UPSERT = "Upsert";
 }

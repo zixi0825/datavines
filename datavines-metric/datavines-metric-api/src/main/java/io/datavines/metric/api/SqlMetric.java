@@ -59,6 +59,14 @@ public interface SqlMetric {
     ExecuteSql getActualValue(Map<String,String> inputParameter);
 
     /**
+     * get direct actual value execute sql without use view
+     * @return ExecuteSql
+     */
+    default ExecuteSql getDirectActualValue(Map<String,String> inputParameter) {
+        return getActualValue(inputParameter);
+    }
+
+    /**
      * get actual name
      */
     default String getActualName() {

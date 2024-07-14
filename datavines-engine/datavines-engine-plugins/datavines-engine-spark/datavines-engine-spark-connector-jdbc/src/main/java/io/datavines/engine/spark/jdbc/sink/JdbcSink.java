@@ -17,10 +17,12 @@
 package io.datavines.engine.spark.jdbc.sink;
 
 import io.datavines.common.utils.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SaveMode;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +39,7 @@ import io.datavines.engine.spark.api.batch.SparkBatchSink;
 
 import static io.datavines.common.ConfigConstants.*;
 
+@Slf4j
 public class JdbcSink implements SparkBatchSink {
 
     private Config config = new Config();
@@ -83,17 +86,64 @@ public class JdbcSink implements SparkBatchSink {
 
     @Override
     public Void output(Dataset<Row> data, SparkRuntimeEnvironment environment) {
-        if (!Strings.isNullOrEmpty(config.getString(SQL))) {
-            data = environment.sparkSession().sql(config.getString(SQL));
+        if (UPSERT.equals(config.getString(SAVE_MODE))) {
+            data = environment.sparkSession().sql("select * from invalidate_count_" + config.getString(METRIC_UNIQUE_KEY));
+            Properties prop = new Properties();
+            prop.setProperty(DRIVER, config.getString(DRIVER));
+            prop.setProperty(USER, config.getString(USER));
+            prop.setProperty(PASSWORD, config.getString(PASSWORD));
+            String url = config.getString(URL);
+            String sql = config.getString(SQL);
+
+            List<Row> rows = data.takeAsList(50);
+            Connection connection = null;
+            try {
+                connection = DriverManager.getConnection(url, prop);
+                PreparedStatement pstmt = connection.prepareStatement(sql);
+                if (rows.size() == 1) {
+                    Row rowValue = rows.get(0);
+                    if (rowValue.isNullAt(0)) {
+                        pstmt.setObject(1, 0);
+                        pstmt.executeUpdate();
+                    } else {
+                        pstmt.setObject(1, rowValue.get(0));
+                        pstmt.executeUpdate();
+                    }
+                } else if ((rows.size() > 1)) {
+                    List<String> resultList = new ArrayList<>();
+                    for (Row row : rows) {
+                        resultList.add(row.get(0).toString());
+                    }
+
+                    pstmt.setObject(1, String.join("@#@",resultList.toArray(new String[]{})));
+                    pstmt.executeUpdate();
+                }
+
+            } catch (SQLException e) {
+                log.error("execute sql error", e);
+            } finally {
+                if (connection != null) {
+                    try {
+                        connection.close();
+                    } catch (Exception e) {
+                        log.error("close connection error", e);
+                    }
+                }
+            }
+
+        } else {
+            if (!Strings.isNullOrEmpty(config.getString(SQL))) {
+                data = environment.sparkSession().sql(config.getString(SQL));
+            }
+
+            String saveMode = config.getString(SAVE_MODE);
+
+            Properties prop = new Properties();
+            prop.setProperty(DRIVER, config.getString(DRIVER));
+            prop.setProperty(USER, config.getString(USER));
+            prop.setProperty(PASSWORD, config.getString(PASSWORD));
+            data.write().mode(saveMode).jdbc(config.getString(URL), config.getString(TABLE), prop);
         }
-
-        String saveMode = config.getString(SAVE_MODE);
-
-        Properties prop = new Properties();
-        prop.setProperty(DRIVER, config.getString(DRIVER));
-        prop.setProperty(USER, config.getString(USER));
-        prop.setProperty(PASSWORD, config.getString(PASSWORD));
-        data.write().mode(saveMode).jdbc(config.getString(URL), config.getString(TABLE), prop);
 
         return null;
     }

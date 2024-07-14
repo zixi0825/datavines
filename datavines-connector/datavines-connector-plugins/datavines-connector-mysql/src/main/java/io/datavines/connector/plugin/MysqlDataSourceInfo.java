@@ -45,8 +45,4 @@ public class MysqlDataSourceInfo extends BaseJdbcDataSourceInfo {
         return "?";
     }
 
-    @Override
-    protected String filterProperties(String other){
-        return other;
-    }
 }

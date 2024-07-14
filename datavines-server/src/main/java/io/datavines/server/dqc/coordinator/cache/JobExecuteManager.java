@@ -585,7 +585,7 @@ public class JobExecuteManager {
         jobExecutionRequest.setApplicationParameter(JSONUtils.toJsonString(qualityConfig));
 
         if (StringUtils.isEmpty(jobExecution.getTenantCode())) {
-            jobExecutionRequest.setEnv(CommonPropertyUtils.getString(
+            jobExecutionRequest.setTenantCode(CommonPropertyUtils.getString(
                     CommonPropertyUtils.PROFILE_EXECUTE_ENGINE_SPARK_USER,
                     CommonPropertyUtils.PROFILE_EXECUTE_ENGINE_SPARK_USER_DEFAULT));
         } else {

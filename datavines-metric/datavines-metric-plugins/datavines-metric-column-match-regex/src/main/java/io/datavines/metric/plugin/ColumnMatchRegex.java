@@ -19,14 +19,14 @@ package io.datavines.metric.plugin;
 import io.datavines.common.enums.DataVinesDataType;
 import io.datavines.metric.api.MetricDimension;
 import io.datavines.metric.api.MetricType;
-import io.datavines.metric.plugin.base.BaseSingleTableColumn;
 import io.datavines.metric.api.ConfigItem;
+import io.datavines.metric.plugin.base.BaseSingleTableColumnNotUseView;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class ColumnMatchRegex extends BaseSingleTableColumn {
+public class ColumnMatchRegex extends BaseSingleTableColumnNotUseView {
 
     public ColumnMatchRegex(){
         super();
