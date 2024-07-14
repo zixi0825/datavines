@@ -58,7 +58,7 @@ public class StarRocksConfigBuilder extends JdbcConfigBuilder {
         List<PluginParams> list = new ArrayList<>();
 
         InputParam enableExternalCatalog = getInputParam("enable_use_view",
-                isEn ? "enable.use.view" : "允许使用视图",
+                isEn ? "enable.use.view" : "允许使用视图(设置为false时无法导出错误数据)",
                 isEn ? "please enter true or false" : "请填入 true 或者 false", 2, null,
                 "true");
 
