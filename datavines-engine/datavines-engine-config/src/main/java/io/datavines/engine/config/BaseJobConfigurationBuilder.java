@@ -114,6 +114,7 @@ public abstract class BaseJobConfigurationBuilder implements JobConfigurationBui
                 metricInputParameter.put(THRESHOLD, String.valueOf(parameter.getThreshold()));
                 metricInputParameter.put(EXPECTED_TYPE, StringUtils.wrapperSingleQuotes(parameter.getExpectedType()));
                 metricInputParameter.put(INVALIDATE_ITEM_CAN_OUTPUT, String.valueOf(true));
+                metricInputParameter.put(ENGINE_TYPE, jobExecutionInfo.getEngineType());
                 metric2InputParameter.put(metricUniqueKey, metricInputParameter);
             }
         }

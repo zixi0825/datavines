@@ -17,10 +17,44 @@
 package io.datavines.connector.plugin;
 
 import io.datavines.common.datasource.jdbc.JdbcConnectionInfo;
+import io.datavines.common.utils.StringUtils;
 
 public class DorisDataSourceInfo extends MysqlDataSourceInfo {
 
     public DorisDataSourceInfo(JdbcConnectionInfo jdbcConnectionInfo) {
         super(jdbcConnectionInfo);
+    }
+
+    @Override
+    public String getJdbcUrl() {
+        StringBuilder jdbcUrl = new StringBuilder(getAddress());
+        appendCatalogOrDatabase(jdbcUrl);
+        appendProperties(jdbcUrl);
+
+        return jdbcUrl.toString();
+    }
+
+    private void appendCatalogOrDatabase(StringBuilder jdbcUrl) {
+        if (StringUtils.isNotEmpty(getCatalog())) {
+            if (getAddress().lastIndexOf('/') != (jdbcUrl.length() - 1)) {
+                jdbcUrl.append("/");
+            }
+            jdbcUrl.append(getCatalog());
+
+            if (StringUtils.isNotEmpty(getDatabase())) {
+                if (getAddress().lastIndexOf('.') != (jdbcUrl.length() - 1)) {
+                    jdbcUrl.append(".");
+                }
+                jdbcUrl.append(getDatabase());
+            }
+
+        } else {
+            if (StringUtils.isNotEmpty(getDatabase())) {
+                if (getAddress().lastIndexOf('/') != (jdbcUrl.length() - 1)) {
+                    jdbcUrl.append("/");
+                }
+                jdbcUrl.append(getDatabase());
+            }
+        }
     }
 }

@@ -16,7 +16,11 @@
  */
 package io.datavines.connector.plugin;
 
+import io.datavines.common.param.form.PluginParams;
 import io.datavines.common.param.form.type.InputParam;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HiveConfigBuilder extends JdbcConfigBuilder {
 
@@ -26,5 +30,19 @@ public class HiveConfigBuilder extends JdbcConfigBuilder {
                 isEn ? "properties" : "参数",
                 isEn ? "please enter properties,like key=value;key1=value1" : "请填入参数，格式为key=value;key1=value1", 2, null,
                 "hive.resultset.use.unique.column.names=false");
+    }
+
+    @Override
+    protected List<PluginParams> getOtherParams(boolean isEn) {
+
+        List<PluginParams> list = new ArrayList<>();
+
+        InputParam enableSparkHiveSupport = getInputParam("enable_spark_hive_support",
+                "spark.enable.hive.support",
+                isEn ? "please enter true or false" : "请填入 true 或者 false", 2, null,
+                "true");
+
+        list.add(enableSparkHiveSupport);
+        return list;
     }
 }

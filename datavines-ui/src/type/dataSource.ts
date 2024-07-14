@@ -1,3 +1,5 @@
+import {NoticeDynamicItemOption} from "@/type/Notification";
+
 export interface ICreateDataSourceProps {
     type: string;
     placeholder: string;
@@ -20,6 +22,13 @@ export interface ICreateDataSourceItem {
     title: string;
     value: string;
     validate: ICreateDataSourceValidate[];
+    options?: CreateDataSourceDynamicItemOption[];
+}
+
+export interface CreateDataSourceDynamicItemOption {
+    label: string;
+    value: string;
+    disabled: boolean;
 }
 
 export type TableType = 'CARD' | 'TABLE';

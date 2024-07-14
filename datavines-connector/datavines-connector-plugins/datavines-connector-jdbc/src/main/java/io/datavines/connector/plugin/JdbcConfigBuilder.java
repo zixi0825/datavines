@@ -29,6 +29,7 @@ import io.datavines.connector.api.ConfigBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -52,6 +53,8 @@ public class JdbcConfigBuilder implements ConfigBuilder {
         params.add(getUserInput(isEn));
         params.add(getPasswordInput(isEn));
         params.add(getPropertiesInput(isEn));
+
+        params.addAll(getOtherParams(isEn));
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -138,4 +141,9 @@ public class JdbcConfigBuilder implements ConfigBuilder {
                 .setEmit(null)
                 .build();
     }
+
+    protected List<PluginParams> getOtherParams(boolean isEn) {
+        return Collections.emptyList();
+    }
+
 }

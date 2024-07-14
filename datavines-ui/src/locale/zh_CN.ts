@@ -86,7 +86,7 @@ export default {
     home_search_placeholder: '搜索数据源',
     home_create_datasource: '创建数据源',
     home_metadata_fetch: '元数据管理',
-    home_metadata_fetch_now: '立即抓取',
+    home_metadata_fetch_now: '立即执行',
     home_metadata_fetch_schedule: '元数据调度管理',
 
     // jobs
@@ -300,6 +300,8 @@ export default {
     label_add_category: '新增标签分类',
     label_add: '新增标签',
     label_name: '标签名',
+
+    profile_schedule: '数据概览调度配置',
 
     config_title: '参数管理',
     config_var_key: '参数名',

@@ -66,7 +66,7 @@ public class ShellCommandProcess extends BaseCommandProcess {
 
         sb.append("\n");
         sb.append(execCommand);
-        logger.info("command : {}",sb.toString());
+        logger.info("command : {}", sb);
 
         // write data to file
         FileUtils.writeStringToFile(new File(commandFile), sb.toString(), StandardCharsets.UTF_8);

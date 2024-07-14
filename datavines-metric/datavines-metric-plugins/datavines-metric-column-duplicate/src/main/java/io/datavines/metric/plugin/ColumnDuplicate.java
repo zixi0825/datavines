@@ -20,15 +20,14 @@ import io.datavines.common.enums.DataVinesDataType;
 import io.datavines.metric.api.MetricDimension;
 import io.datavines.metric.api.MetricDirectionType;
 import io.datavines.metric.api.MetricType;
-import io.datavines.metric.plugin.base.BaseSingleTableColumn;
+import io.datavines.metric.plugin.base.BaseSingleTableColumnNotUseView;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-public class ColumnDuplicate extends BaseSingleTableColumn {
+public class ColumnDuplicate extends BaseSingleTableColumnNotUseView {
 
     public ColumnDuplicate(){
         super();

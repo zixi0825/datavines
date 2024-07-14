@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static io.datavines.common.ConfigConstants.METRIC_UNIQUE_KEY;
+import static io.datavines.common.ConfigConstants.*;
 
 public class SparkDataProfileMetricBuilder extends BaseSparkConfigurationBuilder {
 
@@ -45,6 +45,8 @@ public class SparkDataProfileMetricBuilder extends BaseSparkConfigurationBuilder
 
                 SinkConfig actualValueSinkConfig = getValidateResultDataSinkConfig(
                         null, profileSinkSql, "dv_catalog_entity_profile", metricInputParameter);
+                actualValueSinkConfig.getConfig().put(SAVE_MODE, UPSERT);
+
                 actualValueSinkConfig.setType(SinkType.PROFILE_VALUE.getDescription());
                 sinkConfigs.add(actualValueSinkConfig);
             }

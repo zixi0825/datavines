@@ -31,6 +31,8 @@ import io.datavines.connector.api.ConnectorFactory;
 import io.datavines.core.enums.Status;
 import io.datavines.server.api.dto.bo.datasource.DataSourceCreate;
 import io.datavines.server.api.dto.bo.datasource.DataSourceUpdate;
+import io.datavines.server.api.dto.bo.job.schedule.MapParam;
+import io.datavines.server.api.dto.bo.task.CommonTaskScheduleCreateOrUpdate;
 import io.datavines.server.api.dto.vo.DataSourceVO;
 import io.datavines.server.enums.CommonTaskType;
 import io.datavines.server.repository.entity.DataSource;
@@ -50,10 +52,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static io.datavines.common.log.SensitiveDataConverter.PWD_PATTERN_1;
 
@@ -69,6 +68,9 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
 
     @Autowired
     private CatalogEntityInstanceService catalogEntityInstanceService;
+
+    @Autowired
+    private CommonTaskScheduleService commonTaskScheduleService;
 
     @Override
     public boolean testConnect(TestConnectionRequestParam param) {
@@ -126,6 +128,21 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
         catalogRefresh.setDatasourceId(dataSource.getId());
         catalogRefresh.setTaskType(CommonTaskType.CATALOG_METADATA_FETCH);
         commonTaskService.refreshCatalog(catalogRefresh);
+
+        CommonTaskScheduleCreateOrUpdate taskScheduleCreateOrUpdate = new CommonTaskScheduleCreateOrUpdate();
+        taskScheduleCreateOrUpdate.setDataSourceId(dataSource.getId());
+        taskScheduleCreateOrUpdate.setTaskType(CommonTaskType.DATA_QUALITY_REPORT);
+        taskScheduleCreateOrUpdate.setType("cycle");
+        MapParam mapParam = new MapParam();
+        mapParam.setCycle("day");
+        Map<String,String> parameter = new HashMap<>();
+        parameter.put("minute","5");
+        parameter.put("hour","0");
+        mapParam.setParameter(parameter);
+        taskScheduleCreateOrUpdate.setParam(mapParam);
+        taskScheduleCreateOrUpdate.setStartTime(LocalDateTime.now());
+        taskScheduleCreateOrUpdate.setEndTime(LocalDateTime.now().plusYears(100));
+        commonTaskScheduleService.createOrUpdate(taskScheduleCreateOrUpdate);
         return dataSource.getId();
     }
 

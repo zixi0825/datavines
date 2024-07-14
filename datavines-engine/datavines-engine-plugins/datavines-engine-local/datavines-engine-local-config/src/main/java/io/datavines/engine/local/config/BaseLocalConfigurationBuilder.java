@@ -65,6 +65,11 @@ public abstract class BaseLocalConfigurationBuilder extends BaseJobConfiguration
                     ConnectorFactory connectorFactory = PluginLoader
                             .getPluginLoader(ConnectorFactory.class)
                             .getNewPlugin(connectorParameter.getType());
+
+                    if (connectorParameter.getParameters().get(ENABLE_USE_VIEW) != null) {
+                        metricInputParameter.put(ENABLE_USE_VIEW, String.valueOf(connectorParameter.getParameters().get(ENABLE_USE_VIEW)));
+                    }
+
                     Map<String, Object> connectorParameterMap = new HashMap<>(connectorParameter.getParameters());
                     connectorParameterMap.putAll(metricInputParameter);
                     connectorParameterMap = connectorFactory.getConnectorParameterConverter().converter(connectorParameterMap);
@@ -103,8 +108,8 @@ public abstract class BaseLocalConfigurationBuilder extends BaseJobConfiguration
                     invalidateItemCanOutput &= connectorFactory.getDialect().invalidateItemCanOutput();
                     metricInputParameter.put(INVALIDATE_ITEM_CAN_OUTPUT, String.valueOf(invalidateItemCanOutput));
 
-                    String connectorUUID = connectorFactory.getConnectorParameterConverter().getConnectorUUID(connectorParameterMap);
-                    if (sourceConnectorSet.contains(connectorUUID)) {
+                    String connectorUuid = connectorFactory.getConnectorParameterConverter().getConnectorUUID(connectorParameterMap);
+                    if (sourceConnectorSet.contains(connectorUuid)) {
                         continue;
                     }
 
@@ -113,7 +118,7 @@ public abstract class BaseLocalConfigurationBuilder extends BaseJobConfiguration
                     sourceConfig.setConfig(connectorParameterMap);
                     sourceConfig.setType(SourceType.SOURCE.getDescription());
                     sourceConfigs.add(sourceConfig);
-                    sourceConnectorSet.add(connectorUUID);
+                    sourceConnectorSet.add(connectorUuid);
                 }
 
                 if (jobExecutionParameter.getConnectorParameter2() != null && jobExecutionParameter.getConnectorParameter2().getParameters() != null) {
@@ -152,8 +157,8 @@ public abstract class BaseLocalConfigurationBuilder extends BaseJobConfiguration
                     invalidateItemCanOutput &= connectorFactory.getDialect().invalidateItemCanOutput();
                     metricInputParameter.put(INVALIDATE_ITEM_CAN_OUTPUT, String.valueOf(invalidateItemCanOutput));
 
-                    String connectorUUID = connectorFactory.getConnectorParameterConverter().getConnectorUUID(connectorParameterMap);
-                    if (targetConnectorSet.contains(connectorUUID)) {
+                    String connectorUuid = connectorFactory.getConnectorParameterConverter().getConnectorUUID(connectorParameterMap);
+                    if (targetConnectorSet.contains(connectorUuid)) {
                         continue;
                     }
 
@@ -162,7 +167,7 @@ public abstract class BaseLocalConfigurationBuilder extends BaseJobConfiguration
                     sourceConfig.setConfig(connectorParameterMap);
                     sourceConfig.setType(SourceType.TARGET.getDescription());
                     sourceConfigs.add(sourceConfig);
-                    targetConnectorSet.add(connectorUUID);
+                    targetConnectorSet.add(connectorUuid);
                 }
 
                 String expectedType = jobExecutionInfo.getEngineType() + "_" + parameter.getExpectedType();
@@ -202,28 +207,47 @@ public abstract class BaseLocalConfigurationBuilder extends BaseJobConfiguration
                 invalidateItemCanOutput &= sqlMetric.isInvalidateItemsCanOutput();
                 metricInputParameter.put(INVALIDATE_ITEM_CAN_OUTPUT, String.valueOf(invalidateItemCanOutput));
 
-                // generate invalidate item execute sql
-                if (sqlMetric.getInvalidateItems(metricInputParameter) != null) {
-                    ExecuteSql invalidateItemExecuteSql = sqlMetric.getInvalidateItems(metricInputParameter);
-                    metricInputParameter.put(INVALIDATE_ITEMS_TABLE, invalidateItemExecuteSql.getResultTable());
-                    invalidateItemExecuteSql.setResultTable(invalidateItemExecuteSql.getResultTable());
-                    MetricParserUtils.setTransformerConfig(
-                            metricInputParameter,
-                            transformConfigs,
-                            invalidateItemExecuteSql,
-                            TransformType.INVALIDATE_ITEMS.getDescription());
+                boolean isEnableExternalCatalog = true;
+                if (metricInputParameter.get(ENABLE_USE_VIEW) != null) {
+                    isEnableExternalCatalog = Boolean.parseBoolean(metricInputParameter.get(ENABLE_USE_VIEW));
                 }
 
-                // generate actual value execute sql
-                ExecuteSql actualValueExecuteSql = sqlMetric.getActualValue(metricInputParameter);
-                if (actualValueExecuteSql != null) {
-                    actualValueExecuteSql.setResultTable(sqlMetric.getActualValue(metricInputParameter).getResultTable());
-                    MetricParserUtils.setTransformerConfig(
-                            metricInputParameter,
-                            transformConfigs,
-                            actualValueExecuteSql,
-                            TransformType.ACTUAL_VALUE.getDescription());
-                    metricInputParameter.put(ACTUAL_TABLE, sqlMetric.getActualValue(metricInputParameter).getResultTable());
+                if (isEnableExternalCatalog) {
+                    // generate invalidate item execute sql
+                    if (sqlMetric.getInvalidateItems(metricInputParameter) != null) {
+                        ExecuteSql invalidateItemExecuteSql = sqlMetric.getInvalidateItems(metricInputParameter);
+                        metricInputParameter.put(INVALIDATE_ITEMS_TABLE, invalidateItemExecuteSql.getResultTable());
+                        invalidateItemExecuteSql.setResultTable(invalidateItemExecuteSql.getResultTable());
+                        MetricParserUtils.setTransformerConfig(
+                                metricInputParameter,
+                                transformConfigs,
+                                invalidateItemExecuteSql,
+                                TransformType.INVALIDATE_ITEMS.getDescription());
+                    }
+
+                    // generate actual value execute sql
+                    ExecuteSql actualValueExecuteSql = sqlMetric.getActualValue(metricInputParameter);
+                    if (actualValueExecuteSql != null) {
+                        actualValueExecuteSql.setResultTable(sqlMetric.getActualValue(metricInputParameter).getResultTable());
+                        MetricParserUtils.setTransformerConfig(
+                                metricInputParameter,
+                                transformConfigs,
+                                actualValueExecuteSql,
+                                TransformType.ACTUAL_VALUE.getDescription());
+                        metricInputParameter.put(ACTUAL_TABLE, sqlMetric.getActualValue(metricInputParameter).getResultTable());
+                    }
+                } else {
+                    // generate actual value execute sql
+                    ExecuteSql actualValueExecuteSql = sqlMetric.getDirectActualValue(metricInputParameter);
+                    if (actualValueExecuteSql != null) {
+                        actualValueExecuteSql.setResultTable(sqlMetric.getDirectActualValue(metricInputParameter).getResultTable());
+                        MetricParserUtils.setTransformerConfig(
+                                metricInputParameter,
+                                transformConfigs,
+                                actualValueExecuteSql,
+                                TransformType.ACTUAL_VALUE.getDescription());
+                        metricInputParameter.put(ACTUAL_TABLE, sqlMetric.getActualValue(metricInputParameter).getResultTable());
+                    }
                 }
 
                 // generate expected value transform sql

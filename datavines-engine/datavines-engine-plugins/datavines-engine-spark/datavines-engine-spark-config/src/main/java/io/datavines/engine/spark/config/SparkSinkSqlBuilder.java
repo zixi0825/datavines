@@ -66,18 +66,25 @@ public class SparkSinkSqlBuilder {
 
     public static String getProfileValueSql() {
 
-        List<String> columnList = new ArrayList<>(MetricConstants.PROFILE_COLUMN_LIST.size());
-
+        List<String> columnList = new ArrayList<>();
+        List<String> columnValueList = new ArrayList<>();
         for (ColumnInfo columnInfo : MetricConstants.PROFILE_COLUMN_LIST) {
 
-            if (columnInfo.isNeedSingleQuotation()) {
-                columnList.add(StringUtils.wrapperSingleQuotes("${" + columnInfo.getParameterName() + "}") + " as "
-                        + columnInfo.getName());
+            columnList.add("`"+columnInfo.getName()+"`");
+
+            if ("actual_value".equals(columnInfo.getName())) {
+                columnValueList.add("?");
             } else {
-                columnList.add("${" + columnInfo.getParameterName() + "}" + " as " + columnInfo.getName());
+                if (columnInfo.isNeedSingleQuotation()) {
+                    columnValueList.add(StringUtils.wrapperSingleQuotes("${"+columnInfo.getParameterName()+"}"));
+                } else {
+                    columnValueList.add("${"+columnInfo.getName()+"}");
+                }
             }
         }
 
-        return "select " + String.join(", ", columnList) + " from ${actual_table}";
+        return "INSERT INTO dv_catalog_entity_profile ("
+                + String.join(", ", columnList)+") VALUES ("
+                + String.join(", ", columnValueList)+ ") ON DUPLICATE KEY UPDATE actual_value = VALUES(actual_value), actual_value_type='${actual_value_type}',update_time=${update_time}";
     }
 }

@@ -21,7 +21,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-public class DataVinesAPI {
+public class DatavinesAPI {
     private String path;
     private String method;
     private String consumerMediaType;
@@ -31,7 +31,7 @@ public class DataVinesAPI {
 
     private static final String JSON_UTF8_MEDIA = MediaType.APPLICATION_JSON + "; charset=UTF-8";
 
-    public DataVinesAPI(String path, String method, String consumerMediaType, String providerMediaType, Response.Status status, TypeReference resultType) {
+    public DatavinesAPI(String path, String method, String consumerMediaType, String providerMediaType, Response.Status status, TypeReference resultType) {
         this.path = path;
         this.method = method;
         this.consumerMediaType = consumerMediaType;
@@ -39,7 +39,7 @@ public class DataVinesAPI {
         this.expectStatus = status;
         this.resultType = resultType;
     }
-    public DataVinesAPI(String path, String method, Response.Status status, TypeReference resultType) {
+    public DatavinesAPI(String path, String method, Response.Status status, TypeReference resultType) {
         this(path, method, JSON_UTF8_MEDIA, MediaType.APPLICATION_JSON, status, resultType);
     }
 

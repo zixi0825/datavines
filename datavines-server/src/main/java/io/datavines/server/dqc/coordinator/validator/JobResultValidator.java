@@ -141,7 +141,7 @@ public class JobResultValidator {
                 DataSource dataSource = jobExternalService.getDataSourceService().getDataSourceById(dataSourceId);
                 dataSourceName = dataSource.getName();
                 dataSourceType = dataSource.getType();
-                if (!CommonPropertyUtils.getString(CommonPropertyUtils.DATAVINES_FQDN).equals(CommonPropertyUtils.DATAVINES_FQDN_DEFAULT)) {
+                if (!CommonPropertyUtils.DATAVINES_FQDN_DEFAULT.equals(CommonPropertyUtils.getString(CommonPropertyUtils.DATAVINES_FQDN))) {
                     fqdn = CommonPropertyUtils.getString(CommonPropertyUtils.DATAVINES_FQDN) + String.format("/#/main/detail/%s/jobs/instance?jobId=%s", dataSourceId, jobId);
                 }
             }

@@ -18,6 +18,7 @@ package io.datavines.common;
 
 public class ConfigConstants {
 
+    public static final String ENGINE_TYPE = "engine_type";
     public static final String CONNECTOR_TYPE = "connector_type";
     public static final String DATASOURCE_ID = "datasource_id";
     public static final String TABLE = "table";
@@ -105,6 +106,7 @@ public class ConfigConstants {
     public static final String DATA_DIR = "data_dir";
 
     public static final String ENABLE_SPARK_HIVE_SUPPORT = "enable_spark_hive_support";
+    public static final String ENABLE_USE_VIEW = "enable_use_view";
 
     public static final String FILE = "file";
 
@@ -160,4 +162,6 @@ public class ConfigConstants {
     public static final String POST_SQL = "post_sql";
 
     public static final String SAVE_MODE = "save_mode";
+
+    public static final String UPSERT = "Upsert";
 }

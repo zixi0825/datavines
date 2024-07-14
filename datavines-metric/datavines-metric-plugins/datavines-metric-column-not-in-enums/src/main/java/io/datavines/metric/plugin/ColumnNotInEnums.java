@@ -21,14 +21,13 @@ import io.datavines.metric.api.ConfigItem;
 import io.datavines.metric.api.MetricDimension;
 import io.datavines.metric.api.MetricDirectionType;
 import io.datavines.metric.api.MetricType;
-import io.datavines.metric.plugin.base.BaseSingleTableColumn;
+import io.datavines.metric.plugin.base.BaseSingleTableColumnNotUseView;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-public class ColumnNotInEnums extends BaseSingleTableColumn {
+public class ColumnNotInEnums extends BaseSingleTableColumnNotUseView {
 
     public ColumnNotInEnums(){
         super();

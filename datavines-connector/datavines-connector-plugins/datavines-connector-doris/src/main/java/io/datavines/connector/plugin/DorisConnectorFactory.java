@@ -42,6 +42,6 @@ public class DorisConnectorFactory extends AbstractJdbcConnectorFactory {
 
     @Override
     public ConfigBuilder getConfigBuilder() {
-        return new MysqlConfigBuilder();
+        return new DorisConfigBuilder();
     }
 }

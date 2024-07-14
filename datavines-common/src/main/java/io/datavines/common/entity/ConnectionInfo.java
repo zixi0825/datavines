@@ -53,6 +53,8 @@ public class ConnectionInfo {
 
     private String password;
 
+    private Map<String,Object> allConfigMap = new HashMap<>();
+
     @Override
     public String toString() {
         return "JdbcInfo{"
@@ -66,16 +68,7 @@ public class ConnectionInfo {
     }
 
     public Map<String, Object> configMap() {
-        Map<String, Object> configMap = new HashMap<>();
-        configMap.put(DATABASE, database);
-        configMap.put(PASSWORD, password);
-        configMap.put(HOST, host);
-        configMap.put(PORT, port);
-        configMap.put(USER, user);
-        configMap.put(PROPERTIES, properties);
-        configMap.put(CATALOG, catalog);
-        configMap.put(SCHEMA, schema);
-        return configMap;
+        return this.allConfigMap;
     }
 
     public void setConfig(Map<String, Object> configMap) {
@@ -87,5 +80,7 @@ public class ConnectionInfo {
         this.properties = (String)configMap.get(PROPERTIES);
         this.catalog = (String)configMap.get(CATALOG);
         this.schema =  (String)configMap.get(SCHEMA);
+
+        this.allConfigMap.putAll(configMap);
     }
 }

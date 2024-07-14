@@ -20,13 +20,13 @@ import io.datavines.common.enums.DataVinesDataType;
 import io.datavines.metric.api.MetricDimension;
 import io.datavines.metric.api.MetricDirectionType;
 import io.datavines.metric.api.MetricType;
-import io.datavines.metric.plugin.base.BaseSingleTableColumn;
+import io.datavines.metric.plugin.base.BaseSingleTableColumnNotUseView;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class ColumnBlank extends BaseSingleTableColumn {
+public class ColumnBlank extends BaseSingleTableColumnNotUseView {
 
     public ColumnBlank(){
         super();

@@ -81,7 +81,7 @@ public abstract class BaseSingleTable implements SqlMetric {
     }
 
     private void addFiltersIntoInvalidateItemsSql() {
-        if (filters.size() > 0) {
+        if (!filters.isEmpty()) {
             invalidateItemsSql.append(" where ").append(String.join(" and ", filters));
         }
     }

@@ -66,7 +66,7 @@ public class ColumnDistinct extends BaseSingleTableColumn {
         executeSql.setResultTable("invalidate_count_" + uniqueKey);
         StringBuilder actualValueSql = new StringBuilder();
         actualValueSql.append("select count(distinct(${column})) as actual_value_").append(uniqueKey).append(" from ${table}");
-        if (filters.size() > 0) {
+        if (!filters.isEmpty()) {
             actualValueSql.append(" where ").append(String.join(" and ", filters));
         }
 

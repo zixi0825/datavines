@@ -303,6 +303,8 @@ export default {
     label_add: 'Add Tag',
     label_name: 'Tag Name',
 
+    profile_schedule: 'Profile Schedule',
+
     config_title: 'Config Management',
     config_var_key: 'Config Key',
     config_var_value: 'Config Value',
