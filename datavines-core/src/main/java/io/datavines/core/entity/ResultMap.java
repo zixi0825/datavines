@@ -69,11 +69,6 @@ public class ResultMap extends HashMap<String, Object> {
                     throw new DataVinesServerException(Status.TOKEN_IS_NULL_ERROR);
                 }
             }
-        } else {
-            token = request.getParameter(DataVinesConstants.TOKEN_HEADER_STRING);
-            if (StringUtils.isEmpty(token)) {
-                throw new DataVinesServerException(Status.TOKEN_IS_NULL_ERROR);
-            }
         }
         this.code = Status.SUCCESS.getCode();
         this.put("code", this.code);
@@ -110,11 +105,6 @@ public class ResultMap extends HashMap<String, Object> {
                 if (StringUtils.isEmpty(token)) {
                     throw new DataVinesServerException(Status.TOKEN_IS_NULL_ERROR);
                 }
-            }
-        } else {
-            token = request.getParameter(DataVinesConstants.TOKEN_HEADER_STRING);
-            if (StringUtils.isEmpty(token)) {
-                throw new DataVinesServerException(Status.TOKEN_IS_NULL_ERROR);
             }
         }
 

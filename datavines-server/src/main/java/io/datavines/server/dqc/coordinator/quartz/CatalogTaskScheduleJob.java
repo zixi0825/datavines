@@ -31,12 +31,12 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 
-public class CommonTaskScheduleJob implements org.quartz.Job {
+public class CatalogTaskScheduleJob implements org.quartz.Job {
 
     /**
      * logger of FlowScheduleJob
      */
-    private static final Logger logger = LoggerFactory.getLogger(CommonTaskScheduleJob.class);
+    private static final Logger logger = LoggerFactory.getLogger(CatalogTaskScheduleJob.class);
 
     public JobExternalService getJobExternalService(){
         return SpringApplicationContext.getBean(JobExternalService.class);

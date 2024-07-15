@@ -24,7 +24,7 @@ import io.datavines.core.enums.Status;
 import io.datavines.core.exception.DataVinesServerException;
 import io.datavines.server.api.dto.bo.task.CommonTaskScheduleCreateOrUpdate;
 import io.datavines.server.api.dto.bo.job.schedule.MapParam;
-import io.datavines.server.dqc.coordinator.quartz.CommonTaskScheduleJob;
+import io.datavines.server.dqc.coordinator.quartz.CatalogTaskScheduleJob;
 import io.datavines.server.dqc.coordinator.quartz.QuartzExecutors;
 import io.datavines.server.dqc.coordinator.quartz.ScheduleJobInfo;
 import io.datavines.server.dqc.coordinator.quartz.cron.StrategyFactory;
@@ -110,7 +110,7 @@ public class CommonTaskScheduleServiceImpl extends ServiceImpl<CommonTaskSchedul
         switch (JobScheduleType.of(scheduleCreateOrUpdate.getType())) {
             case CYCLE:
             case CRONTAB:
-                quartzExecutor.addJob(CommonTaskScheduleJob.class, getScheduleJobInfo(commonTaskSchedule));
+                quartzExecutor.addJob(CatalogTaskScheduleJob.class, getScheduleJobInfo(commonTaskSchedule));
                 break;
             case OFFLINE:
                 break;
