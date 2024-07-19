@@ -155,7 +155,7 @@ public class JobQualityReportServiceImpl extends ServiceImpl<JobQualityReportMap
                 if (jobQualityReport == null) {
                     jobQualityReport = new JobQualityReport();
                     jobQualityReport.setReportDate(LocalDate.parse(yesterday));
-                    jobQualityReport.setScore(score.divide(new BigDecimal(executionResultIds.size()),4, RoundingMode.UP));
+                    jobQualityReport.setScore(CollectionUtils.isEmpty(executionResultIds) ? new BigDecimal(0) : score.divide(new BigDecimal(executionResultIds.size()),4, RoundingMode.UP));
                     jobQualityReport.setDatabaseName(databaseName);
                     jobQualityReport.setTableName(tableName);
                     jobQualityReport.setColumnName(columnName);
@@ -165,7 +165,7 @@ public class JobQualityReportServiceImpl extends ServiceImpl<JobQualityReportMap
                     jobQualityReport.setEntityLevel(MetricLevel.COLUMN.getDescription());
                     jobQualityReportMapper.insert(jobQualityReport);
                 } else {
-                    jobQualityReport.setScore(score.divide(new BigDecimal(executionResultIds.size()),4, RoundingMode.UP));
+                    jobQualityReport.setScore(CollectionUtils.isEmpty(executionResultIds) ? new BigDecimal(0) : score.divide(new BigDecimal(executionResultIds.size()),4, RoundingMode.UP));
                     jobQualityReport.setUpdateTime(LocalDateTime.now());
                     jobQualityReportMapper.updateById(jobQualityReport);
                 }

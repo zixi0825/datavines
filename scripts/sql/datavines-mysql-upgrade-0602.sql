@@ -45,3 +45,7 @@ CREATE TABLE `dv_job_execution_result_report_rel` (
 
 -- update  collate
 alter table dv_catalog_entity_instance modify fully_qualified_name varchar(255) collate utf8mb4_bin not null comment '全限定名';
+
+
+update dv_common_task set task_type = 'catalog_metadata_fetch' where task_type is null or task_type = '';
+update dv_common_task_schedule set task_type = 'catalog_metadata_fetch' where task_type is null or task_type = '';

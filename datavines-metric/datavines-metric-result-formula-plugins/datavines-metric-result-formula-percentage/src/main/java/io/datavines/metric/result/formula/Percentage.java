@@ -38,7 +38,7 @@ public class Percentage implements ResultFormula {
     @Override
     public BigDecimal getResult(BigDecimal actualValue, BigDecimal expectedValue) {
         BigDecimal result = BigDecimal.valueOf(0);
-        if (expectedValue != null) {
+        if (expectedValue != null && expectedValue.compareTo(BigDecimal.ZERO) != 0) {
             result = actualValue.divide(expectedValue, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
         }
 
@@ -48,7 +48,7 @@ public class Percentage implements ResultFormula {
     @Override
     public BigDecimal getScore(BigDecimal actualValue, BigDecimal expectedValue, boolean isSuccess, MetricDirectionType direction) {
         BigDecimal result = BigDecimal.valueOf(0);
-        if (expectedValue != null) {
+        if (expectedValue != null && expectedValue.compareTo(BigDecimal.ZERO) != 0) {
             if (MetricDirectionType.NEGATIVE == direction) {
                 result = new BigDecimal(100).subtract(actualValue.divide(expectedValue, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100)));
             } else if (MetricDirectionType.POSITIVE == direction) {
