@@ -146,6 +146,11 @@ const Index = () => {
     const items: TabsProps['items'] = [
         {
             key: '1',
+            label: intl.formatMessage({ id: 'warn_notice' }),
+            children: <Notification />,
+        },
+        {
+            key: '2',
             label: intl.formatMessage({ id: 'warn_association_rule_jobs' }),
             children: <Table<TWarnMetricTableItem>
                 loading={loading}
@@ -163,11 +168,6 @@ const Index = () => {
                     pageSize: pageParams.pageSize,
                 }}
             />,
-        },
-        {
-            key: '2',
-            label: intl.formatMessage({ id: 'warn_notice' }),
-            children: <Notification />,
         },
     ];
     return (

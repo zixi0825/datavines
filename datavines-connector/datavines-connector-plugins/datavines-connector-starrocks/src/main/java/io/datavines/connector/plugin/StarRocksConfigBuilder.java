@@ -38,7 +38,7 @@ public class StarRocksConfigBuilder extends JdbcConfigBuilder {
     @Override
     protected InputParam getCatalogInput(boolean isEn) {
         return getInputParam("catalog",
-                isEn ? "catalog" : "目录类型",
+                isEn ? "catalog（External Catalog only support v3.2.0 and above）" : "目录类型（外部目录只支持v3.2.0以上版本）",
                 isEn ? "please enter catalog" : "请填入目录类型", 1,
                 Validate.newBuilder().setRequired(false).setMessage(isEn ? "please enter catalog" : "请填入目录类型").build(),
                 null);
