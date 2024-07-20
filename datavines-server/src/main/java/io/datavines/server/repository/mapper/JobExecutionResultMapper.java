@@ -39,7 +39,7 @@ public interface JobExecutionResultMapper extends BaseMapper<JobExecutionResult>
             "FROM\n" +
             "\t(select djer.* from dv_job_execution_result djer join dv_job_execution dje on djer.job_execution_id = dje.id where dje.datasource_id = #{datasourceId} and djer.create_time >= #{startTime} and djer.create_time <= #{endTime}\n" +
             ") t1\n" +
-            "\tINNER JOIN ( SELECT t3.database_name,t3.table_name,t3.column_name,t3.metric_name, MAX(t3.create_time) as max_timestamp FROM (select djer.* from dv_job_execution_result djer join dv_job_execution dje on djer.job_execution_id = dje.id where dje.datasource_id = #{datasourceId}\n" +
+            "\tINNER JOIN ( SELECT t3.database_name,t3.table_name,t3.column_name,t3.metric_name, MAX(t3.create_time) as max_timestamp FROM (select djer.* from dv_job_execution_result djer join dv_job_execution dje on djer.job_execution_id = dje.id where dje.datasource_id = #{datasourceId} and djer.create_time >= #{startTime} and djer.create_time <= #{endTime}\n" +
             ") t3 GROUP BY database_name,table_name,column_name,metric_name ) t2\n" +
             "    ON t1.database_name = t2.database_name and t1.table_name = t2.table_name and t1.column_name = t2.column_name and t1.metric_name = t2.metric_name and t1.create_time = t2.max_timestamp;")
     List<JobExecutionResult> listByDatasourceIdAndTimeRange(@Param("datasourceId") Long datasourceId,
