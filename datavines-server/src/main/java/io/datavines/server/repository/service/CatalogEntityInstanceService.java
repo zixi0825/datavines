@@ -34,6 +34,8 @@ public interface CatalogEntityInstanceService extends IService<CatalogEntityInst
 
     CatalogEntityInstance getByTypeAndFQN(String type, String fqn);
 
+    CatalogEntityInstance getByUUID(String uuid);
+
     CatalogEntityInstance getByDataSourceAndFQN(Long dataSourceId, String fqn);
 
     IPage<CatalogEntityInstance> getEntityPage(String upstreamId, Integer pageNumber, Integer pageSize, String whetherMark);

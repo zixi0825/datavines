@@ -95,6 +95,11 @@ public class CatalogEntityInstanceServiceImpl
     }
 
     @Override
+    public CatalogEntityInstance getByUUID(String uuid) {
+        return baseMapper.selectOne(new QueryWrapper<CatalogEntityInstance>().lambda().eq(CatalogEntityInstance::getUuid, uuid));
+    }
+
+    @Override
     public CatalogEntityInstance getByDataSourceAndFQN(Long dataSourceId, String fqn) {
         return baseMapper.selectOne(new QueryWrapper<CatalogEntityInstance>().lambda()
                 .eq(CatalogEntityInstance::getDatasourceId, dataSourceId)
