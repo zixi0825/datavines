@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.repository.service;
+package io.datavines.server.api.dto.vo.catalog.lineage;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import io.datavines.server.api.dto.bo.catalog.CatalogEntityInstanceInfo;
 import io.datavines.server.api.dto.bo.catalog.lineage.EntityEdgeInfo;
-import io.datavines.server.api.dto.vo.catalog.lineage.CatalogEntityLineageVO;
-import io.datavines.server.repository.entity.catalog.CatalogEntityRel;
+import lombok.Data;
 
-public interface CatalogEntityRelService extends IService<CatalogEntityRel> {
+import java.io.Serializable;
+import java.util.List;
 
-    public boolean addLineage(EntityEdgeInfo entityEdgeInfo);
+@Data
+public class CatalogEntityLineageVO implements Serializable {
 
-    public CatalogEntityLineageVO getLineageByFqn(Long datasourceId, String fqn, int upstreamDepth, int downstreamDepth);
+    public List<EntityEdgeInfo> upstreamEdges;
 
-    public CatalogEntityLineageVO getLineageByUUID(String uuid, int upstreamDepth, int downstreamDepth);
+    public List<EntityEdgeInfo> downstreamEdges;
 
-    public boolean deleteLineage(String fromUUID, String toUUID);
+    public CatalogEntityInstanceInfo currentEntity;
 }
