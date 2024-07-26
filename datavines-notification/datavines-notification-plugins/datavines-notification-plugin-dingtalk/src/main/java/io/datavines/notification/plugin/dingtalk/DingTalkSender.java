@@ -108,7 +108,7 @@ public class DingTalkSender {
     private String generateMsgJson(String title, String content,ReceiverConfig receiverConfig) {
 
         final String atMobiles = receiverConfig.getAtMobiles();
-        final String atUserIds = receiverConfig.getAtUserIds();
+        final String atDingtalkIds = receiverConfig.getAtDingtalkIds();
         final Boolean isAtAll = receiverConfig.getIsAtAll();
 
         if (org.apache.commons.lang3.StringUtils.isBlank(msgType)) {
@@ -133,8 +133,8 @@ public class DingTalkSender {
                     builder.append(" ");
                 });
             }
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(atUserIds)) {
-                Arrays.stream(atUserIds.split(",")).forEach(value -> {
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(atDingtalkIds)) {
+                Arrays.stream(atDingtalkIds.split(",")).forEach(value -> {
                     builder.append("@");
                     builder.append(value);
                     builder.append(" ");
@@ -163,10 +163,10 @@ public class DingTalkSender {
                 org.apache.commons.lang3.StringUtils.isNotBlank(atMobiles) ? atMobiles.split(",")
                         : new String[0];
         String[] atUserArray =
-                org.apache.commons.lang3.StringUtils.isNotBlank(atUserIds) ? atUserIds.split(",")
+                org.apache.commons.lang3.StringUtils.isNotBlank(atDingtalkIds) ? atDingtalkIds.split(",")
                         : new String[0];
         at.put("atMobiles", atMobileArray);
-        at.put("atUserIds", atUserArray);
+        at.put("atDingtalkIds", atUserArray);
         at.put("isAtAll", isAtAll);
 
         items.put("at", at);
