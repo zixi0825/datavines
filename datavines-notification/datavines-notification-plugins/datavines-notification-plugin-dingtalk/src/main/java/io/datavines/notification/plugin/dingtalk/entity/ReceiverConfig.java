@@ -29,7 +29,7 @@ public class ReceiverConfig {
 
     private String atMobiles;
 
-    private String atUserIds;
+    private String atDingtalkIds;
 
     private Boolean isAtAll;
 
@@ -47,6 +47,6 @@ public class ReceiverConfig {
 
     @Override
     public int hashCode() {
-        return Objects.hash(atMobiles, atUserIds);
+        return Objects.hash(atMobiles, atDingtalkIds);
     }
 }

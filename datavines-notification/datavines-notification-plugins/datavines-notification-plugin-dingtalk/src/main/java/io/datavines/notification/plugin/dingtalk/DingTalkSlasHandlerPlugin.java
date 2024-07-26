@@ -107,10 +107,10 @@ public class DingTalkSlasHandlerPlugin implements SlasHandlerPlugin {
         List<PluginParams> paramsList = new ArrayList<>();
 
         InputParam atMobiles = InputParam.newBuilder("atMobiles", "atMobiles")
-                .addValidate(Validate.newBuilder().setRequired(true).build())
+                .addValidate(Validate.newBuilder().setRequired(false).build())
                 .build();
-        InputParam atUserIds = InputParam.newBuilder("atUserIds", "atUserIds")
-                .addValidate(Validate.newBuilder().setRequired(true).build())
+        InputParam atDingtalkIds = InputParam.newBuilder("atDingtalkIds", "atDingtalkIds")
+                .addValidate(Validate.newBuilder().setRequired(false).build())
                 .build();
         RadioParam isAtAll = RadioParam.newBuilder("isAtAll", "isAtAll")
                 .addParamsOptions(new ParamsOptions(STRING_YES, STRING_TRUE, false))
@@ -120,7 +120,7 @@ public class DingTalkSlasHandlerPlugin implements SlasHandlerPlugin {
                 .build();
 
         paramsList.add(atMobiles);
-        paramsList.add(atUserIds);
+        paramsList.add(atDingtalkIds);
         paramsList.add(isAtAll);
 
         ObjectMapper mapper = new ObjectMapper();
