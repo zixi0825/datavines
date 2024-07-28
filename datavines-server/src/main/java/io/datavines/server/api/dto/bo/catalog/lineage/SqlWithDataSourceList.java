@@ -14,32 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.connector.api;
+package io.datavines.server.api.dto.bo.catalog.lineage;
 
-import io.datavines.spi.SPI;;
+import io.datavines.server.api.dto.bo.datasource.DataSourceInfo;
+import lombok.Data;
 
-@SPI
-public interface ConnectorFactory {
+import java.io.Serializable;
+import java.util.List;
 
-    String getCategory();
+@Data
+public class SqlWithDataSourceList implements Serializable {
 
-    Connector getConnector();
+    private static final long serialVersionUID = -1L;
 
-    ResponseConverter getResponseConverter();
+    private List<DataSourceInfo> dataSourceInfos;
 
-    Dialect getDialect();
-
-    ConnectorParameterConverter getConnectorParameterConverter();
-
-    Executor getExecutor();
-
-    TypeConverter getTypeConverter();
-
-    ConfigBuilder getConfigBuilder();
-
-    DataSourceClient getDataSourceClient();
-
-    StatementSplitter getStatementSplitter();
-
-    StatementParser getStatementParser();
+    private String sql;
 }

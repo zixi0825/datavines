@@ -14,32 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.connector.api;
+package io.datavines.connector.api.entity;
 
-import io.datavines.spi.SPI;;
+public class MetaDataConstants {
 
-@SPI
-public interface ConnectorFactory {
-
-    String getCategory();
-
-    Connector getConnector();
-
-    ResponseConverter getResponseConverter();
-
-    Dialect getDialect();
-
-    ConnectorParameterConverter getConnectorParameterConverter();
-
-    Executor getExecutor();
-
-    TypeConverter getTypeConverter();
-
-    ConfigBuilder getConfigBuilder();
-
-    DataSourceClient getDataSourceClient();
-
-    StatementSplitter getStatementSplitter();
-
-    StatementParser getStatementParser();
+    public final static String UNKNOWN_STATEMENT_TYPE = "UNKNOWN";
 }

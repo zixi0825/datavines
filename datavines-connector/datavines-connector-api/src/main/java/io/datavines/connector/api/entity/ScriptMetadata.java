@@ -14,32 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.connector.api;
+package io.datavines.connector.api.entity;
 
-import io.datavines.spi.SPI;;
+import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
+import java.util.ArrayList;
+import java.util.List;
 
-@SPI
-public interface ConnectorFactory {
+@Data
+public class ScriptMetadata {
 
-    String getCategory();
+    private String script;
 
-    Connector getConnector();
+    private List<StatementMetadata> statementMetadataList;
 
-    ResponseConverter getResponseConverter();
-
-    Dialect getDialect();
-
-    ConnectorParameterConverter getConnectorParameterConverter();
-
-    Executor getExecutor();
-
-    TypeConverter getTypeConverter();
-
-    ConfigBuilder getConfigBuilder();
-
-    DataSourceClient getDataSourceClient();
-
-    StatementSplitter getStatementSplitter();
-
-    StatementParser getStatementParser();
+    public void addStatementMetadata(StatementMetadata statementMetadata) {
+        if (CollectionUtils.isEmpty(statementMetadataList)) {
+            statementMetadataList = new ArrayList<>();
+        }
+        statementMetadataList.add(statementMetadata);
+    }
 }

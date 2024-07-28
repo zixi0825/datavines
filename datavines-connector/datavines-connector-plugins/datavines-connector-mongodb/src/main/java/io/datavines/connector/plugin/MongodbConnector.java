@@ -210,7 +210,7 @@ public class MongodbConnector implements Connector {
 
     @Override
     public List<String> keyProperties() {
-        return Arrays.asList(HOST, PORT, DATABASE);
+        return Arrays.asList(HOST, PORT);
     }
 
     @Override

@@ -19,6 +19,8 @@ package io.datavines.server.api.controller;
 import io.datavines.core.aop.RefreshToken;
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.server.api.dto.bo.catalog.lineage.EntityEdgeInfo;
+import io.datavines.server.api.dto.bo.catalog.lineage.SqlWithDataSourceKeyProperties;
+import io.datavines.server.api.dto.bo.catalog.lineage.SqlWithDataSourceList;
 import io.datavines.server.repository.entity.catalog.CatalogTagCategory;
 import io.datavines.server.repository.service.CatalogEntityRelService;
 import io.swagger.annotations.Api;
@@ -61,5 +63,17 @@ public class CatalogLineageController {
     public Object deleteLineage(@PathVariable("fromUUID") String fromUUID,
                                      @PathVariable("toUUID") String toUUID) {
         return catalogEntityRelService.deleteLineage(fromUUID, toUUID);
+    }
+
+    @ApiOperation(value = "parse sql to get lineage", response = Long.class)
+    @PostMapping(value = "/addByParseSql", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Object addLineageByParseSql(@Valid @RequestBody SqlWithDataSourceList sqlWithDataSourceList) {
+        return catalogEntityRelService.addLineageByParseSql(sqlWithDataSourceList);
+    }
+
+    @ApiOperation(value = "parse sql to get lineage", response = Long.class)
+    @PostMapping(value = "/addByParseSql2", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Object addLineageByParseSql2(@Valid @RequestBody SqlWithDataSourceKeyProperties sqlWithDataSourceKeyProperties) {
+        return catalogEntityRelService.addLineageByParseSql2(sqlWithDataSourceKeyProperties);
     }
 }

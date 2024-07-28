@@ -14,32 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.connector.api;
+package io.datavines.connector.plugin;
 
-import io.datavines.spi.SPI;;
+import io.datavines.common.utils.StringUtils;
+import io.datavines.connector.api.StatementSplitter;
 
-@SPI
-public interface ConnectorFactory {
+import java.util.Arrays;
+import java.util.List;
 
-    String getCategory();
+public class DefaultStatementSplitter implements StatementSplitter {
 
-    Connector getConnector();
+    @Override
+    public List<String> splitStatements(String body) {
 
-    ResponseConverter getResponseConverter();
-
-    Dialect getDialect();
-
-    ConnectorParameterConverter getConnectorParameterConverter();
-
-    Executor getExecutor();
-
-    TypeConverter getTypeConverter();
-
-    ConfigBuilder getConfigBuilder();
-
-    DataSourceClient getDataSourceClient();
-
-    StatementSplitter getStatementSplitter();
-
-    StatementParser getStatementParser();
+        String DELIMITER = ";";
+        return StringUtils.isEmpty(body) ? null : Arrays.asList(body.split(DELIMITER));
+    }
 }

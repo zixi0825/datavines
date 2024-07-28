@@ -14,32 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.connector.api;
+package io.datavines.connector.api.entity;
 
-import io.datavines.spi.SPI;;
+import lombok.Data;
 
-@SPI
-public interface ConnectorFactory {
+import java.time.LocalDateTime;
 
-    String getCategory();
+@Data
+public class StatementMetadata {
 
-    Connector getConnector();
+    private int statementIndex;
 
-    ResponseConverter getResponseConverter();
+    private String statementText;
 
-    Dialect getDialect();
+    private StatementMetadataFragment statementMetadataFragment;
 
-    ConnectorParameterConverter getConnectorParameterConverter();
+    private LocalDateTime statementParseStartTime;
 
-    Executor getExecutor();
-
-    TypeConverter getTypeConverter();
-
-    ConfigBuilder getConfigBuilder();
-
-    DataSourceClient getDataSourceClient();
-
-    StatementSplitter getStatementSplitter();
-
-    StatementParser getStatementParser();
+    private LocalDateTime statementParseEndTime;
 }

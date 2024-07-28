@@ -16,30 +16,9 @@
  */
 package io.datavines.connector.api;
 
-import io.datavines.spi.SPI;;
+import java.util.List;
 
-@SPI
-public interface ConnectorFactory {
+public interface StatementSplitter {
 
-    String getCategory();
-
-    Connector getConnector();
-
-    ResponseConverter getResponseConverter();
-
-    Dialect getDialect();
-
-    ConnectorParameterConverter getConnectorParameterConverter();
-
-    Executor getExecutor();
-
-    TypeConverter getTypeConverter();
-
-    ConfigBuilder getConfigBuilder();
-
-    DataSourceClient getDataSourceClient();
-
-    StatementSplitter getStatementSplitter();
-
-    StatementParser getStatementParser();
+    List<String> splitStatements(String body) ;
 }

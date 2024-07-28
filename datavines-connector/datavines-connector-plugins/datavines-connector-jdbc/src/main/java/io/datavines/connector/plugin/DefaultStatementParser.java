@@ -14,32 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.connector.api;
+package io.datavines.connector.plugin;
 
-import io.datavines.spi.SPI;;
+import io.datavines.connector.api.StatementParser;
+import io.datavines.connector.api.entity.StatementMetadataFragment;
 
-@SPI
-public interface ConnectorFactory {
+public class DefaultStatementParser implements StatementParser {
 
-    String getCategory();
-
-    Connector getConnector();
-
-    ResponseConverter getResponseConverter();
-
-    Dialect getDialect();
-
-    ConnectorParameterConverter getConnectorParameterConverter();
-
-    Executor getExecutor();
-
-    TypeConverter getTypeConverter();
-
-    ConfigBuilder getConfigBuilder();
-
-    DataSourceClient getDataSourceClient();
-
-    StatementSplitter getStatementSplitter();
-
-    StatementParser getStatementParser();
+    @Override
+    public StatementMetadataFragment parseStatement(String statement) {
+        return null;
+    }
 }

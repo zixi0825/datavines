@@ -23,9 +23,9 @@ import java.util.HashMap;
 public enum SourceType {
 
     /**
-     * 0 normal
-     * 1 invalidate items
-     * 2 actual value
+     * 0 source
+     * 1 target
+     * 2 metadata
      **/
     SOURCE(0, "source"),
     TARGET(1, "target"),
