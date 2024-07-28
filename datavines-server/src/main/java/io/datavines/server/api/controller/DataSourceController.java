@@ -17,13 +17,11 @@
 package io.datavines.server.api.controller;
 
 import io.datavines.connector.api.ConnectorFactory;
+import io.datavines.server.api.dto.bo.datasource.*;
 import io.datavines.server.api.dto.vo.Item;
 import io.datavines.common.param.TestConnectionRequestParam;
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.core.aop.RefreshToken;
-import io.datavines.server.api.dto.bo.datasource.DataSourceCreate;
-import io.datavines.server.api.dto.bo.datasource.DataSourceUpdate;
-import io.datavines.server.api.dto.bo.datasource.ExecuteRequest;
 import io.datavines.server.repository.entity.DataSource;
 import io.datavines.server.repository.entity.catalog.CatalogEntityInstance;
 import io.datavines.server.repository.service.CatalogEntityInstanceService;
@@ -162,5 +160,11 @@ public class DataSourceController {
     @GetMapping(value = "/list/{workspaceId}/{type}")
     public Object getDataSourceListByType(@PathVariable Long workspaceId, @PathVariable String type) {
         return dataSourceService.listByWorkSpaceIdAndType(workspaceId,type);
+    }
+
+    @ApiOperation(value = "get datasource list by info")
+    @GetMapping(value = "/listByInfo")
+    public Object getDataSourceListByInfo(@Valid @RequestBody DataSourceKeyProperties dataSourceKeyProperties) {
+        return dataSourceService.listByInfo(dataSourceKeyProperties);
     }
 }

@@ -16,30 +16,9 @@
  */
 package io.datavines.connector.api;
 
-import io.datavines.spi.SPI;;
+import io.datavines.connector.api.entity.StatementMetadataFragment;
 
-@SPI
-public interface ConnectorFactory {
+public interface StatementParser {
 
-    String getCategory();
-
-    Connector getConnector();
-
-    ResponseConverter getResponseConverter();
-
-    Dialect getDialect();
-
-    ConnectorParameterConverter getConnectorParameterConverter();
-
-    Executor getExecutor();
-
-    TypeConverter getTypeConverter();
-
-    ConfigBuilder getConfigBuilder();
-
-    DataSourceClient getDataSourceClient();
-
-    StatementSplitter getStatementSplitter();
-
-    StatementParser getStatementParser();
+    StatementMetadataFragment parseStatement(String statement);
 }

@@ -97,8 +97,4 @@ public class PrestoConnector extends JdbcConnector {
         }
     }
 
-    @Override
-    public List<String> keyProperties() {
-        return Arrays.asList("host","port","catalog","database");
-    }
 }

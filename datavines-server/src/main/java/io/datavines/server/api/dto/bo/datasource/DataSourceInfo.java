@@ -14,32 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.connector.api;
+package io.datavines.server.api.dto.bo.datasource;
 
-import io.datavines.spi.SPI;;
+import lombok.Data;
 
-@SPI
-public interface ConnectorFactory {
+@Data
+public class DataSourceInfo {
 
-    String getCategory();
+    private Long id;
 
-    Connector getConnector();
+    private String uuid;
 
-    ResponseConverter getResponseConverter();
+    private String category;
 
-    Dialect getDialect();
+    private String type;
 
-    ConnectorParameterConverter getConnectorParameterConverter();
-
-    Executor getExecutor();
-
-    TypeConverter getTypeConverter();
-
-    ConfigBuilder getConfigBuilder();
-
-    DataSourceClient getDataSourceClient();
-
-    StatementSplitter getStatementSplitter();
-
-    StatementParser getStatementParser();
+    private String paramCode;
 }
