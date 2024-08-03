@@ -209,11 +209,11 @@ const Schedule: React.FC<ScheduleProps> = ({ formRef, detail }) => {
                 return (
                     <>
                         <span style={{ ...commonStyle, marginRight: 5 }}>{getIntl('jobs_nhour_before')}</span>
-                        {timeMap.nhour()}
-                        <span style={{ ...commonStyle, margin: '0 5px' }}>:</span>
                         {timeMap.hour()}
-                        <span style={{ ...commonStyle, marginRight: 5 }}>{getIntl('jobs_nhour_middle')}</span>
+                        <span style={{ ...commonStyle, margin: '0 5px' }}>:</span>
                         {timeMap.minute()}
+                        <span style={{ ...commonStyle, marginRight: 5 }}>{getIntl('jobs_nhour_middle')}</span>
+                        {timeMap.nhour()}
                         <span style={{ ...commonStyle, marginLeft: 5 }}>{getIntl('jobs_nhour_after')}</span>
                     </>
                 );
