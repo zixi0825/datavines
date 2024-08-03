@@ -38,8 +38,8 @@ public class DiffPercentage implements ResultFormula {
     @Override
     public BigDecimal getResult(BigDecimal actualValue, BigDecimal expectedValue) {
         BigDecimal result = BigDecimal.valueOf(0);
-        if (expectedValue != null && expectedValue.compareTo(BigDecimal.ZERO) != 0) {
-            BigDecimal quotient = actualValue.divide(expectedValue, 2, RoundingMode.HALF_UP);
+        if (expectedValue != null && expectedValue.compareTo(BigDecimal.ZERO) != 0 && actualValue != null) {
+            BigDecimal quotient = actualValue.subtract(expectedValue).abs();
             result = quotient.divide(expectedValue, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
         }
 
