@@ -52,7 +52,7 @@ public class Percentage implements ResultFormula {
             if (MetricDirectionType.NEGATIVE == direction) {
                 result = new BigDecimal(100).subtract(actualValue.divide(expectedValue, 4, RoundingMode.HALF_UP).multiply(new BigDecimal(100)));
             } else if (MetricDirectionType.POSITIVE == direction) {
-                result = actualValue.divide(expectedValue, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+                result = actualValue.divide(expectedValue, 4, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
             }
         }
 
