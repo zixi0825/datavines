@@ -319,4 +319,5 @@ export default {
 
     next_ten_cron_run_times: '未来十次执行时间',
     view_future_execute_plan: '查看未来执行计划',
+    test_send: '测试发送',
 };

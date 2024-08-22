@@ -20,13 +20,14 @@ import io.datavines.server.enums.LineageSourceType;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class CatalogEntityLineageDetail implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
-    private CatalogEntityColumnLineageDetail childRelDetail;
+    private List<CatalogEntityColumnLineageDetail> childRelDetailList;
 
     private String description;
 

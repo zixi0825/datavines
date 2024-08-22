@@ -16,6 +16,7 @@
  */
 package io.datavines.server.api.dto.bo.catalog.lineage;
 
+import io.datavines.server.api.dto.bo.catalog.CatalogEntityInstanceInfo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -26,9 +27,9 @@ public class CatalogEntityColumnLineageDetail implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
-    private List<String> fromChildren;
+    private List<CatalogEntityInstanceInfo> fromChildren;
 
     private String function;
 
-    private String toChild;
+    private CatalogEntityInstanceInfo toChild;
 }

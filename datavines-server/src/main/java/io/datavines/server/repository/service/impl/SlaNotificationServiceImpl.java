@@ -89,6 +89,21 @@ public class SlaNotificationServiceImpl extends ServiceImpl<SlaNotificationMappe
     }
 
     @Override
+    public Map<SlaSenderMessage, Set<SlaConfigMessage>> getSlasNotificationConfigurationBySlasIdAndSenderId(Long slaId, Long senderId, String config) {
+        // Assemble sender information
+        SlaSender slaSender = slaSenderService.getById(senderId);
+        SlaSenderMessage slaSenderMessage = BeanConvertUtils.convertBean(slaSender, SlaSenderMessage::new);
+        HashMap<SlaSenderMessage, Set<SlaConfigMessage>> result = new HashMap<>();
+        SlaConfigMessage configMessage = new SlaConfigMessage();
+        configMessage.setType(slaSender.getType());
+        configMessage.setConfig(config);
+        HashSet<SlaConfigMessage> set = new HashSet<>();
+        set.add(configMessage);
+        result.put(slaSenderMessage, set);
+        return result;
+    }
+
+    @Override
     public Map<SlaSenderMessage, Set<SlaConfigMessage>> getSlasNotificationConfigurationByJobId(Long jobId) {
         LambdaQueryWrapper<SlaJob> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(SlaJob::getJobId, jobId);

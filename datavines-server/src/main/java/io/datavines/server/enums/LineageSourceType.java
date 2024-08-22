@@ -42,19 +42,29 @@ public enum LineageSourceType {
 
     private final String description;
 
-    private static final Map<Integer, LineageSourceType> COMMAND_CATEGORY_MAP = new HashMap<>();
+    private static final Map<Integer, LineageSourceType> CODE_2_MAP = new HashMap<>();
+
+    private static final Map<String, LineageSourceType> DESC_2_MAP = new HashMap<>();
 
     static {
         for (LineageSourceType commandCategory : LineageSourceType.values()) {
-            COMMAND_CATEGORY_MAP.put(commandCategory.code,commandCategory);
+            CODE_2_MAP.put(commandCategory.code,commandCategory);
+            DESC_2_MAP.put(commandCategory.description,commandCategory);
         }
     }
 
     public static LineageSourceType of(Integer status) {
-        if (COMMAND_CATEGORY_MAP.containsKey(status)) {
-            return COMMAND_CATEGORY_MAP.get(status);
+        if (CODE_2_MAP.containsKey(status)) {
+            return CODE_2_MAP.get(status);
         }
-        throw new IllegalArgumentException("invalid command category : " + status);
+        throw new IllegalArgumentException("invalid lineage source type : " + status);
+    }
+
+    public static LineageSourceType descOf(String description) {
+        if (DESC_2_MAP.containsKey(description)) {
+            return DESC_2_MAP.get(description);
+        }
+        throw new IllegalArgumentException("invalid lineage source type : " + description);
     }
 
     public int getCode() {
