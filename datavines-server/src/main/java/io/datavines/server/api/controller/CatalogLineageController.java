@@ -18,7 +18,7 @@ package io.datavines.server.api.controller;
 
 import io.datavines.core.aop.RefreshToken;
 import io.datavines.core.constant.DataVinesConstants;
-import io.datavines.server.api.dto.bo.catalog.lineage.EntityEdgeInfo;
+import io.datavines.server.api.dto.bo.catalog.lineage.LineageEntityEdgeInfo;
 import io.datavines.server.api.dto.bo.catalog.lineage.SqlWithDataSourceKeyProperties;
 import io.datavines.server.api.dto.bo.catalog.lineage.SqlWithDataSourceList;
 import io.datavines.server.repository.entity.catalog.CatalogTagCategory;
@@ -42,7 +42,7 @@ public class CatalogLineageController {
 
     @ApiOperation(value = "add lineage", response = Long.class)
     @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Object addLineage(@Valid @RequestBody EntityEdgeInfo entityEdgeInfo) {
+    public Object addLineage(@Valid @RequestBody LineageEntityEdgeInfo entityEdgeInfo) {
         return catalogEntityRelService.addLineage(entityEdgeInfo);
     }
 

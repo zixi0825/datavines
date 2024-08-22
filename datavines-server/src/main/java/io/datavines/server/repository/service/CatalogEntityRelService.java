@@ -17,7 +17,7 @@
 package io.datavines.server.repository.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import io.datavines.server.api.dto.bo.catalog.lineage.EntityEdgeInfo;
+import io.datavines.server.api.dto.bo.catalog.lineage.LineageEntityEdgeInfo;
 import io.datavines.server.api.dto.bo.catalog.lineage.SqlWithDataSourceKeyProperties;
 import io.datavines.server.api.dto.bo.catalog.lineage.SqlWithDataSourceList;
 import io.datavines.server.api.dto.vo.catalog.lineage.CatalogEntityLineageVO;
@@ -25,7 +25,7 @@ import io.datavines.server.repository.entity.catalog.CatalogEntityRel;
 
 public interface CatalogEntityRelService extends IService<CatalogEntityRel> {
 
-    public boolean addLineage(EntityEdgeInfo entityEdgeInfo);
+    public boolean addLineage(LineageEntityEdgeInfo entityEdgeInfo);
 
     public boolean addLineageByParseSql(SqlWithDataSourceList sqlWithDataSourceList);
 

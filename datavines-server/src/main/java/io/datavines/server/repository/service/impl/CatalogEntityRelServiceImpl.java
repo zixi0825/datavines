@@ -17,7 +17,6 @@
 package io.datavines.server.repository.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.datavines.common.datasource.jdbc.JdbcConnectionInfo;
 import io.datavines.common.enums.EntityRelType;
@@ -31,9 +30,7 @@ import io.datavines.connector.api.entity.StatementMetadataFragment;
 import io.datavines.core.enums.Status;
 import io.datavines.core.exception.DataVinesServerException;
 import io.datavines.server.api.dto.bo.catalog.CatalogEntityInstanceInfo;
-import io.datavines.server.api.dto.bo.catalog.lineage.EntityEdgeInfo;
-import io.datavines.server.api.dto.bo.catalog.lineage.SqlWithDataSourceKeyProperties;
-import io.datavines.server.api.dto.bo.catalog.lineage.SqlWithDataSourceList;
+import io.datavines.server.api.dto.bo.catalog.lineage.*;
 import io.datavines.server.api.dto.bo.datasource.DataSourceInfo;
 import io.datavines.server.api.dto.vo.catalog.lineage.CatalogEntityLineageVO;
 import io.datavines.server.enums.LineageSourceType;
@@ -51,10 +48,11 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("catalogEntityRelService")
 public class CatalogEntityRelServiceImpl extends ServiceImpl<CatalogEntityRelMapper, CatalogEntityRel> implements CatalogEntityRelService {
@@ -65,12 +63,81 @@ public class CatalogEntityRelServiceImpl extends ServiceImpl<CatalogEntityRelMap
     @Autowired
     private DataSourceService dataSourceService;
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean addLineage(EntityEdgeInfo entityEdgeInfo) {
+    public boolean addLineage(LineageEntityEdgeInfo entityEdgeInfo) {
         String fromUUID = entityEdgeInfo.getFromEntity().getUuid();
         String toUUID = entityEdgeInfo.getToEntity().getUuid();
+        CatalogEntityRel rel = getOne(new LambdaQueryWrapper<CatalogEntityRel>()
+                .eq(CatalogEntityRel::getEntity1Uuid, fromUUID)
+                .eq(CatalogEntityRel::getEntity2Uuid, toUUID)
+                .eq(CatalogEntityRel::getType, EntityRelType.DOWNSTREAM.getDescription()), false);
+        if (rel == null) {
+            rel = new CatalogEntityRel();
+        }
 
-        return addLineage(fromUUID, toUUID, entityEdgeInfo.getLineageDetail().getSourceType(),entityEdgeInfo.getLineageDetail().getSqlQuery());
+        rel.setEntity1Uuid(fromUUID);
+        rel.setEntity2Uuid(toUUID);
+        rel.setType(EntityRelType.DOWNSTREAM.getDescription());
+        rel.setSourceType(entityEdgeInfo.getLineageDetail().getSourceType().getDescription());
+        rel.setRelatedScript(entityEdgeInfo.getLineageDetail().getSqlQuery());
+        rel.setUpdateBy(ContextHolder.getUserId());
+        rel.setUpdateTime(LocalDateTime.now());
+
+        boolean result;
+        if (rel.getId() == null) {
+            result = save(rel);
+        } else {
+            result = updateById(rel);
+        }
+
+        if (result) {
+            CatalogEntityLineageDetail catalogEntityLineageDetail = entityEdgeInfo.getLineageDetail();
+            List<CatalogEntityColumnLineageDetail> detailList = catalogEntityLineageDetail.getChildRelDetailList();
+            if (CollectionUtils.isEmpty(detailList)) {
+                return true;
+            }
+
+            for (CatalogEntityColumnLineageDetail detail : detailList) {
+                List<CatalogEntityInstanceInfo> fromEntityList = detail.getFromChildren();
+                if (CollectionUtils.isEmpty(fromEntityList)) {
+                    continue;
+                }
+
+                CatalogEntityInstanceInfo toEntity = detail.getToChild();
+                if (toEntity == null) {
+                    continue;
+                }
+
+                for (CatalogEntityInstanceInfo fromEntity : fromEntityList) {
+                    CatalogEntityRel columnRel = getOne(new LambdaQueryWrapper<CatalogEntityRel>()
+                            .eq(CatalogEntityRel::getEntity1Uuid, fromEntity.getUuid())
+                            .eq(CatalogEntityRel::getEntity2Uuid, toEntity.getUuid())
+                            .eq(CatalogEntityRel::getType, EntityRelType.DOWNSTREAM.getDescription()), false);
+                    if (columnRel == null) {
+                        columnRel = new CatalogEntityRel();
+                    }
+
+                    columnRel.setEntity1Uuid(fromEntity.getUuid());
+                    columnRel.setEntity2Uuid(toEntity.getUuid());
+                    columnRel.setType(EntityRelType.DOWNSTREAM.getDescription());
+                    columnRel.setSourceType(catalogEntityLineageDetail.getSourceType().getDescription());
+                    columnRel.setRelatedScript(catalogEntityLineageDetail.getSqlQuery());
+                    columnRel.setUpdateBy(ContextHolder.getUserId());
+                    columnRel.setUpdateTime(LocalDateTime.now());
+
+                    if (columnRel.getId() == null) {
+                        save(columnRel);
+                    } else {
+                        updateById(columnRel);
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -168,51 +235,218 @@ public class CatalogEntityRelServiceImpl extends ServiceImpl<CatalogEntityRelMap
 
     @NotNull
     private CatalogEntityLineageVO getCatalogEntityLineageVO(CatalogEntityInstance catalogEntityInstance) {
+        Set<String> nodeSet = new HashSet<>();
+        Set<String> edgeSet = new HashSet<>();
+
         CatalogEntityLineageVO catalogEntityLineageVO = new CatalogEntityLineageVO();
         CatalogEntityInstanceInfo currentEntityInstanceInfo = new CatalogEntityInstanceInfo();
         BeanUtils.copyProperties(catalogEntityInstance, currentEntityInstanceInfo);
-        catalogEntityLineageVO.setCurrentEntity(currentEntityInstanceInfo);
         String fromUUID = catalogEntityInstance.getUuid();
+
+        LineageEntityNodeInfo currentNode = new LineageEntityNodeInfo();
+        BeanUtils.copyProperties(catalogEntityInstance, currentNode);
+        CatalogEntityInstance databaseEntity = catalogEntityInstanceService.getParent(fromUUID);
+        CatalogEntityInstanceInfo databaseEntityInstanceInfo = new CatalogEntityInstanceInfo();
+        BeanUtils.copyProperties(databaseEntity, databaseEntityInstanceInfo);
+        currentNode.setDatabase(databaseEntityInstanceInfo);
+        DataSource dataSource = dataSourceService.getById(catalogEntityInstance.getDatasourceId());
+        CatalogEntityInstanceInfo datasourceEntityInstanceInfo = new CatalogEntityInstanceInfo();
+        datasourceEntityInstanceInfo.setType(dataSource.getType());
+        datasourceEntityInstanceInfo.setDisplayName(dataSource.getName());
+        datasourceEntityInstanceInfo.setUuid(dataSource.getUuid());
+        datasourceEntityInstanceInfo.setId(dataSource.getId());
+        List<CatalogEntityInstance> currentChildEntityInstances = catalogEntityInstanceService.getChildren(catalogEntityInstance.getUuid());
+        if (CollectionUtils.isNotEmpty(currentChildEntityInstances)) {
+            List<CatalogEntityInstanceInfo> columns = new ArrayList<>();
+            for (CatalogEntityInstance childEntityInstance : currentChildEntityInstances) {
+                CatalogEntityInstanceInfo columnEntityInstanceInfo = new CatalogEntityInstanceInfo();
+                BeanUtils.copyProperties(childEntityInstance, columnEntityInstanceInfo);
+                columns.add(columnEntityInstanceInfo);
+            }
+            currentNode.setColumns(columns);
+        }
+        currentNode.setDatasource(datasourceEntityInstanceInfo);
+        catalogEntityLineageVO.setCurrentNode(currentNode);
+
+        List<LineageEntityNodeInfo> nodes = new ArrayList<>();
+        nodes.add(currentNode);
+
+        List<LineageEntityEdgeInfo> edges = new ArrayList<>();
+
         List<CatalogEntityRel> downstreamRelList = list(new LambdaQueryWrapper<CatalogEntityRel>()
                 .eq(CatalogEntityRel::getEntity1Uuid, fromUUID)
                 .eq(CatalogEntityRel::getType, EntityRelType.DOWNSTREAM.getDescription()));
         if (CollectionUtils.isNotEmpty(downstreamRelList)) {
-            List<EntityEdgeInfo> downstreamEdges = new ArrayList<>();
             for (CatalogEntityRel rel : downstreamRelList) {
                 CatalogEntityInstance downstreamEntityInstance = catalogEntityInstanceService.getByUUID(rel.getEntity2Uuid());
-                if (downstreamEntityInstance != null) {
-                    EntityEdgeInfo entityEdgeInfo = new EntityEdgeInfo();
-                    CatalogEntityInstanceInfo fromEntity = new CatalogEntityInstanceInfo();
-                    BeanUtils.copyProperties(currentEntityInstanceInfo, fromEntity);
-                    CatalogEntityInstanceInfo toEntity = new CatalogEntityInstanceInfo();
-                    BeanUtils.copyProperties(downstreamEntityInstance, toEntity);
-                    entityEdgeInfo.setFromEntity(fromEntity);
-                    entityEdgeInfo.setToEntity(toEntity);
-                    downstreamEdges.add(entityEdgeInfo);
+                if (downstreamEntityInstance != null && !nodeSet.contains(downstreamEntityInstance.getUuid())) {
+                    LineageEntityNodeInfo downstreamNode = new LineageEntityNodeInfo();
+                    BeanUtils.copyProperties(downstreamEntityInstance, downstreamNode);
+                    CatalogEntityInstance toDatabaseEntity = catalogEntityInstanceService.getParent(fromUUID);
+                    CatalogEntityInstanceInfo toDatabaseEntityInstanceInfo = new CatalogEntityInstanceInfo();
+                    BeanUtils.copyProperties(toDatabaseEntity, toDatabaseEntityInstanceInfo);
+                    downstreamNode.setDatabase(databaseEntityInstanceInfo);
+                    DataSource toDataSource = dataSourceService.getById(catalogEntityInstance.getDatasourceId());
+                    CatalogEntityInstanceInfo toDatasourceEntityInstanceInfo = new CatalogEntityInstanceInfo();
+                    toDatasourceEntityInstanceInfo.setType(toDataSource.getType());
+                    toDatasourceEntityInstanceInfo.setDisplayName(toDataSource.getName());
+                    toDatasourceEntityInstanceInfo.setUuid(toDataSource.getUuid());
+                    toDatasourceEntityInstanceInfo.setId(toDataSource.getId());
+                    downstreamNode.setDatasource(toDatasourceEntityInstanceInfo);
+                    List<CatalogEntityInstance> childEntityInstances = catalogEntityInstanceService.getChildren(downstreamEntityInstance.getUuid());
+                    if (CollectionUtils.isNotEmpty(childEntityInstances)) {
+                        List<CatalogEntityInstanceInfo> columns = new ArrayList<>();
+                        for (CatalogEntityInstance childEntityInstance : childEntityInstances) {
+                            CatalogEntityInstanceInfo columnEntityInstanceInfo = new CatalogEntityInstanceInfo();
+                            BeanUtils.copyProperties(childEntityInstance, columnEntityInstanceInfo);
+                            columns.add(columnEntityInstanceInfo);
+                        }
+                        downstreamNode.setColumns(columns);
+                    }
+
+                    nodes.add(downstreamNode);
+                    nodeSet.add(downstreamEntityInstance.getUuid());
+
+                    if (!edgeSet.contains(currentEntityInstanceInfo.getUuid() + ":" + downstreamEntityInstance.getUuid())) {
+                        LineageEntityEdgeInfo edgeInfo = new LineageEntityEdgeInfo();
+                        CatalogEntityInstanceInfo fromEntity = new CatalogEntityInstanceInfo();
+                        BeanUtils.copyProperties(currentEntityInstanceInfo, fromEntity);
+                        CatalogEntityInstanceInfo toEntity = new CatalogEntityInstanceInfo();
+                        BeanUtils.copyProperties(downstreamEntityInstance, toEntity);
+                        edgeInfo.setFromEntity(fromEntity);
+                        edgeInfo.setToEntity(toEntity);
+                        edgeInfo.setUuid(fromEntity.getUuid() + ":" + toEntity.getUuid());
+
+                        CatalogEntityLineageDetail lineageDetail = new CatalogEntityLineageDetail();
+                        List<CatalogEntityColumnLineageDetail> childRelDetailList = new ArrayList<>();
+
+                        if (CollectionUtils.isNotEmpty(currentNode.getColumns())
+                                && CollectionUtils.isNotEmpty(downstreamNode.getColumns())) {
+                            Map<String, CatalogEntityInstanceInfo> key2ColumnMap = new HashMap<>();
+                            for (CatalogEntityInstanceInfo  column : currentNode.getColumns()) {
+                                key2ColumnMap.put(column.getUuid(), column);
+                            }
+
+                            List<CatalogEntityInstanceInfo> columns = downstreamNode.getColumns();
+                            for (CatalogEntityInstanceInfo column : columns) {
+                                List<CatalogEntityRel> columnDownstreamRelList = list(new LambdaQueryWrapper<CatalogEntityRel>()
+                                        .eq(CatalogEntityRel::getEntity2Uuid, column.getUuid())
+                                        .eq(CatalogEntityRel::getType, EntityRelType.DOWNSTREAM.getDescription()));
+                                if (CollectionUtils.isNotEmpty(columnDownstreamRelList)) {
+                                    List<CatalogEntityInstanceInfo> fromChildren = columnDownstreamRelList
+                                            .stream()
+                                            .filter(x-> key2ColumnMap.containsKey(x.getEntity1Uuid()))
+                                            .map(item -> key2ColumnMap.get(item.getEntity1Uuid())).collect(Collectors.toList());
+                                    if (CollectionUtils.isNotEmpty(fromChildren)) {
+                                        CatalogEntityColumnLineageDetail
+                                                columnLineageDetail = new CatalogEntityColumnLineageDetail();
+                                        columnLineageDetail.setFromChildren(fromChildren);
+                                        columnLineageDetail.setToChild(column);
+                                        childRelDetailList.add(columnLineageDetail);
+                                    }
+                                }
+                            }
+                        }
+
+                        lineageDetail.setChildRelDetailList(childRelDetailList);
+                        lineageDetail.setSourceType(LineageSourceType.descOf(rel.getSourceType()));
+                        lineageDetail.setSqlQuery(rel.getRelatedScript());
+                        edgeInfo.setLineageDetail(lineageDetail);
+                        edges.add(edgeInfo);
+                        edgeSet.add(fromEntity.getUuid() + ":" + toEntity.getUuid());
+                    }
                 }
             }
-            catalogEntityLineageVO.setDownstreamEdges(downstreamEdges);
         }
 
-        List<CatalogEntityRel> upstreamRelList = list(new LambdaQueryWrapper<CatalogEntityRel>().eq(CatalogEntityRel::getEntity2Uuid, fromUUID)
+        List<CatalogEntityRel> upstreamRelList = list(new LambdaQueryWrapper<CatalogEntityRel>()
+                .eq(CatalogEntityRel::getEntity2Uuid, fromUUID)
                 .eq(CatalogEntityRel::getType, EntityRelType.DOWNSTREAM.getDescription()));
         if (CollectionUtils.isNotEmpty(upstreamRelList)) {
-            List<EntityEdgeInfo> upstreamEdges = new ArrayList<>();
             for (CatalogEntityRel rel : upstreamRelList) {
                 CatalogEntityInstance upstreamEntityInstance = catalogEntityInstanceService.getByUUID(rel.getEntity1Uuid());
-                if (upstreamEntityInstance != null) {
-                    EntityEdgeInfo entityEdgeInfo = new EntityEdgeInfo();
-                    CatalogEntityInstanceInfo fromEntity = new CatalogEntityInstanceInfo();
-                    BeanUtils.copyProperties(upstreamEntityInstance, fromEntity);
-                    CatalogEntityInstanceInfo toEntity = new CatalogEntityInstanceInfo();
-                    BeanUtils.copyProperties(currentEntityInstanceInfo, toEntity);
-                    entityEdgeInfo.setFromEntity(fromEntity);
-                    entityEdgeInfo.setToEntity(toEntity);
-                    upstreamEdges.add(entityEdgeInfo);
+                if (upstreamEntityInstance != null && !nodeSet.contains(upstreamEntityInstance.getUuid())) {
+                    LineageEntityNodeInfo upstreamNode = new LineageEntityNodeInfo();
+                    BeanUtils.copyProperties(upstreamEntityInstance, upstreamNode);
+                    CatalogEntityInstance fromDatabaseEntity = catalogEntityInstanceService.getParent(fromUUID);
+                    CatalogEntityInstanceInfo fromDatabaseEntityInstanceInfo = new CatalogEntityInstanceInfo();
+                    BeanUtils.copyProperties(fromDatabaseEntity, fromDatabaseEntityInstanceInfo);
+                    upstreamNode.setDatabase(databaseEntityInstanceInfo);
+                    DataSource fromDataSource = dataSourceService.getById(catalogEntityInstance.getDatasourceId());
+                    CatalogEntityInstanceInfo fromDatasourceEntityInstanceInfo = new CatalogEntityInstanceInfo();
+                    fromDatasourceEntityInstanceInfo.setType(fromDataSource.getType());
+                    fromDatasourceEntityInstanceInfo.setDisplayName(fromDataSource.getName());
+                    fromDatasourceEntityInstanceInfo.setUuid(fromDataSource.getUuid());
+                    fromDatasourceEntityInstanceInfo.setId(fromDataSource.getId());
+                    upstreamNode.setDatasource(fromDatasourceEntityInstanceInfo);
+                    List<CatalogEntityInstance> childEntityInstances = catalogEntityInstanceService.getChildren(upstreamEntityInstance.getUuid());
+                    if (CollectionUtils.isNotEmpty(childEntityInstances)) {
+                        List<CatalogEntityInstanceInfo> columns = new ArrayList<>();
+                        for (CatalogEntityInstance childEntityInstance : childEntityInstances) {
+                            CatalogEntityInstanceInfo columnEntityInstanceInfo = new CatalogEntityInstanceInfo();
+                            BeanUtils.copyProperties(childEntityInstance, columnEntityInstanceInfo);
+                            columns.add(columnEntityInstanceInfo);
+                        }
+                        upstreamNode.setColumns(columns);
+                    }
+                    nodes.add(upstreamNode);
+                    nodeSet.add(upstreamEntityInstance.getUuid());
+
+                    if (!edgeSet.contains(upstreamEntityInstance.getUuid() + ":" + currentEntityInstanceInfo.getUuid())) {
+                        LineageEntityEdgeInfo edgeInfo = new LineageEntityEdgeInfo();
+                        CatalogEntityInstanceInfo fromEntity = new CatalogEntityInstanceInfo();
+                        BeanUtils.copyProperties(upstreamEntityInstance, fromEntity);
+                        CatalogEntityInstanceInfo toEntity = new CatalogEntityInstanceInfo();
+                        BeanUtils.copyProperties(currentEntityInstanceInfo, toEntity);
+                        edgeInfo.setFromEntity(fromEntity);
+                        edgeInfo.setToEntity(toEntity);
+                        edgeInfo.setUuid(fromEntity.getUuid() + ":" + toEntity.getUuid());
+
+                        CatalogEntityLineageDetail lineageDetail = new CatalogEntityLineageDetail();
+                        List<CatalogEntityColumnLineageDetail> childRelDetailList = new ArrayList<>();
+
+                        if (CollectionUtils.isNotEmpty(currentNode.getColumns())
+                                && CollectionUtils.isNotEmpty(upstreamNode.getColumns())) {
+                            Map<String, CatalogEntityInstanceInfo> key2ColumnMap = new HashMap<>();
+                            for (CatalogEntityInstanceInfo  column : upstreamNode.getColumns()) {
+                                key2ColumnMap.put(column.getUuid(), column);
+                            }
+
+                            List<CatalogEntityInstanceInfo> columns = currentNode.getColumns();
+                            for (CatalogEntityInstanceInfo column : columns) {
+                                List<CatalogEntityRel> columnDownstreamRelList = list(new LambdaQueryWrapper<CatalogEntityRel>()
+                                        .eq(CatalogEntityRel::getEntity2Uuid, column.getUuid())
+                                        .eq(CatalogEntityRel::getType, EntityRelType.DOWNSTREAM.getDescription()));
+                                if (CollectionUtils.isNotEmpty(columnDownstreamRelList)) {
+                                    List<CatalogEntityInstanceInfo> fromChildren = columnDownstreamRelList
+                                            .stream()
+                                            .filter(x-> key2ColumnMap.containsKey(x.getEntity1Uuid()))
+                                            .map(item -> key2ColumnMap.get(item.getEntity1Uuid())).collect(Collectors.toList());
+                                    if (CollectionUtils.isNotEmpty(fromChildren)) {
+                                        CatalogEntityColumnLineageDetail
+                                                columnLineageDetail = new CatalogEntityColumnLineageDetail();
+                                        columnLineageDetail.setFromChildren(fromChildren);
+                                        columnLineageDetail.setToChild(column);
+                                        childRelDetailList.add(columnLineageDetail);
+                                    }
+                                }
+                            }
+                        }
+
+                        lineageDetail.setChildRelDetailList(childRelDetailList);
+                        lineageDetail.setSourceType(LineageSourceType.descOf(rel.getSourceType()));
+                        lineageDetail.setSqlQuery(rel.getRelatedScript());
+                        edgeInfo.setLineageDetail(lineageDetail);
+                        edges.add(edgeInfo);
+                        edgeSet.add(fromEntity.getUuid() + ":" + toEntity.getUuid());
+                    }
                 }
             }
-            catalogEntityLineageVO.setUpstreamEdges(upstreamEdges);
         }
+
+        catalogEntityLineageVO.setNodes(nodes);
+        catalogEntityLineageVO.setEdges(edges);
+
         return catalogEntityLineageVO;
     }
 
@@ -232,9 +466,9 @@ public class CatalogEntityRelServiceImpl extends ServiceImpl<CatalogEntityRelMap
     }
 
     private boolean addLineage(String fromUUID, String toUUID, LineageSourceType sourceType, String sql) {
-        List<CatalogEntityRel> relList = list(new QueryWrapper<CatalogEntityRel>()
-                .eq("entity1_uuid", fromUUID)
-                .eq("entity2_uuid", toUUID).eq("type", EntityRelType.DOWNSTREAM.getDescription()));
+        List<CatalogEntityRel> relList = list(new LambdaQueryWrapper<CatalogEntityRel>()
+                .eq(CatalogEntityRel::getEntity1Uuid, fromUUID)
+                .eq(CatalogEntityRel::getEntity2Uuid, toUUID).eq(CatalogEntityRel::getType, EntityRelType.DOWNSTREAM.getDescription()));
         CatalogEntityRel rel;
         if (CollectionUtils.isEmpty(relList)) {
             rel = new CatalogEntityRel();

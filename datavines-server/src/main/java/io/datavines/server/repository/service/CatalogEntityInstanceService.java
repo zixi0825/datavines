@@ -34,6 +34,10 @@ public interface CatalogEntityInstanceService extends IService<CatalogEntityInst
 
     CatalogEntityInstance getByTypeAndFQN(String type, String fqn);
 
+    CatalogEntityInstance getParent(String uuid);
+
+    List<CatalogEntityInstance> getChildren(String uuid);
+
     CatalogEntityInstance getByUUID(String uuid);
 
     CatalogEntityInstance getByDataSourceAndFQN(Long dataSourceId, String fqn);

@@ -16,6 +16,7 @@
  */
 package io.datavines.server.repository.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -97,6 +98,39 @@ public class CatalogEntityInstanceServiceImpl
     @Override
     public CatalogEntityInstance getByUUID(String uuid) {
         return baseMapper.selectOne(new QueryWrapper<CatalogEntityInstance>().lambda().eq(CatalogEntityInstance::getUuid, uuid));
+    }
+
+    @Override
+    public CatalogEntityInstance getParent(String uuid) {
+        CatalogEntityRel parentEntityRel = entityRelService.getOne(new LambdaQueryWrapper<CatalogEntityRel>()
+                .eq(CatalogEntityRel::getEntity2Uuid, uuid)
+                .eq(CatalogEntityRel::getType, EntityRelType.CHILD.getDescription()), false);
+
+        CatalogEntityInstance parentEntity = null;
+        if (parentEntityRel == null) {
+            return parentEntity;
+        }
+
+        parentEntity = getByUUID(parentEntityRel.getEntity1Uuid());
+        return parentEntity;
+    }
+
+    @Override
+    public List<CatalogEntityInstance> getChildren(String uuid) {
+        List<CatalogEntityRel> childEntityRelList = entityRelService.list(new LambdaQueryWrapper<CatalogEntityRel>()
+                .eq(CatalogEntityRel::getEntity1Uuid, uuid)
+                .eq(CatalogEntityRel::getType, EntityRelType.CHILD.getDescription()));
+        List<CatalogEntityInstance> childEntityList = new ArrayList<>();
+        if (CollectionUtils.isEmpty(childEntityRelList)) {
+            return childEntityList;
+        }
+
+        for (CatalogEntityRel childEntityRel : childEntityRelList) {
+            CatalogEntityInstance childEntity = getByUUID(childEntityRel.getEntity2Uuid());
+            childEntityList.add(childEntity);
+        }
+
+        return childEntityList;
     }
 
     @Override

@@ -26,7 +26,7 @@ import java.util.List;
 
 public class LineageParser {
 
-    public static ScriptMetadata parseScript(String script, StatementSplitter statementSplitter, StatementParser   statementParser) {
+    public static ScriptMetadata parseScript(String script, StatementSplitter statementSplitter, StatementParser  statementParser) {
         if (StringUtils.isEmpty(script)) {
             return null;
         }

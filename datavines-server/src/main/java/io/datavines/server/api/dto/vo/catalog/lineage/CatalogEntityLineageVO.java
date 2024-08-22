@@ -16,8 +16,8 @@
  */
 package io.datavines.server.api.dto.vo.catalog.lineage;
 
-import io.datavines.server.api.dto.bo.catalog.CatalogEntityInstanceInfo;
-import io.datavines.server.api.dto.bo.catalog.lineage.EntityEdgeInfo;
+import io.datavines.server.api.dto.bo.catalog.lineage.LineageEntityEdgeInfo;
+import io.datavines.server.api.dto.bo.catalog.lineage.LineageEntityNodeInfo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -26,9 +26,9 @@ import java.util.List;
 @Data
 public class CatalogEntityLineageVO implements Serializable {
 
-    public List<EntityEdgeInfo> upstreamEdges;
+    public LineageEntityNodeInfo currentNode;
 
-    public List<EntityEdgeInfo> downstreamEdges;
+    public List<LineageEntityNodeInfo> nodes;
 
-    public CatalogEntityInstanceInfo currentEntity;
-}
+    public List<LineageEntityEdgeInfo> edges;
+ }

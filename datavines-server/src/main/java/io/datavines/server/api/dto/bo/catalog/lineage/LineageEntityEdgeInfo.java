@@ -14,11 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.connector.api;
+package io.datavines.server.api.dto.bo.catalog.lineage;
 
-import java.util.List;
+import io.datavines.server.api.dto.bo.catalog.CatalogEntityInstanceInfo;
+import lombok.Data;
 
-public interface StatementSplitter {
+import java.io.Serializable;
 
-    List<String> splitStatements(String body);
+@Data
+public class LineageEntityEdgeInfo implements Serializable {
+
+    private static final long serialVersionUID = -1L;
+
+    private String uuid;
+
+    private CatalogEntityInstanceInfo fromEntity;
+
+    private String description;
+
+    private CatalogEntityLineageDetail lineageDetail;
+
+    private CatalogEntityInstanceInfo toEntity;
+
 }
