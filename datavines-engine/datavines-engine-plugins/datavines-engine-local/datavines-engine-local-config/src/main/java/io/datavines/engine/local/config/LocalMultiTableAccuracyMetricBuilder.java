@@ -125,7 +125,7 @@ public class LocalMultiTableAccuracyMetricBuilder extends BaseLocalConfiguration
                     connectorParameterMap.put(ERROR_DATA_FILE_NAME, jobExecutionInfo.getErrorDataFileName());
                     connectorParameterMap.put(ERROR_DATA_DIR, metricInputParameter.get(ERROR_DATA_DIR));
                     connectorParameterMap.put(METRIC_NAME, metricInputParameter.get(METRIC_NAME));
-                    boolean isEnableUseView = true;
+                    boolean isEnableUseView = false;
                     if (metricInputParameter.get(ENABLE_USE_VIEW) != null) {
                         isEnableUseView = Boolean.parseBoolean(metricInputParameter.get(ENABLE_USE_VIEW));
                     }
