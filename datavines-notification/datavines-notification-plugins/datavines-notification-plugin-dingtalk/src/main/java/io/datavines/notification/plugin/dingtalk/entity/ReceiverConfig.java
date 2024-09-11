@@ -28,6 +28,8 @@ public class ReceiverConfig {
 
     private String webhook;
 
+    private String secret;
+
     private String keyword;
 
     private String atMobiles;

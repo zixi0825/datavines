@@ -18,12 +18,10 @@ package io.datavines.notification.plugin.dingtalk;
 
 import io.datavines.common.utils.JSONUtils;
 import io.datavines.notification.api.entity.SlaNotificationResultRecord;
-import io.datavines.notification.api.entity.SlaSenderMessage;
 import io.datavines.notification.plugin.dingtalk.entity.ReceiverConfig;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -39,13 +37,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -70,7 +62,8 @@ public class DingTalkSender {
         for (ReceiverConfig receiverConfig : receiverSet) {
             try {
                 String msg = generateMsgJson(subject, message, receiverConfig);
-                HttpPost httpPost = constructHttpPost(receiverConfig.getWebhook(), msg);
+                String url = constructUrl(receiverConfig.getWebhook(), receiverConfig.getSecret());
+                HttpPost httpPost = constructHttpPost(url, msg);
                 try (CloseableHttpClient httpClient = getDefaultClient()) {
                     CloseableHttpResponse response = httpClient.execute(httpPost);
                     String resp;
@@ -93,9 +86,10 @@ public class DingTalkSender {
             String recordMessage = String.format("send to %s fail", String.join(",", failToReceivers.stream().map(ReceiverConfig::getAtMobiles).collect(Collectors.toList())));
             result.setStatus(false);
             result.setMessage(recordMessage);
-        }else{
+        } else {
             result.setStatus(true);
         }
+
         return result;
     }
 
