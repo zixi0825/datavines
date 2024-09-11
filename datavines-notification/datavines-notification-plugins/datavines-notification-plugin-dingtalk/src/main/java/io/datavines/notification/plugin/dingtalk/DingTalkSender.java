@@ -37,7 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.requireNonNull;
+import static io.datavines.notification.plugin.dingtalk.DingTalkConstants.MSG_TYPE;
 
 @Slf4j
 @EqualsAndHashCode
@@ -45,24 +45,6 @@ import static java.util.Objects.requireNonNull;
 public class DingTalkSender {
 
     private String msgType;
-    private String webHook;
-    private String keyWord;
-
-    private String mustNotNull = " must not be null";
-
-    public DingTalkSender(SlaSenderMessage senderMessage) {
-
-        String configString = senderMessage.getConfig();
-        Map<String, String> config = JSONUtils.toMap(configString);
-
-        msgType=config.get("msgType");
-
-        webHook=config.get("webHook");
-        requireNonNull(webHook, "dingtalk webHook" + mustNotNull);
-        keyWord=config.get("keyWord");
-        requireNonNull(keyWord, "dingtalk keyWord" + mustNotNull);
-
-    }
 
     public SlaNotificationResultRecord sendCardMsg(Set<ReceiverConfig> receiverSet, String subject, String message){
         SlaNotificationResultRecord result = new SlaNotificationResultRecord();
@@ -71,12 +53,11 @@ public class DingTalkSender {
         }
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         Set<ReceiverConfig> failToReceivers = new HashSet<>();
-        for(ReceiverConfig receiverConfig : receiverSet){
+        for (ReceiverConfig receiverConfig : receiverSet) {
             try {
                 String msg = generateMsgJson(subject, message, receiverConfig);
-                HttpPost httpPost = constructHttpPost(webHook, msg);
-                CloseableHttpClient httpClient = getDefaultClient();
-                try {
+                HttpPost httpPost = constructHttpPost(receiverConfig.getWebhook(), msg);
+                try (CloseableHttpClient httpClient = getDefaultClient()) {
                     CloseableHttpResponse response = httpClient.execute(httpPost);
                     String resp;
                     try {
@@ -87,8 +68,6 @@ public class DingTalkSender {
                         response.close();
                     }
                     log.info("Ding Talk send msg :{}, resp: {}", msg, resp);
-                } finally {
-                    httpClient.close();
                 }
             } catch (Exception e) {
                 failToReceivers.add(receiverConfig);
@@ -115,15 +94,15 @@ public class DingTalkSender {
             msgType = DingTalkConstants.DING_TALK_MSG_TYPE_TEXT;
         }
         Map<String, Object> items = new HashMap<>();
-        items.put("msgtype", msgType);
+        items.put(MSG_TYPE, msgType);
         Map<String, Object> text = new HashMap<>();
         items.put(msgType, text);
 
         if (DingTalkConstants.DING_TALK_MSG_TYPE_MARKDOWN.equals(msgType)) {
             StringBuilder builder = new StringBuilder(content);
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(keyWord)) {
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(receiverConfig.getKeyword())) {
                 builder.append(" ");
-                builder.append(keyWord);
+                builder.append(receiverConfig.getKeyword());
             }
             builder.append("\n\n");
             if (org.apache.commons.lang3.StringUtils.isNotBlank(atMobiles)) {
@@ -148,9 +127,9 @@ public class DingTalkSender {
             StringBuilder builder = new StringBuilder(title);
             builder.append("\n");
             builder.append(content);
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(keyWord)) {
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(receiverConfig.getKeyword())) {
                 builder.append(" ");
-                builder.append(keyWord);
+                builder.append(receiverConfig.getKeyword());
             }
             byte[] byt = StringUtils.getBytesUtf8(builder.toString());
             String txt = StringUtils.newStringUtf8(byt);
