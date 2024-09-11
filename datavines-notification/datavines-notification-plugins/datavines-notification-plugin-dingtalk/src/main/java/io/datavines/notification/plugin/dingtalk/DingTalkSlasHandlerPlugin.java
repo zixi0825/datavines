@@ -93,7 +93,10 @@ public class DingTalkSlasHandlerPlugin implements SlasHandlerPlugin {
                 .addValidate(Validate.newBuilder().setRequired(true).build())
                 .build();
         InputParam keyWord = InputParam.newBuilder("keyWord", "keyWord")
-                .addValidate(Validate.newBuilder().setRequired(true).build())
+                .addValidate(Validate.newBuilder().setRequired(false).build())
+                .build();
+        InputParam secret = InputParam.newBuilder("secret", "secret")
+                .addValidate(Validate.newBuilder().setRequired(false).build())
                 .build();
         InputParam atMobiles = InputParam.newBuilder("atMobiles", "atMobiles")
                 .addValidate(Validate.newBuilder().setRequired(false).build())
@@ -109,6 +112,7 @@ public class DingTalkSlasHandlerPlugin implements SlasHandlerPlugin {
                 .build();
 
         paramsList.add(webHook);
+        paramsList.add(secret);
         paramsList.add(keyWord);
         paramsList.add(atMobiles);
         paramsList.add(atDingtalkIds);

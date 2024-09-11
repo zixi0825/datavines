@@ -23,6 +23,8 @@ import io.datavines.notification.plugin.dingtalk.entity.ReceiverConfig;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.http.HttpEntity;
@@ -33,7 +35,19 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -84,6 +98,22 @@ public class DingTalkSender {
         }
         return result;
     }
+
+    private String constructUrl(String webHook, String secret) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
+        if (org.apache.commons.lang3.StringUtils.isBlank(secret)) {
+            return webHook;
+        }
+        Long timestamp = System.currentTimeMillis();
+        String stringToSign = timestamp + "\n" + secret;
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+        byte[] signData = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
+        String sign = URLEncoder.encode(new String(Base64.encodeBase64(signData)),"UTF-8");
+
+        // sign字段和timestamp字段必须拼接到请求URL上，否则会出现 310000 的错误信息
+        return String.format(webHook + "&sign=%s&timestamp=%d", sign, timestamp);
+    }
+
     private String generateMsgJson(String title, String content,ReceiverConfig receiverConfig) {
 
         final String atMobiles = receiverConfig.getAtMobiles();
