@@ -17,11 +17,9 @@
 package io.datavines.engine.local.api.utils;
 
 import io.datavines.common.utils.StringUtils;
-import io.datavines.engine.local.api.LocalRuntimeEnvironment;
 import io.datavines.engine.local.api.entity.QueryColumn;
 import io.datavines.engine.local.api.entity.ResultList;
 import io.datavines.engine.local.api.entity.ResultListWithColumns;
-import lombok.extern.slf4j.Slf4j;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -57,7 +55,7 @@ public class SqlUtils {
 
         try {
             while (rs.next()) {
-                resultList.add(getResultObjectMap(rs, metaData, queryFromsAndJoins));
+                resultList.add(getResultObjectMap(rs, metaData));
             }
         } catch (Throwable e) {
             log.error("get result set error: {0}", e);
@@ -67,7 +65,7 @@ public class SqlUtils {
         return resultListWithColumns;
     }
 
-    public static ResultListWithColumns getListWithHeaderFromResultSet(ResultSet rs, Set<String> queryFromsAndJoins, int start, int end) throws SQLException {
+    public static ResultListWithColumns getListWithHeaderFromResultSet(ResultSet rs, int start, int end) throws SQLException {
 
         ResultListWithColumns resultListWithColumns = new ResultListWithColumns();
 
@@ -75,23 +73,22 @@ public class SqlUtils {
 
         List<QueryColumn> queryColumns = new ArrayList<>();
         for (int i = 1; i <= metaData.getColumnCount(); i++) {
-            String key = getColumnLabel(queryFromsAndJoins, metaData.getColumnLabel(i));
-            queryColumns.add(new QueryColumn(key, metaData.getColumnTypeName(i),""));
+            queryColumns.add(new QueryColumn(metaData.getColumnLabel(i), metaData.getColumnTypeName(i),""));
         }
         resultListWithColumns.setColumns(queryColumns);
-        resultListWithColumns.setResultList(getPage(rs, queryFromsAndJoins, start, end, metaData));
+        resultListWithColumns.setResultList(getPage(rs, start, end, metaData));
         return resultListWithColumns;
     }
 
-    public static ResultList getPageFromResultSet(ResultSet rs, Set<String> queryFromsAndJoins, int start, int end) throws SQLException {
+    public static ResultList getPageFromResultSet(ResultSet rs, int start, int end) throws SQLException {
 
         ResultList result = new ResultList();
         ResultSetMetaData metaData = rs.getMetaData();
-        result.setResultList(getPage(rs, queryFromsAndJoins, start, end, metaData));
+        result.setResultList(getPage(rs, start, end, metaData));
         return result;
     }
 
-    private static List<Map<String, Object>> getPage(ResultSet rs, Set<String> queryFromsAndJoins, int start, int end, ResultSetMetaData metaData) {
+    private static List<Map<String, Object>> getPage(ResultSet rs, int start, int end, ResultSetMetaData metaData) {
 
         List<Map<String, Object>> resultList = new ArrayList<>();
 
@@ -102,7 +99,7 @@ public class SqlUtils {
             int current = start;
             while (rs.next()) {
                 if (current >= start && current < end ){
-                    resultList.add(getResultObjectMap(rs, metaData, queryFromsAndJoins));
+                    resultList.add(getResultObjectMap(rs, metaData));
                     if (current == end-1){
                         break;
                     }
@@ -118,7 +115,7 @@ public class SqlUtils {
         return resultList;
     }
 
-    public static ResultList getListFromResultSet(ResultSet rs, Set<String> queryFromsAndJoins) throws SQLException {
+    public static ResultList getListFromResultSet(ResultSet rs) throws SQLException {
 
         ResultList result = new ResultList();
         ResultSetMetaData metaData = rs.getMetaData();
@@ -127,7 +124,7 @@ public class SqlUtils {
 
         try {
             while (rs.next()) {
-                resultList.add(getResultObjectMap(rs, metaData, queryFromsAndJoins));
+                resultList.add(getResultObjectMap(rs, metaData));
             }
         } catch (Throwable e) {
             log.error("get result set error: {0}", e);
@@ -137,15 +134,13 @@ public class SqlUtils {
         return result;
     }
 
-    private static Map<String, Object> getResultObjectMap(ResultSet rs, ResultSetMetaData metaData, Set<String> queryFromsAndJoins) throws SQLException {
+    private static Map<String, Object> getResultObjectMap(ResultSet rs, ResultSetMetaData metaData) throws SQLException {
         Map<String, Object> map = new LinkedHashMap<>();
 
         for (int i = 1; i <= metaData.getColumnCount(); i++) {
             String key = metaData.getColumnLabel(i);
-            String label = getColumnLabel(queryFromsAndJoins, key);
-
             Object value = rs.getObject(key);
-            map.put(label.toLowerCase(), value instanceof byte[] ? new String((byte[]) value) : value);
+            map.put(key.toLowerCase(), value instanceof byte[] ? new String((byte[]) value) : value);
         }
 
         return map;

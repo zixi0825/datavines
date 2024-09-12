@@ -155,9 +155,12 @@ public class EMailSender {
         props.setProperty("mail.smtp.port", mailSmtpPort);
         props.setProperty("mail.smtp.auth", enableSmtpAuth);
         props.setProperty("mail.transport.protocol", mailProtocol);
+        props.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
         props.setProperty("mail.smtp.starttls.enable", mailUseStartTLS);
         props.setProperty("mail.smtp.ssl.enable", mailUseSSL);
-        props.setProperty("mail.smtp.ssl.trust", sslTrust);
+        if (Boolean.TRUE == Boolean.parseBoolean(sslTrust)) {
+            props.setProperty("mail.smtp.ssl.trust", mailSmtpHost);
+        }
 
         Authenticator auth = new Authenticator() {
             @Override
@@ -187,7 +190,7 @@ public class EMailSender {
                 }
                 contents.append(EmailConstants.TR_END);
             }
-            return EmailConstants.HTML_HEADER_PREFIX + contents.toString() + EmailConstants.TABLE_HTML_TAIL + EmailConstants.BODY_HTML_TAIL;
+            return EmailConstants.HTML_HEADER_PREFIX + contents + EmailConstants.TABLE_HTML_TAIL + EmailConstants.BODY_HTML_TAIL;
         }
         return content;
     }
