@@ -186,7 +186,7 @@ public class ErrorDataSinkExecutor extends BaseDataSinkExecutor {
                 int start = i * pageSize;
                 int end = (i+1) * pageSize;
 
-                ResultList resultList = SqlUtils.getPageFromResultSet(errorDataResultSet, SqlUtils.getQueryFromsAndJoins("select * from " + sourceTable), start, end);
+                ResultList resultList = SqlUtils.getPageFromResultSet(errorDataResultSet, start, end);
                 for (Map<String, Object> row: resultList.getResultList()) {
                     for (int j=0; j<columns.size(); j++) {
                         StructField field = columns.get(j);

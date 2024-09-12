@@ -44,7 +44,7 @@ public class ActualValueExecutor implements ITransformExecutor {
             statement = connection.createStatement();
             env.setCurrentStatement(statement);
             resultSet = statement.executeQuery(sql);
-            resultList = SqlUtils.getListFromResultSet(resultSet, SqlUtils.getQueryFromsAndJoins(sql));
+            resultList = SqlUtils.getListFromResultSet(resultSet);
             if (CollectionUtils.isNotEmpty(resultList.getResultList())) {
                 List<Map<String, Object>> dataList = resultList.getResultList();
                 List<Map<String, Object>> newDataList = new ArrayList<>();

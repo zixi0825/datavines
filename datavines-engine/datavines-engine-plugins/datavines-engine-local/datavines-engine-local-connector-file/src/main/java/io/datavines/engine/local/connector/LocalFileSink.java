@@ -143,7 +143,7 @@ public class LocalFileSink implements LocalSink {
                     int start = i * pageSize;
                     int end = (i+1) * pageSize;
 
-                    ResultListWithColumns resultList = SqlUtils.getListWithHeaderFromResultSet(resultSet, SqlUtils.getQueryFromsAndJoins("select * from " + outputTable), start, end);
+                    ResultListWithColumns resultList = SqlUtils.getListWithHeaderFromResultSet(resultSet,  start, end);
                     //执行文件下载到本地
                     FileUtils.writeToLocal(resultList,
                             config.getString(ERROR_DATA_DIR),
