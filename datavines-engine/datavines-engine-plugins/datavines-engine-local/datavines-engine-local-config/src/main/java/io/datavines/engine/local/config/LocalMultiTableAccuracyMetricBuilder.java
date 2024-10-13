@@ -57,7 +57,7 @@ public class LocalMultiTableAccuracyMetricBuilder extends BaseLocalConfiguration
                 List<MappingColumn> mappingColumns = JSONUtils.toList(metricInputParameter.get(MAPPING_COLUMNS),MappingColumn.class);
                 metricInputParameter.put(TABLE_ALIAS_COLUMNS, MetricParserUtils.getTableAliasColumns(mappingColumns,metricInputParameter.get(TABLE_ALIAS),1, false));
                 metricInputParameter.put(TABLE2_ALIAS_COLUMNS, MetricParserUtils.getTableAliasColumns(mappingColumns,metricInputParameter.get(TABLE2_ALIAS),2, false));
-                metricInputParameter.put(ON_CLAUSE, MetricParserUtils.getOnClause(mappingColumns, metricInputParameter, false));
+                metricInputParameter.put(ON_CLAUSE, MetricParserUtils.getOnClauseForLocal(mappingColumns, metricInputParameter, false));
                 metricInputParameter.put(WHERE_CLAUSE, MetricParserUtils.getWhereClause(mappingColumns, metricInputParameter,false));
 
                 metric2InputParameter.put(metricUniqueKey, metricInputParameter);
