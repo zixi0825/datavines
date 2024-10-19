@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +37,7 @@ public class MysqlMutex {
 
     public static final long LOCK_ACQUIRE_INTERVAL = 1000;
 
-    private final long expireTimeWindow = 5000;
+    private final long expireTimeWindow = 600;
 
     private Connection connection;
 
@@ -44,13 +45,13 @@ public class MysqlMutex {
 
     private final ServerInfo serverInfo;
 
-    private final Map<String, RegistryLock> lockHoldMap;
+    private final ConcurrentHashMap<String, RegistryLock> lockHoldMap;
 
     public MysqlMutex(Connection connection, Properties properties) throws SQLException {
         this.connection = connection;
         this.properties = properties;
         this.serverInfo = new ServerInfo(NetUtils.getHost(), Integer.valueOf((String) properties.get("server.port")));
-        this.lockHoldMap = new HashMap<>();
+        this.lockHoldMap = new ConcurrentHashMap<>();
         ScheduledExecutorService lockTermUpdateThreadPool = Executors.newSingleThreadScheduledExecutor(
                 new ThreadFactoryBuilder().setNameFormat("RegistryLockRefreshThread").setDaemon(true).build());
 
@@ -78,6 +79,11 @@ public class MysqlMutex {
                     count = 0;
                 } catch (SQLException e) {
                     log.error("Acquire the lock error, {}, try again!", e.getLocalizedMessage());
+                    try {
+                        clearExpireLock();
+                    } catch (SQLException ex) {
+                       log.error("clear expire lock error : ", ex);
+                    }
                     ThreadUtils.sleep(LOCK_ACQUIRE_INTERVAL);
                     count--;
                 }
@@ -137,9 +143,10 @@ public class MysqlMutex {
         checkConnection();
         PreparedStatement preparedStatement = connection.prepareStatement("delete from dv_registry_lock where lock_key = ?");
         preparedStatement.setString(1, key);
-        preparedStatement.executeUpdate();
+        if (preparedStatement.executeUpdate() > 0) {
+            lockHoldMap.remove(key);
+        }
         preparedStatement.close();
-        lockHoldMap.remove(key);
     }
 
     private boolean isExists(String key, ServerInfo serverInfo) throws SQLException {
