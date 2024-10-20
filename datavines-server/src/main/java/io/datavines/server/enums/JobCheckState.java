@@ -26,17 +26,17 @@ import java.util.Map;
 /**
  * data quality task state
  */
-public enum DqJobExecutionState {
+public enum JobCheckState {
     /**
      * 0-none
      * 1-success
      * 2-failure
      */
-    NONE(0, "none", "默认"),
+    NONE(0, "none", "未知"),
     SUCCESS(1, "success", "成功"),
     FAILURE(2, "failure", "失败");
 
-    DqJobExecutionState(int code, String description, String zhDescription) {
+    JobCheckState(int code, String description, String zhDescription) {
         this.code = code;
         this.description = description;
         this.zhDescription = zhDescription;
@@ -58,18 +58,18 @@ public enum DqJobExecutionState {
         return isEn ? description : zhDescription;
     }
 
-    private static final Map<Integer, DqJobExecutionState> VALUES_MAP = new HashMap<>();
+    private static final Map<Integer, JobCheckState> VALUES_MAP = new HashMap<>();
 
     static {
-        for (DqJobExecutionState type : DqJobExecutionState.values()) {
-            VALUES_MAP.put(type.code,type);
+        for (JobCheckState type : JobCheckState.values()) {
+            VALUES_MAP.put(type.code, type);
         }
     }
 
-    public static DqJobExecutionState of(Integer status) {
-        if (VALUES_MAP.containsKey(status)) {
-            return VALUES_MAP.get(status);
+    public static JobCheckState of(Integer code) {
+        if (VALUES_MAP.containsKey(code)) {
+            return VALUES_MAP.get(code);
         }
-        throw new IllegalArgumentException("invalid code : " + status);
+        throw new IllegalArgumentException("invalid code : " + code);
     }
 }

@@ -16,30 +16,14 @@
  */
 package io.datavines.server.api.dto.vo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Data
-public class JobQualityReportVO implements Serializable {
+public class JobExecutionCheckResultVO implements Serializable {
 
-    private static final long serialVersionUID = -1L;
+    private Long executionId;
 
-    private Long id;
-
-    private Long datasourceId;
-
-    private String databaseName;
-
-    private String tableName;
-
-    private String columnName;
-
-    private BigDecimal score;
-
-    @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
-    private LocalDate reportDate;
+    private int checkResult;
 }

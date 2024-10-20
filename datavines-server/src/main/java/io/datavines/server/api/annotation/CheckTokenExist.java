@@ -14,32 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.api.dto.vo;
+package io.datavines.server.api.annotation;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
-@Data
-public class JobQualityReportVO implements Serializable {
-
-    private static final long serialVersionUID = -1L;
-
-    private Long id;
-
-    private Long datasourceId;
-
-    private String databaseName;
-
-    private String tableName;
-
-    private String columnName;
-
-    private BigDecimal score;
-
-    @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
-    private LocalDate reportDate;
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface CheckTokenExist {
 }

@@ -14,32 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.api.dto.vo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+package io.datavines.server.repository.mapper;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import io.datavines.server.repository.entity.AccessToken;
+import org.apache.ibatis.annotations.Mapper;
 
-@Data
-public class JobQualityReportVO implements Serializable {
-
-    private static final long serialVersionUID = -1L;
-
-    private Long id;
-
-    private Long datasourceId;
-
-    private String databaseName;
-
-    private String tableName;
-
-    private String columnName;
-
-    private BigDecimal score;
-
-    @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
-    private LocalDate reportDate;
+@Mapper
+public interface AccessTokenMapper extends BaseMapper<AccessToken> {
 }

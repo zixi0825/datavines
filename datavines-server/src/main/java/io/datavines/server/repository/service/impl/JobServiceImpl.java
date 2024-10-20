@@ -493,15 +493,13 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     }
 
     @Override
-    public boolean execute(Long jobId, LocalDateTime scheduleTime) throws DataVinesServerException {
+    public Long execute(Long jobId, LocalDateTime scheduleTime) throws DataVinesServerException {
         Job job = baseMapper.selectById(jobId);
         if (job == null) {
             throw new DataVinesServerException(Status.JOB_NOT_EXIST_ERROR, jobId);
         }
 
-        executeJob(job, scheduleTime);
-
-        return true;
+        return executeJob(job, scheduleTime);
     }
 
     @Override
@@ -525,7 +523,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     }
 
 
-    private void executeJob(Job job, LocalDateTime scheduleTime) {
+    private Long executeJob(Job job, LocalDateTime scheduleTime) {
 
         JobExecution jobExecution = getJobExecution(job, scheduleTime);
 
@@ -537,6 +535,8 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
         command.setPriority(Priority.MEDIUM);
         command.setJobExecutionId(jobExecution.getId());
         commandService.insert(command);
+
+        return jobExecution.getId();
     }
 
     private JobExecution getJobExecution(Job job, LocalDateTime scheduleTime) {

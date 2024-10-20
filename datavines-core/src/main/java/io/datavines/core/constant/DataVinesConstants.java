@@ -18,6 +18,8 @@ package io.datavines.core.constant;
 
 public class DataVinesConstants {
 
+    public static String TOKEN = "token";
+
     public static String LOGIN_USER = "login_user";
 
     public static String WORKSPACE_ID = "workspace_id";
