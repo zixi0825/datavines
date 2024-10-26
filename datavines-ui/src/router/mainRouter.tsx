@@ -54,7 +54,7 @@ const router: TRouter = {
         path: '/main/tokenManager',
         key: '/main/tokenManager',
         icon: <SafetyCertificateOutlined />,
-        component: lazy(() => import(/* webpackChunkName: 'view-label' */ '@/view/Main/tokenManager')),
+        component: lazy(() => import(/* webpackChunkName: 'view-label' */ '@/view/Main/TokenManager')),
     },
 };
 
