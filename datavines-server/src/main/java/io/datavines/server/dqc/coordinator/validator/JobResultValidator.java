@@ -29,7 +29,7 @@ import io.datavines.notification.api.entity.SlaNotificationMessage;
 import io.datavines.notification.api.entity.SlaSenderMessage;
 import io.datavines.notification.core.client.NotificationClient;
 import io.datavines.server.api.dto.bo.issue.IssueCreate;
-import io.datavines.server.enums.DqJobExecutionState;
+import io.datavines.server.enums.JobCheckState;
 import io.datavines.server.repository.entity.DataSource;
 import io.datavines.server.repository.entity.Job;
 import io.datavines.server.repository.entity.JobExecution;
@@ -112,11 +112,11 @@ public class JobResultValidator {
         BeanUtils.copyProperties(jobExecutionResult, metricExecutionResult);
         if (MetricValidator.isSuccess(metricExecutionResult)) {
             jobExecutionResult.setScore(MetricValidator.getQualityScore(metricExecutionResult, true));
-            jobExecutionResult.setState(DqJobExecutionState.SUCCESS.getCode());
+            jobExecutionResult.setState(JobCheckState.SUCCESS.getCode());
             result = true;
         } else {
             jobExecutionResult.setScore(MetricValidator.getQualityScore(metricExecutionResult, false));
-            jobExecutionResult.setState(DqJobExecutionState.FAILURE.getCode());
+            jobExecutionResult.setState(JobCheckState.FAILURE.getCode());
         }
 
         jobExternalService.updateJobExecutionResult(jobExecutionResult);

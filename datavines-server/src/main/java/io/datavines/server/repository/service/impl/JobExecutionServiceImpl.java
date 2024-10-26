@@ -37,7 +37,7 @@ import io.datavines.server.api.dto.bo.job.JobExecutionDashboardParam;
 import io.datavines.server.api.dto.bo.job.JobExecutionPageParam;
 import io.datavines.server.api.dto.vo.*;
 import io.datavines.core.exception.DataVinesServerException;
-import io.datavines.server.enums.DqJobExecutionState;
+import io.datavines.server.enums.JobCheckState;
 import io.datavines.server.repository.entity.JobExecution;
 import io.datavines.server.repository.entity.JobExecutionResult;
 import io.datavines.server.repository.mapper.JobExecutionResultMapper;
@@ -136,7 +136,7 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
                         ));
                 jobExecutionList.forEach(jobExecution -> {
                     if (jobExecutionStateMap.get(jobExecution.getId()) != null) {
-                        jobExecution.setCheckState(DqJobExecutionState.of(jobExecutionStateMap.get(jobExecution.getId())));
+                        jobExecution.setCheckState(JobCheckState.of(jobExecutionStateMap.get(jobExecution.getId())));
                     }
                 });
             }

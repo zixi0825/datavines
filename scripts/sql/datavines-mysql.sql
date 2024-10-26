@@ -447,6 +447,20 @@ CREATE TABLE `dv_env` (
   UNIQUE KEY `env_name` (`name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='运行环境配置信息';
 
+DROP TABLE IF EXISTS `dv_access_token`;
+CREATE TABLE `dv_access_token` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `workspace_id` bigint(20) NOT NULL COMMENT '工作空间ID',
+    `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+    `token` varchar(1024) NOT NULL COMMENT 'token',
+    `expire_time` datetime NOT NULL COMMENT '过期时间',
+    `create_by` bigint(20) NOT NULL COMMENT '创建用户ID',
+    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_by` bigint(20) NOT NULL COMMENT '更新用户ID',
+    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='token 管理';
+
 -- ----------------------------
 -- Table structure for dv_error_data_storage
 -- ----------------------------

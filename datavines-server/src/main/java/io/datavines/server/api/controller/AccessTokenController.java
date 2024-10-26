@@ -19,51 +19,51 @@ package io.datavines.server.api.controller;
 import io.datavines.core.aop.RefreshToken;
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.core.exception.DataVinesServerException;
-import io.datavines.server.api.dto.bo.config.ConfigCreate;
-import io.datavines.server.api.dto.bo.config.ConfigUpdate;
-import io.datavines.server.repository.service.ConfigService;
+import io.datavines.server.api.dto.bo.token.TokenCreate;
+import io.datavines.server.api.dto.bo.token.TokenUpdate;
+import io.datavines.server.repository.service.AccessTokenService;
+import io.datavines.server.utils.ContextHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 
-@Api(value = "config", tags = "config", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value = "token", tags = "token", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
-@RequestMapping(value = DataVinesConstants.BASE_API_PATH + "/config", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = DataVinesConstants.BASE_API_PATH + "/token", produces = MediaType.APPLICATION_JSON_VALUE)
 @RefreshToken
-public class ConfigController {
+public class AccessTokenController {
 
-    @Autowired
-    private ConfigService configService;
+    @Resource
+    private AccessTokenService accessTokenService;
 
-    @ApiOperation(value = "create config")
+    @ApiOperation(value = "create token")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Object createConfig(@Valid @RequestBody ConfigCreate configCreate) throws DataVinesServerException {
-        return configService.create(configCreate);
+    public Object createToken(@Valid @RequestBody TokenCreate tokenCreate) throws DataVinesServerException {
+        return accessTokenService.create(tokenCreate);
     }
 
-    @ApiOperation(value = "update config")
+    @ApiOperation(value = "update token")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Object updateConfig(@Valid @RequestBody ConfigUpdate configUpdate) throws DataVinesServerException {
-        return configService.update(configUpdate)>0;
+    public Object updateToken(@Valid @RequestBody TokenUpdate tokenUpdate) throws DataVinesServerException {
+        return accessTokenService.update(tokenUpdate);
     }
 
-    @ApiOperation(value = "delete config")
+    @ApiOperation(value = "delete token")
     @DeleteMapping(value = "/{id}")
-    public Object deleteConfig(@PathVariable Long id)  {
-        return configService.deleteById(id);
+    public Object deleteToken(@PathVariable Long id)  {
+        // 加入黑名单，并且需要拦截器进行处理
+        return accessTokenService.deleteToken(id);
     }
 
-    @ApiOperation(value = "page config")
+    @ApiOperation(value = "page token")
     @GetMapping(value = "/page")
     public Object listByUserId(@RequestParam("workspaceId") Long workspaceId,
-                               @RequestParam(value = "searchVal", required = false) String searchVal,
                                @RequestParam("pageNumber") Integer pageNumber,
                                @RequestParam("pageSize") Integer pageSize)  {
-        return configService.configPage(workspaceId, searchVal, pageNumber, pageSize);
+        return accessTokenService.page(workspaceId, ContextHolder.getUserId(), pageNumber, pageSize);
     }
 }

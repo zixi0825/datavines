@@ -30,7 +30,7 @@ import io.datavines.metric.api.*;
 import io.datavines.server.api.dto.bo.job.JobQualityReportDashboardParam;
 import io.datavines.server.api.dto.vo.*;
 import io.datavines.server.enums.DataQualityLevel;
-import io.datavines.server.enums.DqJobExecutionState;
+import io.datavines.server.enums.JobCheckState;
 import io.datavines.server.repository.entity.*;
 import io.datavines.server.repository.mapper.JobExecutionResultMapper;
 import io.datavines.server.repository.mapper.JobQualityReportMapper;
@@ -419,7 +419,7 @@ public class JobQualityReportServiceImpl extends ServiceImpl<JobQualityReportMap
             String resultFormulaFormat = resultFormula.getResultFormat(!LanguageUtils.isZhContext())+" ${operator} ${threshold}";
 
             jobExecutionResultVO.setCheckSubject(jobExecutionResult.getDatabaseName() + "." + jobExecutionResult.getTableName() + "." + jobExecutionResult.getColumnName());
-            jobExecutionResultVO.setCheckResult(DqJobExecutionState.of(jobExecutionResult.getState()).getDescription(!LanguageUtils.isZhContext()));
+            jobExecutionResultVO.setCheckResult(JobCheckState.of(jobExecutionResult.getState()).getDescription(!LanguageUtils.isZhContext()));
             SqlMetric sqlMetric = PluginLoader.getPluginLoader(SqlMetric.class).getOrCreatePlugin(jobExecutionResult.getMetricName());
             if (!"multi_table_value_comparison".equalsIgnoreCase(sqlMetric.getName())) {
                 ExpectedValue expectedValue = PluginLoader.getPluginLoader(ExpectedValue.class).getOrCreatePlugin(jobExecution.getEngineType() + "_" + jobExecutionResult.getExpectedType());

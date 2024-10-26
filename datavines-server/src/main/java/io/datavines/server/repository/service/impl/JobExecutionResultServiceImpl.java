@@ -25,13 +25,14 @@ import io.datavines.metric.api.ConfigItem;
 import io.datavines.metric.api.ExpectedValue;
 import io.datavines.metric.api.ResultFormula;
 import io.datavines.metric.api.SqlMetric;
+import io.datavines.server.api.dto.vo.JobExecutionCheckResultVO;
 import io.datavines.server.api.dto.vo.JobExecutionResultVO;
 import io.datavines.server.repository.entity.Job;
 import io.datavines.server.repository.entity.JobExecution;
 import io.datavines.server.repository.entity.JobExecutionResult;
 import io.datavines.server.repository.service.JobService;
 import io.datavines.server.repository.service.JobExecutionService;
-import io.datavines.server.enums.DqJobExecutionState;
+import io.datavines.server.enums.JobCheckState;
 import io.datavines.common.enums.OperatorType;
 import io.datavines.server.repository.mapper.JobExecutionResultMapper;
 import io.datavines.server.repository.service.JobExecutionResultService;
@@ -96,8 +97,27 @@ public class JobExecutionResultServiceImpl extends ServiceImpl<JobExecutionResul
     public List<JobExecutionResult> listByErrorJobExecutionId(long jobExecutionId) {
         return baseMapper.selectList(new QueryWrapper<JobExecutionResult>().lambda()
                 .eq(JobExecutionResult::getJobExecutionId, jobExecutionId)
-                .eq(JobExecutionResult::getState, DqJobExecutionState.FAILURE.getCode())
+                .eq(JobExecutionResult::getState, JobCheckState.FAILURE.getCode())
                 .orderByDesc(JobExecutionResult::getUpdateTime));
+    }
+
+    @Override
+    public int getCheckResultByJobExecutionId(long jobExecutionId) {
+
+        int result = JobCheckState.NONE.getCode();
+        List<JobExecutionResult> jobExecutionResultList = listByJobExecutionId(jobExecutionId);
+        if (CollectionUtils.isEmpty(jobExecutionResultList)) {
+            return result;
+        }
+        int resultState = 1;
+        for (JobExecutionResult executionResult : jobExecutionResultList) {
+            if (executionResult.getState() != 1) {
+                resultState = 2;
+                break;
+            }
+        }
+
+        return JobCheckState.of(resultState).getCode();
     }
 
     @Override
@@ -159,7 +179,7 @@ public class JobExecutionResultServiceImpl extends ServiceImpl<JobExecutionResul
             checkSubject +=  "." + jobExecutionResult.getColumnName();
         }
         jobExecutionResultVO.setCheckSubject(checkSubject);
-        jobExecutionResultVO.setCheckResult(DqJobExecutionState.of(jobExecutionResult.getState()).getDescription(!LanguageUtils.isZhContext()));
+        jobExecutionResultVO.setCheckResult(JobCheckState.of(jobExecutionResult.getState()).getDescription(!LanguageUtils.isZhContext()));
         SqlMetric sqlMetric = PluginLoader.getPluginLoader(SqlMetric.class).getOrCreatePlugin(jobExecutionResult.getMetricName());
         if (!"multi_table_value_comparison".equalsIgnoreCase(sqlMetric.getName())) {
             ExpectedValue expectedValue = PluginLoader.getPluginLoader(ExpectedValue.class).getOrCreatePlugin(jobExecution.getEngineType() + "_" + jobExecutionResult.getExpectedType());

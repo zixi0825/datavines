@@ -47,6 +47,7 @@ export default {
     '/main/detail/:id': 'Detail',
     '/main/label': 'Label',
     '/main/config': 'Config',
+    '/main/tokenManager': 'Token',
 
     confirm_text: 'OK',
     test_link: 'Test Connect',
@@ -93,6 +94,7 @@ export default {
     jobs_list: 'Jobs',
     jobs_add: 'Add',
     jobs_add_tip: 'Please save the job first',
+    jobs_id: 'Jobs Id',
     jobs_name: 'Jobs Name',
     jobs_type: 'Jobs Type',
     jobs_updater: 'Updater',
@@ -309,6 +311,11 @@ export default {
     config_var_key: 'Config Key',
     config_var_value: 'Config Value',
     create_config: 'Create Config',
+
+    token_title: 'Token Management',
+    token_expire_time: 'Expire Time',
+    token_token: 'Token',
+    create_token: 'Create Token',
 
     quality_dashboard_profile: 'Quality Profile',
     quality_dashboard_trend: 'Quality Trend',

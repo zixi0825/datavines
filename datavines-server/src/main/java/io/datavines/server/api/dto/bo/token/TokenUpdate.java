@@ -14,32 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.server.api.dto.vo;
+package io.datavines.server.api.dto.bo.token;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import javax.validation.constraints.NotNull;
 
 @Data
-public class JobQualityReportVO implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+@NotNull(message = "Token Update cannot be null")
+public class TokenUpdate extends TokenCreate {
 
-    private static final long serialVersionUID = -1L;
-
+    @NotNull(message = "Config id cannot be null")
     private Long id;
-
-    private Long datasourceId;
-
-    private String databaseName;
-
-    private String tableName;
-
-    private String columnName;
-
-    private BigDecimal score;
-
-    @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
-    private LocalDate reportDate;
 }
