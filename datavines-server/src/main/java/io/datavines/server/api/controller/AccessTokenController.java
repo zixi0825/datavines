@@ -19,7 +19,8 @@ package io.datavines.server.api.controller;
 import io.datavines.core.aop.RefreshToken;
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.core.exception.DataVinesServerException;
-import io.datavines.core.utils.TokenManager;
+import io.datavines.server.api.dto.bo.token.TokenCreate;
+import io.datavines.server.api.dto.bo.token.TokenUpdate;
 import io.datavines.server.repository.service.AccessTokenService;
 import io.datavines.server.utils.ContextHolder;
 import io.swagger.annotations.Api;
@@ -28,9 +29,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+import javax.validation.Valid;
 
 @Api(value = "token", tags = "token", produces = MediaType.APPLICATION_JSON_VALUE)
 @RestController
@@ -42,22 +41,29 @@ public class AccessTokenController {
     private AccessTokenService accessTokenService;
 
     @ApiOperation(value = "create token")
-    @PostMapping()
-    public Object createOrUpdateToken(@RequestParam("workspaceId") Long workspaceId,
-                                      @RequestParam("expireTime") String expireTime) throws DataVinesServerException {
-        return accessTokenService.generateToken(workspaceId, expireTime);
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Object createToken(@Valid @RequestBody TokenCreate tokenCreate) throws DataVinesServerException {
+        return accessTokenService.create(tokenCreate);
+    }
+
+    @ApiOperation(value = "update token")
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Object updateToken(@Valid @RequestBody TokenUpdate tokenUpdate) throws DataVinesServerException {
+        return accessTokenService.update(tokenUpdate);
     }
 
     @ApiOperation(value = "delete token")
-    @PostMapping(value = "/delete")
-    public Object deleteToken(@RequestParam("id") Long id)  {
+    @DeleteMapping(value = "/{id}")
+    public Object deleteToken(@PathVariable Long id)  {
         // 加入黑名单，并且需要拦截器进行处理
         return accessTokenService.deleteToken(id);
     }
 
-    @ApiOperation(value = "list token")
-    @GetMapping(value = "/list")
-    public Object listToken(@RequestParam("workspaceId") Long workspaceId)  {
-        return accessTokenService.listToken(workspaceId, ContextHolder.getUserId());
+    @ApiOperation(value = "page token")
+    @GetMapping(value = "/page")
+    public Object listByUserId(@RequestParam("workspaceId") Long workspaceId,
+                               @RequestParam("pageNumber") Integer pageNumber,
+                               @RequestParam("pageSize") Integer pageSize)  {
+        return accessTokenService.page(workspaceId, ContextHolder.getUserId(), pageNumber, pageSize);
     }
 }

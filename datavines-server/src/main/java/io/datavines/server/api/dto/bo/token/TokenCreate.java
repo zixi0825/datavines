@@ -14,26 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.datavines.server.api.dto.bo.token;
 
-package io.datavines.server.repository.service;
+import lombok.Data;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
-import io.datavines.server.api.dto.bo.token.TokenCreate;
-import io.datavines.server.api.dto.bo.token.TokenUpdate;
-import io.datavines.server.repository.entity.AccessToken;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-import java.util.List;
+@Data
+@NotNull(message = "Token Create cannot be null")
+public class TokenCreate {
 
-public interface AccessTokenService extends IService<AccessToken> {
+    @NotNull(message = "WorkspaceId cannot be empty")
+    private long workspaceId;
 
-    Boolean checkTokenExist(String token);
-
-    Long create(TokenCreate tokenCreate);
-
-    Long update(TokenUpdate tokenUpdate);
-
-    boolean deleteToken(Long id);
-
-    IPage<AccessToken> page(Long workspaceId, Long userId, Integer pageNumber, Integer pageSize);
+    @NotBlank(message = "expireTime cannot be empty")
+    private String expireTime;
 }

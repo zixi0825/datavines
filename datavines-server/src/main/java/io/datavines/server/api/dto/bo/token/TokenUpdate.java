@@ -14,26 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.datavines.server.api.dto.bo.token;
 
-package io.datavines.server.repository.service;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
-import io.datavines.server.api.dto.bo.token.TokenCreate;
-import io.datavines.server.api.dto.bo.token.TokenUpdate;
-import io.datavines.server.repository.entity.AccessToken;
+import javax.validation.constraints.NotNull;
 
-import java.util.List;
+@Data
+@EqualsAndHashCode(callSuper = true)
+@NotNull(message = "Token Update cannot be null")
+public class TokenUpdate extends TokenCreate {
 
-public interface AccessTokenService extends IService<AccessToken> {
-
-    Boolean checkTokenExist(String token);
-
-    Long create(TokenCreate tokenCreate);
-
-    Long update(TokenUpdate tokenUpdate);
-
-    boolean deleteToken(Long id);
-
-    IPage<AccessToken> page(Long workspaceId, Long userId, Integer pageNumber, Integer pageSize);
+    @NotNull(message = "Config id cannot be null")
+    private Long id;
 }

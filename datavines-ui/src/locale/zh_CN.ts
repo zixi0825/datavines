@@ -47,6 +47,7 @@ export default {
     '/main/detail/:id': '详情',
     '/main/label': '标签管理',
     '/main/config': '参数管理',
+    '/main/tokenManager': '令牌管理',
 
     confirm_text: '确认',
     test_link: '测试链接',
@@ -93,6 +94,7 @@ export default {
     jobs_list: '规则作业列表',
     jobs_add: '创建规则作业',
     jobs_add_tip: '请先保存规则作业',
+    jobs_id: '规则作业Id',
     jobs_name: '规则作业名称',
     jobs_type: '规则作业类型',
     jobs_updater: '更新人',
@@ -307,6 +309,11 @@ export default {
     config_var_key: '参数名',
     config_var_value: '参数值',
     create_config: '创建参数',
+
+    token_title: '令牌管理',
+    token_expire_time: '过期时间',
+    token_token: '令牌',
+    create_token: '创建令牌',
 
     quality_dashboard_profile: '质量概览',
     quality_dashboard_trend: '质量趋势',

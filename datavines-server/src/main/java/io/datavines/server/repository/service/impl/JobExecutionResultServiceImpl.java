@@ -102,25 +102,22 @@ public class JobExecutionResultServiceImpl extends ServiceImpl<JobExecutionResul
     }
 
     @Override
-    public JobExecutionCheckResultVO getCheckResultByJobExecutionId(long jobExecutionId) {
-        JobExecutionCheckResultVO resultVO = new JobExecutionCheckResultVO();
-        resultVO.setCheckResult(JobCheckState.NONE.getCode());
+    public int getCheckResultByJobExecutionId(long jobExecutionId) {
+
+        int result = JobCheckState.NONE.getCode();
         List<JobExecutionResult> jobExecutionResultList = listByJobExecutionId(jobExecutionId);
         if (CollectionUtils.isEmpty(jobExecutionResultList)) {
-            return resultVO;
+            return result;
         }
         int resultState = 1;
-        for (JobExecutionResult result : jobExecutionResultList) {
-            if (result.getState() != 1) {
+        for (JobExecutionResult executionResult : jobExecutionResultList) {
+            if (executionResult.getState() != 1) {
                 resultState = 2;
                 break;
             }
         }
 
-        resultVO.setExecutionId(jobExecutionId);
-        resultVO.setCheckResult(JobCheckState.of(resultState).getCode());
-
-        return resultVO;
+        return JobCheckState.of(resultState).getCode();
     }
 
     @Override

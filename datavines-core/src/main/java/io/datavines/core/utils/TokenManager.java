@@ -18,6 +18,7 @@ package io.datavines.core.utils;
 
 import io.datavines.core.constant.DataVinesConstants;
 import io.datavines.core.exception.DataVinesServerException;
+import io.jsonwebtoken.CompressionCodecs;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -44,7 +45,7 @@ public class TokenManager {
     @Value("${jwt.token.timeout:8640000}")
     private Long timeout;
 
-    @Value("${jwt.token.algorithm:HS512}")
+    @Value("${jwt.token.algorithm:HS256}")
     private String algorithm;
 
     public String generateToken(String username, String password) {
@@ -103,6 +104,7 @@ public class TokenManager {
                 .setClaims(claims)
                 .setSubject(claims.get(DataVinesConstants.TOKEN_USER_NAME).toString())
                 .signWith(SignatureAlgorithm.valueOf(algorithm), tokenSecret.getBytes(StandardCharsets.UTF_8))
+                .compressWith(CompressionCodecs.DEFLATE)
                 .compact();
     }
 
@@ -120,6 +122,7 @@ public class TokenManager {
                 .setSubject(null == claims.get(DataVinesConstants.TOKEN_USER_NAME) ? null : claims.get(DataVinesConstants.TOKEN_USER_NAME).toString())
                 .setExpiration(new Date(expiration))
                 .signWith(SignatureAlgorithm.valueOf(algorithm), tokenSecret.getBytes(StandardCharsets.UTF_8))
+                .compressWith(CompressionCodecs.DEFLATE)
                 .compact();
     }
 
