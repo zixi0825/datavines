@@ -187,7 +187,7 @@ const Jobs = ({ datasourceId }: TJobs) => {
     // @ts-ignore
     const columns: ColumnsType<TJobsTableItem> = [
         {
-            title: intl.formatMessage({ id: 'jobs_name' }),
+            title: intl.formatMessage({ id: 'jobs_id' }),
             dataIndex: 'id',
             key: 'id',
             width: 160,

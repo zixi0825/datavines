@@ -25,7 +25,6 @@ import io.datavines.metric.api.ConfigItem;
 import io.datavines.metric.api.ExpectedValue;
 import io.datavines.metric.api.ResultFormula;
 import io.datavines.metric.api.SqlMetric;
-import io.datavines.server.api.dto.vo.JobExecutionCheckResultVO;
 import io.datavines.server.api.dto.vo.JobExecutionResultVO;
 import io.datavines.server.repository.entity.Job;
 import io.datavines.server.repository.entity.JobExecution;
@@ -102,9 +101,9 @@ public class JobExecutionResultServiceImpl extends ServiceImpl<JobExecutionResul
     }
 
     @Override
-    public int getCheckResultByJobExecutionId(long jobExecutionId) {
+    public JobCheckState getCheckResultByJobExecutionId(long jobExecutionId) {
 
-        int result = JobCheckState.NONE.getCode();
+        JobCheckState result = JobCheckState.NONE;
         List<JobExecutionResult> jobExecutionResultList = listByJobExecutionId(jobExecutionId);
         if (CollectionUtils.isEmpty(jobExecutionResultList)) {
             return result;
@@ -117,7 +116,7 @@ public class JobExecutionResultServiceImpl extends ServiceImpl<JobExecutionResul
             }
         }
 
-        return JobCheckState.of(resultState).getCode();
+        return JobCheckState.of(resultState);
     }
 
     @Override
