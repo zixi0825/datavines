@@ -66,17 +66,18 @@ public class TokenManager {
 
     public String generateToken(String token, Long timeOutMillis) {
         Map<String, Object> claims = new HashMap<>();
+
         String username = getUsername(token);
         String password = getPassword(token);
         if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
             throw new DataVinesServerException("can not get the user info from token");
         }
-
+        Long createTime = System.currentTimeMillis();
         claims.put(DataVinesConstants.TOKEN_USER_NAME, username);
         claims.put(DataVinesConstants.TOKEN_USER_PASSWORD, password);
-        claims.put(DataVinesConstants.TOKEN_CREATE_TIME, System.currentTimeMillis());
+        claims.put(DataVinesConstants.TOKEN_CREATE_TIME,createTime);
 
-        return toTokenString(timeOutMillis, claims);
+        return toTokenString(createTime, timeOutMillis, claims);
     }
 
     public String refreshToken(String token) {
@@ -87,11 +88,12 @@ public class TokenManager {
 
     public String generateToken(TokenInfo tokenInfo, Long timeOutMillis) {
         Map<String, Object> claims = new HashMap<>();
+        Long createTime = System.currentTimeMillis();
         claims.put(DataVinesConstants.TOKEN_USER_NAME, StringUtils.isEmpty(tokenInfo.getUsername()) ? DataVinesConstants.EMPTY : tokenInfo.getUsername());
         claims.put(DataVinesConstants.TOKEN_USER_PASSWORD, StringUtils.isEmpty(tokenInfo.getPassword()) ? DataVinesConstants.EMPTY : tokenInfo.getPassword());
-        claims.put(DataVinesConstants.TOKEN_CREATE_TIME, System.currentTimeMillis());
+        claims.put(DataVinesConstants.TOKEN_CREATE_TIME, createTime);
 
-        return toTokenString(timeOutMillis, claims);
+        return toTokenString(createTime, timeOutMillis, claims);
     }
 
     public String generateContinuousToken(TokenInfo tokenInfo) {
@@ -109,11 +111,12 @@ public class TokenManager {
     }
 
     private String generate(Map<String, Object> claims) {
-        return toTokenString(timeout, claims);
+        return toTokenString(Long.parseLong(claims.get(DataVinesConstants.TOKEN_CREATE_TIME) + DataVinesConstants.EMPTY), timeout, claims);
     }
 
-    public String toTokenString(Long timeOutMillis, Map<String, Object> claims) {
-        long expiration = Long.parseLong(claims.get(DataVinesConstants.TOKEN_CREATE_TIME) + DataVinesConstants.EMPTY) + timeOutMillis;
+    public String toTokenString(Long createTime, Long timeOutMillis, Map<String, Object> claims) {
+
+        long expiration = createTime + timeOutMillis*1000;
 
         SignatureAlgorithm.valueOf(algorithm);
 

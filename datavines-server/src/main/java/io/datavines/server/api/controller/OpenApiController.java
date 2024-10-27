@@ -65,7 +65,7 @@ public class OpenApiController {
     @ApiOperation(value = "get job execution status", response = String.class)
     @GetMapping(value = "/job/execution/status/{executionId}")
     public Object getTaskStatus(@PathVariable("executionId") Long executionId) {
-        return jobExecutionService.getById(executionId).getStatus().getCode();
+        return jobExecutionService.getById(executionId).getStatus();
     }
 
     @CheckTokenExist

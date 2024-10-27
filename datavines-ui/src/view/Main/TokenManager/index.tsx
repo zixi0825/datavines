@@ -92,6 +92,7 @@ const Index = () => {
             title: intl.formatMessage({ id: 'token_token' }),
             dataIndex: 'token',
             key: 'token',
+            width: 300,
             render: (text: string) => <div>{text || '--'}</div>,
         },
         {

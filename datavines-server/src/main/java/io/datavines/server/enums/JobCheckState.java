@@ -49,7 +49,6 @@ public enum JobCheckState {
     @Getter
     private final String zhDescription;
 
-    @JsonValue
     public String getDescription() {
         return description;
     }
