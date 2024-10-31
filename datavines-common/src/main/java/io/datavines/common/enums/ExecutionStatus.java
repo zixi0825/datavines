@@ -53,7 +53,7 @@ public enum ExecutionStatus {
     NEED_FAULT_TOLERANCE(8, "need fault tolerance","需要容错"),
     KILL(9, "kill", "强制终止"),
     WAITING_THREAD(10, "waiting thread", "等待线程"),
-    WAITING_DEPEND(11, "waiting depend node complete","");
+    WAITING_SUMMIT(11, "waiting_summit","待提交");
 
     ExecutionStatus(int code, String description,String zhDescription){
         this.code = code;
@@ -132,7 +132,7 @@ public enum ExecutionStatus {
      * @return status
      */
     public boolean typeIsRunning() {
-       return this == RUNNING_EXECUTION || this == WAITING_DEPEND;
+       return this == RUNNING_EXECUTION;
     }
 
     /**
