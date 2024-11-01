@@ -30,4 +30,19 @@ public class ImpalaConnector extends JdbcConnector {
     public BaseJdbcDataSourceInfo getDatasourceInfo(JdbcConnectionInfo jdbcConnectionInfo) {
         return new ImpalaDataSourceInfo(jdbcConnectionInfo);
     }
+
+    @Override
+    public ResultSet getMetadataColumns(DatabaseMetaData metaData, String catalog, String schema, String tableName, String columnName) throws SQLException {
+        return metaData.getColumns(null, catalog, tableName, columnName);
+    }
+
+    @Override
+    protected ResultSet getMetadataTables(DatabaseMetaData metaData, String catalog, String schema) throws SQLException {
+        return metaData.getTables(null, catalog, null, TABLE_TYPES);
+    }
+
+    @Override
+    protected ResultSet getPrimaryKeys(DatabaseMetaData metaData, String catalog, String schema, String tableName) throws SQLException {
+        return null;
+    }
 }
