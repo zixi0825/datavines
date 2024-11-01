@@ -20,6 +20,10 @@ import io.datavines.common.datasource.jdbc.BaseJdbcDataSourceInfo;
 import io.datavines.common.datasource.jdbc.JdbcConnectionInfo;
 import io.datavines.connector.api.DataSourceClient;
 
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class ImpalaConnector extends JdbcConnector {
 
     public ImpalaConnector(DataSourceClient dataSourceClient) {
