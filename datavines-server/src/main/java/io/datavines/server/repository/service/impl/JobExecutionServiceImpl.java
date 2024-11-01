@@ -204,15 +204,23 @@ public class JobExecutionServiceImpl extends ServiceImpl<JobExecutionMapper, Job
             return jobExecutionId;
         }
 
-        Command command = new Command();
-        Map<String, String> parameter = new HashMap<>();
-        parameter.put("engine", jobExecution.getEngineType());
+        boolean deleteCommandResult = false;
+        if (ExecutionStatus.WAITING_SUMMIT == jobExecution.getStatus()) {
+            deleteCommandResult = commandService.deleteByJobExecutionId(jobExecutionId);
+        }
 
-        command.setType(CommandType.STOP);
-        command.setPriority(Priority.MEDIUM);
-        command.setParameter(JSONUtils.toJsonString(parameter));
-        command.setJobExecutionId(jobExecutionId);
-        commandService.insert(command);
+        if (!deleteCommandResult) {
+            Command command = new Command();
+            Map<String, String> parameter = new HashMap<>();
+            parameter.put("engine", jobExecution.getEngineType());
+
+            command.setType(CommandType.STOP);
+            command.setPriority(Priority.MEDIUM);
+            command.setParameter(JSONUtils.toJsonString(parameter));
+            command.setJobExecutionId(jobExecutionId);
+            command.setExecuteHost(jobExecution.getExecuteHost());
+            commandService.insert(command);
+        }
 
         return jobExecutionId;
     }

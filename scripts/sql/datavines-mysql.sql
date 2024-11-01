@@ -403,6 +403,7 @@ CREATE TABLE `dv_command` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `type` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Command type: 0 start task, 1 stop task',
   `parameter` text COMMENT 'json command parameters',
+  `execute_host` varchar(255) COMMENT 'job execute host',
   `job_execution_id` bigint(20) NOT NULL COMMENT 'task id',
   `priority` int(11) DEFAULT NULL COMMENT 'process instance priority: 0 Highest,1 High,2 Medium,3 Low,4 Lowest',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'create time',

@@ -529,11 +529,15 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
 
         jobExecutionService.save(jobExecution);
 
+        Map<String, String> parameter = new HashMap<>();
+        parameter.put("engine", jobExecution.getEngineType());
+
         // add a command
         Command command = new Command();
         command.setType(CommandType.START);
         command.setPriority(Priority.MEDIUM);
         command.setJobExecutionId(jobExecution.getId());
+        command.setParameter(JSONUtils.toJsonString(parameter));
         commandService.insert(command);
 
         return jobExecution.getId();
@@ -585,7 +589,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
         jobExecution.setErrorDataStorageType(errorDataStorageType);
         jobExecution.setErrorDataStorageParameter(errorDataStorageParameter);
         jobExecution.setErrorDataFileName(getErrorDataFileName(job.getParameter()));
-        jobExecution.setStatus(ExecutionStatus.SUBMITTED_SUCCESS);
+        jobExecution.setStatus(ExecutionStatus.WAITING_SUMMIT);
         jobExecution.setTenantCode(tenantStr);
         jobExecution.setEnv(envStr);
         jobExecution.setSubmitTime(LocalDateTime.now());
