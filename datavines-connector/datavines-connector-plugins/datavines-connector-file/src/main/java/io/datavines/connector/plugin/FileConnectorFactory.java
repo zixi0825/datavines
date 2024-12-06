@@ -64,4 +64,14 @@ public class FileConnectorFactory implements ConnectorFactory {
     public DataSourceClient getDataSourceClient() {
         return null;
     }
+
+    @Override
+    public StatementSplitter getStatementSplitter() {
+        return null;
+    }
+
+    @Override
+    public StatementParser getStatementParser() {
+        return null;
+    }
 }

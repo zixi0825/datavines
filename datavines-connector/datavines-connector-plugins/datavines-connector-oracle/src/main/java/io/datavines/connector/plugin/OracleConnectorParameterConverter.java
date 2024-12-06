@@ -20,19 +20,16 @@ import io.datavines.common.utils.StringUtils;
 
 import java.util.Map;
 
-import static io.datavines.common.ConfigConstants.HOST;
-import static io.datavines.common.ConfigConstants.PORT;
-import static io.datavines.common.ConfigConstants.DATABASE;
-import static io.datavines.common.ConfigConstants.PROPERTIES;
+import static io.datavines.common.ConfigConstants.*;
 
 public class OracleConnectorParameterConverter extends JdbcConnectorParameterConverter{
 
     @Override
     protected String getUrl(Map<String, Object> parameter) {
-        String url = String.format("jdbc:oracle:thin:@%s:%s:%s",
+        String url = String.format("jdbc:oracle:thin:@//%s:%s/%s",
                 parameter.get(HOST),
                 parameter.get(PORT),
-                parameter.get(DATABASE));
+                parameter.get(SID));
         String properties = (String)parameter.get(PROPERTIES);
         if (StringUtils.isNotEmpty(properties)) {
             url += "?" + properties;

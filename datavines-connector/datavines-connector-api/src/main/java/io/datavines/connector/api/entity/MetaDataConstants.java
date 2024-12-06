@@ -14,21 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.connector.plugin;
+package io.datavines.connector.api.entity;
 
-import io.datavines.common.datasource.jdbc.BaseJdbcDataSourceInfo;
-import io.datavines.connector.api.DataSourceClient;
+public class MetaDataConstants {
 
-import java.util.Map;
-
-public class ImpalaConnector extends JdbcConnector {
-
-    public ImpalaConnector(DataSourceClient dataSourceClient) {
-        super(dataSourceClient);
-    }
-
-    @Override
-    public BaseJdbcDataSourceInfo getDatasourceInfo(Map<String,String> param) {
-        return new ImpalaDataSourceInfo(param);
-    }
+    public final static String UNKNOWN_STATEMENT_TYPE = "UNKNOWN";
 }

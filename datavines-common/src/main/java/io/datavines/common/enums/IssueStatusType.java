@@ -23,30 +23,30 @@ import java.util.HashMap;
 /**
  * job type
  */
-public enum JobType {
+public enum IssueStatusType {
     /**
-     * 0 DATA_QUALITY
-     * 1 DATA_PROFILE
-     * 2 DATA_RECONCILIATION
+     * wait_process
+     * processed
+     * ignored
      */
-    DATA_QUALITY(0, "DATA_QUALITY", "数据质量检查"),
-    DATA_PROFILE(1, "DATA_PROFILE","数据概览检查"),
-    DATA_RECONCILIATION(2, "DATA_RECONCILIATION","数据比对检查");
+    WAIT_PROCESS("wait_process", "WAIT_PROCESS", "待处理"),
+    PROCESSED("processed", "PROCESSED","已处理"),
+    IGNORED("ignored", "IGNORED","已忽略");
 
-    JobType(int code, String description, String zhDescription) {
+    IssueStatusType(String code, String description, String zhDescription) {
         this.code = code;
         this.description = description;
         this.zhDescription = zhDescription;
     }
 
     @EnumValue
-    private final int code;
+    private final String code;
 
     private final String description;
 
     private final String zhDescription;
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 
@@ -58,27 +58,18 @@ public enum JobType {
         return zhDescription;
     }
 
-    private static final HashMap<String, JobType> JOB_TYPE_MAP = new HashMap<>();
+    private static final HashMap<String, IssueStatusType> JOB_TYPE_MAP = new HashMap<>();
 
     static {
-        for (JobType jobType: JobType.values()){
-            JOB_TYPE_MAP.put(jobType.description, jobType);
+        for (IssueStatusType jobType: IssueStatusType.values()){
+            JOB_TYPE_MAP.put(jobType.code, jobType);
         }
     }
 
-    public static JobType of(String jobType){
+    public static IssueStatusType of(String jobType){
         if(JOB_TYPE_MAP.containsKey(jobType)){
             return JOB_TYPE_MAP.get(jobType);
         }
         throw new IllegalArgumentException("invalid job type : " + jobType);
-    }
-
-    public static JobType of(int code){
-        for (JobType jobType : JobType.values()) {
-            if (code == jobType.code) {
-                return jobType;
-            }
-        }
-        throw new IllegalArgumentException("invalid job type code: " + code);
     }
 }

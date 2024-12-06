@@ -14,21 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.connector.plugin;
+package io.datavines.connector.api.entity;
 
-import io.datavines.common.datasource.jdbc.BaseJdbcDataSourceInfo;
-import io.datavines.connector.api.DataSourceClient;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-import java.util.Map;
+import java.util.List;
 
-public class ImpalaConnector extends JdbcConnector {
+@Data
+@AllArgsConstructor
+public class StatementMetadataFragment {
 
-    public ImpalaConnector(DataSourceClient dataSourceClient) {
-        super(dataSourceClient);
-    }
+    private List<String> inputTables;
 
-    @Override
-    public BaseJdbcDataSourceInfo getDatasourceInfo(Map<String,String> param) {
-        return new ImpalaDataSourceInfo(param);
-    }
+    private List<String> outputTables;
+
+    private List<ColumnLineage> columnLineageList;
 }

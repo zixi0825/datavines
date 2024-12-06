@@ -22,6 +22,7 @@ public class ConfigConstants {
     public static final String CONNECTOR_TYPE = "connector_type";
     public static final String DATASOURCE_ID = "datasource_id";
     public static final String TABLE = "table";
+    public static final String VIEW_SQL = "view_sql";
     public static final String TABLE_ALIAS = "table_alias";
     public static final String TABLE2_ALIAS = "table2_alias";
     public static final String TABLE_ALIAS_COLUMNS = "table_alias_columns";
@@ -37,6 +38,7 @@ public class ConfigConstants {
     public static final String ACTUAL_NAME = "actual_name";
     public static final String ACTUAL_EXECUTE_SQL = "actual_execute_sql";
     public static final String ACTUAL_AGGREGATE_SQL = "actual_aggregate_sql";
+    public static final String ACTUAL_CUSTOM_SQL = "actual_custom_sql";
     public static final String EXPECTED_NAME = "expected_name";
     public static final String EXPECTED_TYPE = "expected_type";
     public static final String EXPECTED_TABLE = "expected_table";
@@ -74,9 +76,12 @@ public class ConfigConstants {
     public static final String ERROR_DATA_FILE_NAME = "error_data_file_name";
     public static final String VALIDATE_RESULT_DATA_DIR = "validate_result_data_dir";
     public static final String INVALIDATE_ITEM_CAN_OUTPUT = "invalidate_item_can_output";
+
+    public static final String ERROR_DATA_STORAGE_ID = "error_data_storage_id";
     public static final String ERROR_DATA_OUTPUT_TO_DATASOURCE_DATABASE = "error_data_output_to_datasource_database";
     public static final String DATASOURCE = "datasource";
     public static final String DATABASE = "database";
+    public static final String SID = "sid";
     public static final String DATABASE_NAME = "database_name";
     public static final String TABLE_NAME = "table_name";
     public static final String COLUMN_NAME = "column_name";
