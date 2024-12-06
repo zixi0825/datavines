@@ -25,6 +25,8 @@ import io.datavines.common.utils.StringUtils;
 import io.datavines.connector.api.DataSourceClient;
 
 import java.sql.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -93,6 +95,11 @@ public class PrestoConnector extends JdbcConnector {
             logger.error("create connection error", e);
             return ConnectorResponse.builder().status(ConnectorResponse.Status.SUCCESS).result(false).build();
         }
+    }
+
+    @Override
+    public List<String> keyProperties() {
+        return Arrays.asList("host","port","catalog","database");
     }
 
 }
