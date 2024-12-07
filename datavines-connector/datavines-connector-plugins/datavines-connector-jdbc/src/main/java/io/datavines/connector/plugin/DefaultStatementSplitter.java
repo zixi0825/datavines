@@ -16,19 +16,18 @@
  */
 package io.datavines.connector.plugin;
 
-import io.datavines.common.datasource.jdbc.BaseJdbcDataSourceInfo;
-import io.datavines.connector.api.DataSourceClient;
+import io.datavines.common.utils.StringUtils;
+import io.datavines.connector.api.StatementSplitter;
 
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
-public class ImpalaExecutor extends BaseJdbcExecutor {
-
-    public ImpalaExecutor(DataSourceClient dataSourceClient) {
-        super(dataSourceClient);
-    }
+public class DefaultStatementSplitter implements StatementSplitter {
 
     @Override
-    public BaseJdbcDataSourceInfo getDatasourceInfo(Map<String,String> param) {
-        return new ImpalaDataSourceInfo(param);
+    public List<String> splitStatements(String body) {
+
+        String DELIMITER = ";";
+        return StringUtils.isEmpty(body) ? null : Arrays.asList(body.split(DELIMITER));
     }
 }

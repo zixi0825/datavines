@@ -14,21 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.connector.plugin;
+package io.datavines.connector.api;
 
-import io.datavines.common.datasource.jdbc.BaseJdbcDataSourceInfo;
-import io.datavines.connector.api.DataSourceClient;
+import io.datavines.connector.api.entity.StatementMetadataFragment;
 
-import java.util.Map;
+public interface StatementParser {
 
-public class ImpalaExecutor extends BaseJdbcExecutor {
-
-    public ImpalaExecutor(DataSourceClient dataSourceClient) {
-        super(dataSourceClient);
-    }
-
-    @Override
-    public BaseJdbcDataSourceInfo getDatasourceInfo(Map<String,String> param) {
-        return new ImpalaDataSourceInfo(param);
-    }
+    StatementMetadataFragment parseStatement(String statement);
 }

@@ -38,4 +38,8 @@ public interface ConnectorFactory {
     ConfigBuilder getConfigBuilder();
 
     DataSourceClient getDataSourceClient();
+
+    StatementSplitter getStatementSplitter();
+
+    StatementParser getStatementParser();
 }

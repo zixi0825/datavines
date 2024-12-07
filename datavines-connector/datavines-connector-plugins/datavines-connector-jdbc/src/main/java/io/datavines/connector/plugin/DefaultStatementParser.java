@@ -16,19 +16,13 @@
  */
 package io.datavines.connector.plugin;
 
-import io.datavines.common.datasource.jdbc.BaseJdbcDataSourceInfo;
-import io.datavines.connector.api.DataSourceClient;
+import io.datavines.connector.api.StatementParser;
+import io.datavines.connector.api.entity.StatementMetadataFragment;
 
-import java.util.Map;
-
-public class ImpalaExecutor extends BaseJdbcExecutor {
-
-    public ImpalaExecutor(DataSourceClient dataSourceClient) {
-        super(dataSourceClient);
-    }
+public class DefaultStatementParser implements StatementParser {
 
     @Override
-    public BaseJdbcDataSourceInfo getDatasourceInfo(Map<String,String> param) {
-        return new ImpalaDataSourceInfo(param);
+    public StatementMetadataFragment parseStatement(String statement) {
+        return null;
     }
 }

@@ -44,4 +44,14 @@ public abstract class AbstractJdbcConnectorFactory implements ConnectorFactory {
     public DataSourceClient getDataSourceClient() {
         return new JdbcDataSourceClient();
     }
+
+    @Override
+    public StatementSplitter getStatementSplitter() {
+        return new DefaultStatementSplitter();
+    }
+
+    @Override
+    public StatementParser getStatementParser() {
+        return new DefaultStatementParser();
+    }
 }
