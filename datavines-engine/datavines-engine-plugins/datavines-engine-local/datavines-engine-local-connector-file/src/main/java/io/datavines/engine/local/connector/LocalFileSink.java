@@ -26,11 +26,11 @@ import io.datavines.connector.api.TypeConverter;
 import io.datavines.engine.api.env.RuntimeEnvironment;
 import io.datavines.engine.local.api.LocalRuntimeEnvironment;
 import io.datavines.engine.local.api.LocalSink;
-import io.datavines.engine.local.api.entity.ResultList;
-import io.datavines.engine.local.api.entity.ResultListWithColumns;
+import io.datavines.connector.api.entity.ResultList;
+import io.datavines.connector.api.entity.ResultListWithColumns;
 import io.datavines.engine.local.api.utils.FileUtils;
 import io.datavines.engine.local.api.utils.LoggerFactory;
-import io.datavines.engine.local.api.utils.SqlUtils;
+import io.datavines.connector.plugin.utils.SqlUtils;
 import io.datavines.spi.PluginLoader;
 
 import org.slf4j.Logger;

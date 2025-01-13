@@ -14,28 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.engine.local.api.entity;
+package io.datavines.connector.api.entity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ResultList implements Serializable {
-    protected List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+public class ResultListWithColumns extends ResultList {
 
-    public ResultList() {
+    private List<QueryColumn> columns;
+
+    public ResultListWithColumns() {
+
     }
 
-    public ResultList(List<Map<String, Object>> resultList) {
-        this.resultList = resultList;
+    public ResultListWithColumns(List<QueryColumn> columns, List<Map<String, Object>> resultList){
+        super(resultList);
+        this.columns = columns;
     }
 
-    public List<Map<String, Object>> getResultList() {
-        return resultList;
+    public List<QueryColumn> getColumns() {
+        return columns;
     }
 
-    public void setResultList(List<Map<String, Object>> resultList) {
-        this.resultList = resultList;
+    public void setColumns(List<QueryColumn> columns) {
+        this.columns = columns;
     }
 }

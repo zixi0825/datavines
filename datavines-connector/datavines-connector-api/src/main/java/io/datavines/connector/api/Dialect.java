@@ -18,9 +18,13 @@ package io.datavines.connector.api;
 
 import io.datavines.common.enums.DataType;
 import io.datavines.common.utils.StringUtils;
+import io.datavines.connector.api.entity.ResultList;
 import io.datavines.connector.api.entity.StructField;
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,4 +142,6 @@ public interface Dialect {
     String getErrorDataScript(Map<String, String> configMap);
 
     String getValidateResultDataScript(Map<String, String> configMap);
+
+    ResultList getPageFromResultSet(Statement sourceConnectionStatement, ResultSet rs, String sourceTable, int start, int end) throws SQLException;
 }

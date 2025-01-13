@@ -62,6 +62,7 @@ public class ConfigConstants {
     public static final String DATA_DATE = "data_date";
     public static final String REGEXP_PATTERN = "regexp_pattern";
     public static final String ERROR_OUTPUT_PATH = "error_output_path";
+    public static final String ERROR_DATA_CONNECTOR_TYPE = "error_data_connector_type";
     public static final String INDEX = "index";
     public static final String PATH = "path";
     public static final String HDFS_FILE = "hdfs_file";
@@ -111,7 +112,6 @@ public class ConfigConstants {
     public static final String DATA_DIR = "data_dir";
 
     public static final String ENABLE_SPARK_HIVE_SUPPORT = "enable_spark_hive_support";
-    public static final String ENABLE_USE_VIEW = "enable_use_view";
 
     public static final String FILE = "file";
 

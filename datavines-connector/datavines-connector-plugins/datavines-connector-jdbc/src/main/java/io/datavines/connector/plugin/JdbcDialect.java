@@ -18,7 +18,12 @@ package io.datavines.connector.plugin;
 
 import io.datavines.common.utils.StringUtils;
 import io.datavines.connector.api.Dialect;
+import io.datavines.connector.api.entity.ResultList;
+import io.datavines.connector.plugin.utils.SqlUtils;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -80,4 +85,8 @@ public abstract class JdbcDialect implements Dialect {
         return null;
     }
 
+    @Override
+    public ResultList getPageFromResultSet(Statement sourceConnectionStatement, ResultSet rs, String sourceTable, int start, int end) throws SQLException {
+        return SqlUtils.getPageFromResultSet(rs, start, end);
+    }
 }

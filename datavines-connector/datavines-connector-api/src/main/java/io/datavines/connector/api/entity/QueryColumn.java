@@ -14,29 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.engine.local.api.entity;
+package io.datavines.connector.api.entity;
 
-import java.util.List;
-import java.util.Map;
+public class QueryColumn {
 
-public class ResultListWithColumns extends ResultList {
+    private String name;
 
-    private List<QueryColumn> columns;
+    private String type;
 
-    public ResultListWithColumns() {
+    private String comment;
 
+    public QueryColumn() {
     }
 
-    public ResultListWithColumns(List<QueryColumn> columns, List<Map<String, Object>> resultList){
-        super(resultList);
-        this.columns = columns;
+    public QueryColumn(String name, String type, String comment) {
+        this.name = name;
+        this.type = type;
+        this.comment = comment;
     }
 
-    public List<QueryColumn> getColumns() {
-        return columns;
+    public String getName() {
+        return name;
     }
 
-    public void setColumns(List<QueryColumn> columns) {
-        this.columns = columns;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void setType(String type) {
+        this.type = type == null ? "" : type;
     }
 }

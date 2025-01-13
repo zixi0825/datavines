@@ -56,7 +56,7 @@ public class OpenApiController {
 
     @CheckTokenExist
     @ApiOperation(value = "kill job", response = Long.class)
-    @DeleteMapping(value = "/job/execution/kill/{executionId}")
+    @PostMapping(value = "/job/execution/kill/{executionId}")
     public Object kill(@PathVariable("executionId") Long executionId) {
         return jobExecutionService.killJob(executionId);
     }
