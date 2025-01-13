@@ -14,46 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.datavines.engine.local.api.entity;
+package io.datavines.connector.api.entity;
 
-public class QueryColumn {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-    private String name;
+public class ResultList implements Serializable {
+    protected List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
 
-    private String type;
-
-    private String comment;
-
-    public QueryColumn() {
+    public ResultList() {
     }
 
-    public QueryColumn(String name, String type, String comment) {
-        this.name = name;
-        this.type = type;
-        this.comment = comment;
+    public ResultList(List<Map<String, Object>> resultList) {
+        this.resultList = resultList;
     }
 
-    public String getName() {
-        return name;
+    public List<Map<String, Object>> getResultList() {
+        return resultList;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public void setType(String type) {
-        this.type = type == null ? "" : type;
+    public void setResultList(List<Map<String, Object>> resultList) {
+        this.resultList = resultList;
     }
 }

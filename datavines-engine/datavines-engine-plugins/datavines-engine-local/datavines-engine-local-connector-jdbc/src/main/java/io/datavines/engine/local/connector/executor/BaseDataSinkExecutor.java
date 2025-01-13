@@ -21,7 +21,7 @@ import io.datavines.common.utils.ParameterUtils;
 import io.datavines.common.utils.StringUtils;
 import io.datavines.engine.local.api.LocalRuntimeEnvironment;
 import io.datavines.engine.local.api.utils.LoggerFactory;
-import io.datavines.engine.local.api.utils.SqlUtils;
+import io.datavines.connector.plugin.utils.SqlUtils;
 import org.slf4j.Logger;
 
 import java.sql.SQLException;
@@ -87,7 +87,7 @@ public abstract class BaseDataSinkExecutor implements ISinkExecutor {
         //定义一个变量标示
         boolean flag = false ;
         //一个查询该表所有的语句。
-        String sql = "SELECT COUNT(*) FROM "+ tableName ;
+        String sql = "SELECT 1 FROM "+ tableName ;
         try (Statement statement = env.getMetadataConnection().getConnection().createStatement()) {
             statement.executeQuery(sql);
             flag = true;
